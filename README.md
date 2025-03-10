@@ -30,7 +30,3 @@ Complete API documentation is available at: [documentation-link]
 ### 🤝 Contributing  
 Contributions are welcome! Feel free to submit issues and pull requests.  
 
-### 📫 Contact  
-For inquiries, reach out via [email/contact info].  
-
-🚀 **UBMager – Making Life Easier!**
