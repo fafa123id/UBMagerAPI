@@ -3,6 +3,6 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return ['Service ini berjalan'];
+    return response()->json(['Service UBMagerAPI Sedang Berjalan, By UBMager'],201);
 });
 
