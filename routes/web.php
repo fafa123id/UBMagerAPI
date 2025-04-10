@@ -1,9 +1,7 @@
 <?php
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('index');
-});
+
 Route::get('/api-routes', function () {
     $routes = collect(Route::getRoutes())->map(function ($route) {
         return [
@@ -15,4 +13,7 @@ Route::get('/api-routes', function () {
     })->values();
 
     return response()->json($routes);
+});
+Route::get('/',function(){
+    return view('index');
 });
