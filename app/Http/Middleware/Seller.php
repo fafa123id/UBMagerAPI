@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Services\UserRoleId;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class Seller
@@ -15,7 +16,6 @@ class Seller
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     protected $userRoleId;
-
     public function __construct(UserRoleId $usr)
     {
         $this->userRoleId = $usr;
@@ -23,9 +23,13 @@ class Seller
 
     public function handle(Request $request, Closure $next): Response
     {
-        if ($this->userRoleId->getRole($request->user) === 1) {
+        $usr = Auth::guard('sanctum')->user();
+    
+        if ($this->userRoleId->getRole($usr)=== 1) {
             return $next($request);
         }
+        
+       
 
         return response()->json(['message' => 'Access denied'], 401);
     }
