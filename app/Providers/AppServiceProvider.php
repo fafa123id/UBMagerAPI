@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Services\UserRoleId;
+use App\Services\RouteInfo;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\ServiceProvider;
 
@@ -15,6 +16,9 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(UserRoleId::class,function($app){
             return new UserRoleId();
+        });
+        $this->app->singleton(RouteInfo::class,function($app){
+            return new RouteInfo();
         });
     }
 
