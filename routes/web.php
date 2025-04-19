@@ -17,3 +17,4 @@ Route::get('/api-routes', function () {
 Route::get('/',function(){
     return view('index');
 });
+require __DIR__.'/info.php';
