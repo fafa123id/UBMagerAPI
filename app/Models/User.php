@@ -47,4 +47,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function product()
+    {
+        return $this->hasMany(Product::class);
+    }
+
 }
