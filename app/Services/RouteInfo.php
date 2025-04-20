@@ -14,6 +14,7 @@ class RouteInfo
         ['uri' => 'api/email/verification-notification', 'description' => 'Resend email verification notification'],
         ['uri' => 'api/logout', 'description' => 'Logout the authenticated user, pakai bearer token'],
         ['uri' => 'api/user', 'description' => 'Get User, Harus Login dulu pake sanctum (get Token), abis itu akses api ini dengan bearer token'],
+        ['uri' => 'api/product/{product}', 'description' => 'Get User, Harus Login dulu pake sanctum (get Token), abis itu akses api ini dengan bearer token'],
     ];
     public function getInfo(){
         return $this->info;
