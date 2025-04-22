@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         $middleware->alias([
             'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
+            'unverified' => \App\Http\Middleware\EnsureUnverifiedUser::class,
             'Seller'=>\App\Http\Middleware\Seller::class
         ]);
         $middleware->validateCsrfTokens(except: [
