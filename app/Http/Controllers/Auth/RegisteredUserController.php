@@ -29,11 +29,13 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role_id' => ['required', 'integer'],
+            'phone' => ['required', 'string', 'unique:users,phone','regex:/^(\+62|62|0)8[1-9][0-9]{6,9}$/','max:15'],
         ]);
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'role_id'=> $request->role_id,
+            'phone' => $request->phone,
             'password' => Hash::make($request->string('password')),
             
         ]);
