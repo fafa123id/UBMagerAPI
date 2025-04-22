@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Hash;
      * Send OTP to the user's phone number.
      *
      * @param Request $request
-     * @param Twilio $twilio
      * @return \Illuminate\Http\JsonResponse
      */
 class OtpController extends Controller
@@ -31,7 +30,6 @@ class OtpController extends Controller
         
         // Cek apakah sudah ada OTP yang belum selesai
         $existingOtp = Otp::where('email', $request->email)
-        ->where('expires_at', '>', now()) // masih aktif
         ->first();
 
         if ($existingOtp) {
