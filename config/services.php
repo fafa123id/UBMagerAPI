@@ -13,6 +13,9 @@ return [
     | a conventional file to locate the various service credentials.
     |
     */
+    'callmebot'=> [
+        'api_key' => env('CALLMEBOT_API_KEY'),
+    ],
 
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
