@@ -16,8 +16,8 @@ class successReturn extends JsonResource
     {
         return [
             'status' => true,
-            'message' => $this->resource['message'],
-            'data' => $this->resource['data'],
+            'message' => $this->resource['message']??'',
+            'data' => $this->resource['data']??null,
         ];
     }
     public function withResponse($request, $response)
