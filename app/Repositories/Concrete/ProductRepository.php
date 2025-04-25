@@ -98,7 +98,7 @@ class ProductRepository implements ProductRepositoryInterface
         $product->delete();
         return new successReturn(
             [
-                'status' => 204,
+                'status' => 200,
                 'message' => 'Product deleted successfully'
             ]
         );

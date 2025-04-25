@@ -81,7 +81,7 @@ class CartController extends Controller
         }
         return new successReturn([
             'message' => 'Cart deleted',
-            'status' => 204
+            'status' => 200
         ]);
 
     }
@@ -91,7 +91,7 @@ class CartController extends Controller
 
         return new successReturn([
             'message' => 'All cart deleted',
-            'status' => 204
+            'status' => 200
         ]);
     }
 }
