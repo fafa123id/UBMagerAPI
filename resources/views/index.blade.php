@@ -12,7 +12,9 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            height: fit-content;
+            overflow: auto;
             margin: 0;
             font-family: Arial, sans-serif;
             text-align: center;
@@ -54,7 +56,6 @@
             border-radius: 8px;
             color: #fff;
             font-size: 1rem;
-            cursor: pointer;
             transition: all 0.3s ease;
         }
 
@@ -62,10 +63,6 @@
             background-color: rgba(255, 255, 255, 0.2);
             border-color: #00ffc8;
             transform: scale(1.05);
-        }
-
-        .route-button:active {
-            transform: scale(0.97);
         }
 
         @keyframes fadeIn {
@@ -89,10 +86,9 @@
             .then(data => {
                 const list = document.getElementById('routes-list');
                 data.forEach(route => {
-                    const button = document.createElement('button');
+                    const button = document.createElement('li');
                     button.className = 'route-button';
                     button.textContent = `${route.method} - ${route.uri}`;
-                    button.onclick = () => window.location.href = 'info/'+route.uri;
                     const li = document.createElement('li');
                     li.appendChild(button);
                     list.appendChild(li);
