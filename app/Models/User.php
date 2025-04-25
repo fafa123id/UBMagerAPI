@@ -53,4 +53,24 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Product::class);
     }
+    public function cart()
+    {
+        return $this->hasMany(Cart::class);
+    }
+    public function resettoken()
+    {
+        return $this->hasOne(ResetToken::class);
+    }
+    public function transaction()
+    {
+        return $this->hasMany(Transaction::class);
+    }
+    public function order()
+    {
+        return $this->hasMany(Order::class);
+    }
+    public function history()
+    {
+        return $this->hasMany(History::class);
+    }
 }
