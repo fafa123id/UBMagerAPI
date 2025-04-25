@@ -1,31 +1,42 @@
 <?php
 
 namespace App\Http\Controllers\Auth;
-
 use App\Http\Controllers\Controller;
-use Illuminate\Auth\Events\Verified;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use Illuminate\Http\RedirectResponse;
+use App\Models\User;
+use App\Repositories\Abstract\OtpHandlerRepositoryInterface;
+use Illuminate\Http\Request;
 
+
+/**
+ * Send OTP to the user's phone number.
+ *
+ * @param Request $request
+ * @return \Illuminate\Http\JsonResponse
+ */
 class VerifyEmailController extends Controller
 {
-    /**
-     * Mark the authenticated user's email address as verified.
-     */
-    public function __invoke(EmailVerificationRequest $request): RedirectResponse
+    private $otpHandler;
+    public function __construct(OtpHandlerRepositoryInterface $otpHandler)
     {
-        if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(
-                config('app.frontend_url').'/dashboard?verified=1'
-            );
-        }
+        $this->otpHandler = $otpHandler;
+    }
+    public function verifyEmail(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|string|email',
+            'otp' => 'required|string'
+        ]);
 
-        if ($request->user()->markEmailAsVerified()) {
-            event(new Verified($request->user()));
+        $otphandling = $this->otpHandler->verifyOtp($request->email, $request->otp);
+        if ($otphandling === false) {
+            return response()->json(['message' => 'Invalid or OTP Expired'], 400);
         }
-
-        return redirect()->intended(
-            config('app.frontend_url').'/dashboard?verified=1'
-        );
+        $email = User::where('email', $request->email)->first();
+        if ($email) {
+            $email->status = 'verified';
+            $email->email_verified_at = now();
+            $email->save();
+        }
+        return response()->json(['message' => 'OTP verified']);
     }
 }
