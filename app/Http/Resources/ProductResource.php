@@ -12,12 +12,14 @@ class ProductResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'type' => $this->type,
+            'category'=> $this->category,
             'description' => $this->description,
             'quantity' => $this->quantity,
             'price' => $this->price,
             'status' => $this->status,
             'owner' => $this->user->name ?? null,
             'created_at' => $this->created_at->toDateTimeString(),
+            'updated_at'=> $this->updated_at->toDateTimeString(),
         ];
     }
 }
