@@ -12,13 +12,15 @@ use Illuminate\Queue\SerializesModels;
 class OtpMail extends Mailable
 {
     use Queueable, SerializesModels;
-    public $otp;
+    public $otp, $for, $subject;
     /**
      * Create a new message instance.
      */
-    public function __construct($otp)
+    public function __construct($otp,$for, $subject)
     {
         $this->otp = $otp;
+        $this->for = $for;
+        $this->subject = $subject;
     }
     
     /**
@@ -27,7 +29,7 @@ class OtpMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'UB Mager Email Verification OTP',
+            subject: 'UB Mager '.$this->subject.' OTP',
         );
     }
 
@@ -53,10 +55,11 @@ class OtpMail extends Mailable
 
     public function build()
     {
-        return $this->subject('UB Mager Email Verification OTP')
+        return $this
             ->view('emails.otp')
             ->with([
                 'otp' => $this->otp,
+                'for' => $this->for,
             ]);
     }
 }
