@@ -24,15 +24,20 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(UserRoleId::class,function($app){
             return new UserRoleId();
         });
-        $this->app->singleton(RouteInfo::class,function($app){
-            return new RouteInfo();
-        });
         $this->app->singleton(OtpMailer::class,function($app){
             return new OtpMailer();
         });
         $this->app->bind(
+            \App\Repositories\Abstract\OtpHandlerRepositoryInterface::class,
+            \App\Repositories\Concrete\OtpHandlerRepository::class
+        );
+        $this->app->bind(
             \App\Repositories\Abstract\ProductRepositoryInterface::class,
             \App\Repositories\Concrete\ProductRepository::class
+        );
+        $this->app->bind(
+            \App\Repositories\Abstract\CartRepositoryInterface::class,
+            \App\Repositories\Concrete\CartRepository::class
         );
     }
 
@@ -42,10 +47,5 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Product::observe(ProductObserver::class);
-        ResetPassword::createUrlUsing(function (object $notifiable, string $token) {
-            return config('app.frontend_url')."/password-reset/$token?email={$notifiable->getEmailForPasswordReset()}";
-        });
-        Gate::policy(Product::class, ProductPolicy::class);
-        Gate::policy(otp::class, OtpPolicy::class);
     }
 }
