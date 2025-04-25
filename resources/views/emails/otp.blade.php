@@ -10,7 +10,7 @@
             <td style="padding: 30px; text-align: center;">
                 <h2 style="color: #333333;">Verification Code</h2>
                 <p style="font-size: 16px; color: #666666;">
-                    Hello, we received a request to verify your account. Use the OTP code below:
+                    Hello, we received a request to {{ $for }}. Use the OTP code below:
                 </p>
                 <p style="font-size: 36px; font-weight: bold; color: #4F46E5; margin: 30px 0;">
                     {{ $otp }}
