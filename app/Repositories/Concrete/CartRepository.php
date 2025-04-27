@@ -59,7 +59,7 @@ class CartRepository implements CartRepositoryInterface
         ];
         return new successReturn([
             'message' => 'Cart created',
-            'data' => new CartResource($product->cart()->create($datas)),
+            'data' => new CartResource(auth()->user()->cart()->create($datas)),
             'status' => 201,
         ]);
     }
