@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Abstract;
+namespace App\Repositories\Concrete;
 use App\Http\Resources\userResource;
 use App\Models\User;
 use App\Repositories\Abstract\UserRepositoryInterface;
