@@ -9,7 +9,7 @@ class UserRepository implements UserRepositoryInterface
 {
     public function self()
     {
-        return userResource::collection(auth()->user());
+        return new userResource(auth()->user());
     }
 
     public function find($id)
