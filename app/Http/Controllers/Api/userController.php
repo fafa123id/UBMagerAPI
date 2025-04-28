@@ -20,6 +20,11 @@ class userController extends Controller
      *     @OA\Property(property="created_at", type="string", format="date-time", example="2023-01-01T00:00:00.000000Z"),
      *     @OA\Property(property="updated_at", type="string", format="date-time", example="2023-01-01T00:00:00.000000Z")
      * )
+     * @OA\Tag(
+     *     name="Users",
+     *     description="API endpoints for User management operations"
+     * )
+     * 
      */
     protected $users;
     public function __construct(UserRepositoryInterface $userRepository)
@@ -29,7 +34,7 @@ class userController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/users",
+     *     path="/api/user",
      *     summary="Get authenticated user information",
      *     tags={"Users"},
      *     @OA\Response(
@@ -50,7 +55,7 @@ class userController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/users/{id}",
+     *     path="/api/user/{id}",
      *     summary="Get user by ID",
      *     tags={"Users"},
      *     @OA\Parameter(
@@ -78,7 +83,7 @@ class userController extends Controller
 
     /**
      * @OA\Put(
-     *     path="/api/users/{id}",
+     *     path="/api/user/{id}",
      *     summary="Update user information",
      *     tags={"Users"},
      *     @OA\Parameter(
