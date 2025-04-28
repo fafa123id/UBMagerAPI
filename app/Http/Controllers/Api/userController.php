@@ -8,10 +8,23 @@ use Illuminate\Http\Request;
 
 class userController extends Controller
 {
+    /**
+     * @OA\Schema(
+     *     schema="UserResource",
+     *     title="User Resource",
+     *     description="User resource representation",
+     *     @OA\Property(property="id", type="integer", example=1),
+     *     @OA\Property(property="name", type="string", example="John Doe"),
+     *     @OA\Property(property="email", type="string", format="email", example="john@example.com"),
+     *     @OA\Property(property="phone", type="string", example="1234567890"),
+     *     @OA\Property(property="created_at", type="string", format="date-time", example="2023-01-01T00:00:00.000000Z"),
+     *     @OA\Property(property="updated_at", type="string", format="date-time", example="2023-01-01T00:00:00.000000Z")
+     * )
+     */
     protected $users;
     public function __construct(UserRepositoryInterface $userRepository)
     {
-        $this->users= $userRepository;
+        $this->users = $userRepository;
     }
 
     /**
@@ -106,7 +119,7 @@ class userController extends Controller
             'email' => 'required|string|email|max:255',
             'phone' => 'required|string|max:255',
         ]);
-        
+
         return $this->users->update($id, $request->all());
     }
 }
