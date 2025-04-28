@@ -14,7 +14,7 @@ class UserRepository implements UserRepositoryInterface
 
     public function find($id)
     {
-        return userResource::make(User::findOrFail($id));
+        return new userResource(User::findOrFail($id));
     }
 
     public function update($id, array $data)
@@ -23,7 +23,7 @@ class UserRepository implements UserRepositoryInterface
             $data['status'] = 'unverified';
             $data['email_verified_at'] = null;
         }
-        return userResource::make(auth()->user()->update($id, $data));
+        return new userResource(auth()->user()->update($id, $data));
     }
 
     public function delete($id)
