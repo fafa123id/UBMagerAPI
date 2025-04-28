@@ -7,12 +7,14 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "darkaonline/l5-swagger": "^9.0",
         "laravel/breeze": "^2.3",
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
         "twilio/sdk": "^8.5",
-        "vonage/client": "^4.1"
+        "vonage/client": "^4.1",
+        "zircote/swagger-php": "^5.1"
     },
     "require-dev": {
         "beyondcode/laravel-er-diagram-generator": "^4.0",

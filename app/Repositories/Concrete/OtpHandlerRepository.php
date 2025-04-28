@@ -16,6 +16,10 @@ class OtpHandlerRepository implements OtpHandlerRepositoryInterface
     }
     public function sendOtp($email, $otp, $for, $subject)
     {
+        $existingEmail= auth()->user()->email;
+        if ($existingEmail !== $email) {
+            return false;
+        }
         // Cek apakah sudah ada OTP yang belum selesai
         $existingOtp = Otp::where('email', $email)
         ->first();

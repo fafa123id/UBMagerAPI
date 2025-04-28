@@ -27,8 +27,8 @@ Route::middleware(['auth:sanctum'])->group(function(){
 //guest
 Route::get('/product/{id}', [ProductController::class, 'show']);
 Route::get('/product', [ProductController::class, 'index']);
-Route::get('/type', [ProductController::class, 'getType']);
-Route::get('/category/{type}', [ProductController::class, 'getCategoryByType']);
+Route::get('/product-type', [ProductController::class, 'getType']);
+Route::get('/product-category/{type}', [ProductController::class, 'getCategoryByType']);
 Route::post('/forgot-password', [OtpSenderController::class, 'otpResetSend'])->middleware(['throttle:2,1', 'verified']);
 Route::post('/forgot-password/verify', [ResetPasswordController::class, 'verifyOtp'])->middleware(['verified']);
 Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword'])->middleware(['verified']);
