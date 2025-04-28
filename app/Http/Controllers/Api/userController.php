@@ -37,6 +37,7 @@ class userController extends Controller
      *     path="/api/user",
      *     summary="Get authenticated user information",
      *     tags={"Users"},
+     *    security={{"bearerAuth":{}}},
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
@@ -58,6 +59,7 @@ class userController extends Controller
      *     path="/api/user/{id}",
      *     summary="Get user by ID",
      *     tags={"Users"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -86,6 +88,7 @@ class userController extends Controller
      *     path="/api/user/{id}",
      *     summary="Update user information",
      *     tags={"Users"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
