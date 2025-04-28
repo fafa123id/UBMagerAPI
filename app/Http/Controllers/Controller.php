@@ -10,11 +10,11 @@ abstract class Controller
     *      title="UB Mager API Documentation",
     *      description="API Documentation for UB Mager E-commerce System",
     *      @OA\Contact(
-    *          email="admin@example.com"
+    *          email="apiubmager@gmail.com"
     *      ),
     *      @OA\License(
-    *          name="Apache 2.0",
-    *          url="http://www.apache.org/licenses/LICENSE-2.0.html"
+    *          name="NGINX",
+    *          url="https://nginx.org/LICENSE"
     *      )
     * )
     * @OA\SecurityScheme(
