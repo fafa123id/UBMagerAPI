@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\CartController;
+
 use App\Http\Controllers\Api\ProductController;
 
 Route::middleware(['auth:sanctum'])->group(function(){
