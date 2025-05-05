@@ -59,11 +59,7 @@ class OtpSenderController extends Controller
 
     public function otpVerifySend(Request $request)
     {
-        $sendOtp = $this->sendOtp($request->email, 'verify your account', 'Email Verification');
-        if ($sendOtp === false) {
-            return response()->json(['message' => 'Failed to send OTP'], 500);
-        }
-        return response()->json(['message' => 'OTP sent successfully']);
+        return $this->sendOtp($request->email, 'verify your account', 'Email Verification');
     }
 
     /**
@@ -96,20 +92,13 @@ class OtpSenderController extends Controller
      */
     public function otpResetSend(Request $request)
     {
-        $sendOtp = $this->sendOtp($request->email, 'reset your password', 'Password Reset');
-        if ($sendOtp === false) {
-            return response()->json(['message' => 'Failed to send OTP'], 500);
-        }
-        return response()->json(['message' => 'OTP sent successfully']);
+        return $this->sendOtp($request->email, 'reset your password', 'Password Reset');
     }
 
     private function sendOtp($email, $for, $subject)
     {
         $otpCode = rand(100000, 999999);
         $otphandling = $this->otpHandler->sendOtp($email, $otpCode, $for, $subject);
-        if ($otphandling === false) {
-            return false;
-        }
-        return true;
+        return $otphandling;
     }
 }
