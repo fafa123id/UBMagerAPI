@@ -2,6 +2,7 @@
 namespace App\Repositories\Concrete;
 
 use App\Http\Resources\failReturn;
+use App\Http\Resources\successReturn;
 use App\Models\otp;
 use App\Repositories\Abstract\OtpHandlerRepositoryInterface;
 use App\Services\OtpMailer;
@@ -24,8 +25,11 @@ class OtpHandlerRepository implements OtpHandlerRepositoryInterface
 
         // Cek apakah throttle masih aktif
         if (Cache::has($key)) {
-            return failR       }
-
+            return new failReturn([
+                'status' => 429,
+                'message' => 'Please wait before requesting another OTP'
+            ]);
+        }
         Cache::put($key, true, now()->addSeconds(60));
         return false;
     }
@@ -44,9 +48,10 @@ class OtpHandlerRepository implements OtpHandlerRepositoryInterface
         }
         $emailSend = $this->mail->sendOtp($email, $otp, $for, $subject);
         if ($emailSend === null) {
-            return response()->json([
+            return new failReturn([
+                'status' => 500,
                 'message' => 'Failed to send OTP'
-            ], 500);
+            ]);
         }
         // Simpan OTP ke database
         Otp::create([
@@ -55,9 +60,10 @@ class OtpHandlerRepository implements OtpHandlerRepositoryInterface
             'status' => 'sent',
             'expires_at' => now()->addMinutes(5),
         ]);
-        return response()->json([
-            'message' => 'OTP sent successfully'
-        ], 200);
+        return new successReturn([
+            'status' => 200,
+            'message' => 'OTP sent successfully',
+        ]);
     }
 
     public function verifyOtp($email, $otp)

@@ -2,6 +2,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\failReturn;
+use App\Http\Resources\successReturn;
 use App\Models\ResetToken;
 use App\Models\User;
 use App\Repositories\Abstract\OtpHandlerRepositoryInterface;
@@ -57,14 +59,26 @@ class ResetPasswordController extends Controller
 
         $otphandling = $this->otpHandler->verifyOtp($request->email, $request->otp);
         if ($otphandling === false) {
-            return response()->json(['message' => 'Invalid or OTP Expired'], 400);
+            return new failReturn([
+                'status' => 400,
+                'message' => 'Invalid or OTP Expired'
+            ]);
         }
         $user = User::where('email', $request->email)->first();
         $token = $this->requestToken($user);
         if ($token === false) {
-            return response()->json(['message' => 'Failed to generate token'], 500);
+            return new failReturn([
+                'status' => 500,
+                'message' => 'failed to create token'
+            ]);
         }
-        return response()->json(['message' => 'OTP verified', 'token' => $token]);
+        return new successReturn([
+            'status' => 200,
+            'message' => 'OTP verified',
+            'data' => [
+                'token' => $token,
+            ]
+        ]);
     }
 
     /**
@@ -117,19 +131,31 @@ class ResetPasswordController extends Controller
 
         $user = User::where('email', $request->email)->first();
         if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
+            return new failReturn([
+                'status' => 404,
+                'message' => 'User not found'
+            ]);
         }
 
         $resetToken = ResetToken::where('user_id', $user->id)->first();
         if (!$resetToken) {
-            return response()->json(['message' => 'Token Not Found'], 404);
+            return new failReturn([
+                'status' => 404,
+                'message' => 'Token not found'
+            ]);
         }
         if ($resetToken->expires_at < now()) {
             $resetToken->delete();
-            return response()->json(['message' => 'Token expired'], 400);
+            return new failReturn([
+                'status' => 400,
+                'message' => 'Token expired'
+            ]);
         }
         if (Hash::check($request->token, $resetToken->token) === false) {
-            return response()->json(['message' => 'Invalid token'], 400);
+            return new failReturn([
+                'status' => 400,
+                'message' => 'Invalid token'
+            ]);
         }
 
         $user->password = Hash::make($request->password);
@@ -137,7 +163,10 @@ class ResetPasswordController extends Controller
 
         $resetToken->delete();
         $user->tokens()->delete();
-        return response()->json(['message' => 'Password reset successfully']);
+        return new successReturn([
+            'status' => 200,
+            'message' => 'Password reset successfully'
+        ]);
     }
 
     /**
@@ -189,17 +218,26 @@ class ResetPasswordController extends Controller
 
         $user = auth()->user();
         if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
+            return new failReturn([
+                'status' => 404,
+                'message' => 'User not found'
+            ]);
         }
 
         if (Hash::check($request->old_password, $user->password) === false) {
-            return response()->json(['message' => 'Invalid token'], 400);
+            return new failReturn([
+                'status' => 400,
+                'message' => 'Invalid old password'
+            ]);
         }
 
         $user->password = Hash::make($request->password);
         $user->save();
         $user->tokens()->delete();
-        return response()->json(['message' => 'Password reset successfully']);
+        return new successReturn([
+            'status' => 200,
+            'message' => 'Password reset successfully'
+        ]);
     }
 
     protected function requestToken($user)

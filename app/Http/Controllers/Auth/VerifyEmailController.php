@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\failReturn;
+use App\Http\Resources\successReturn;
 use App\Models\User;
 use App\Repositories\Abstract\OtpHandlerRepositoryInterface;
 use Illuminate\Http\Request;
@@ -69,7 +71,10 @@ class VerifyEmailController extends Controller
 
         $otphandling = $this->otpHandler->verifyOtp($request->email, $request->otp);
         if ($otphandling === false) {
-            return response()->json(['message' => 'Invalid or OTP Expired'], 400);
+            return new failReturn([
+                'status' => 400,
+                'message' => 'Invalid or OTP Expired'
+            ]);
         }
 
         $email = User::where('email', $request->email)->first();
@@ -79,6 +84,9 @@ class VerifyEmailController extends Controller
             $email->save();
         }
 
-        return response()->json(['message' => 'OTP verified']);
+        return new successReturn([
+            'status' => 200,
+            'message' => 'OTP verified'
+        ]);
     }
 }
