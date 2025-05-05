@@ -16,9 +16,11 @@ class EnsureUnverifiedUser
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (! $request->user() ||
-            ($request->user() instanceof MustVerifyEmail &&
-            $request->user()->hasVerifiedEmail())) {
+        if (! auth()->user()) {
+            return response()->json(['message' => 'User not found.'], 404);
+        }
+        if ((auth()->user() instanceof MustVerifyEmail &&
+            auth()->user()->hasVerifiedEmail())) {
             return response()->json(['message' => 'Your email address is verified.'], 409);
         }
 
