@@ -1,9 +1,11 @@
 <?php
 namespace App\Repositories\Concrete;
 
+use App\Http\Resources\failReturn;
 use App\Models\otp;
 use App\Repositories\Abstract\OtpHandlerRepositoryInterface;
 use App\Services\OtpMailer;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 
 
@@ -14,22 +16,37 @@ class OtpHandlerRepository implements OtpHandlerRepositoryInterface
     {
         $this->mail = $mail;
     }
+    private function createCache($email){
+        $ip = request()->ip();
+
+        // Buat cache key unik untuk throttle
+        $key = 'otp_throttle:' . sha1($email . '|' . $ip); 
+
+        // Cek apakah throttle masih aktif
+        if (Cache::has($key)) {
+            return failR       }
+
+        Cache::put($key, true, now()->addSeconds(60));
+        return false;
+    }
     public function sendOtp($email, $otp, $for, $subject)
     {
-        $existingEmail= auth()->user()->email;
-        if ($existingEmail !== $email) {
-            return false;
+        $cache = $this->createCache($email);
+        if ($cache) {
+            return $cache;
         }
         // Cek apakah sudah ada OTP yang belum selesai
         $existingOtp = Otp::where('email', $email)
-        ->first();
+            ->first();
 
         if ($existingOtp) {
             $existingOtp->delete(); // hapus OTP yang sudah ada
         }
         $emailSend = $this->mail->sendOtp($email, $otp, $for, $subject);
-        if ($emailSend===null) {
-            return false;
+        if ($emailSend === null) {
+            return response()->json([
+                'message' => 'Failed to send OTP'
+            ], 500);
         }
         // Simpan OTP ke database
         Otp::create([
@@ -38,7 +55,9 @@ class OtpHandlerRepository implements OtpHandlerRepositoryInterface
             'status' => 'sent',
             'expires_at' => now()->addMinutes(5),
         ]);
-        return true;
+        return response()->json([
+            'message' => 'OTP sent successfully'
+        ], 200);
     }
 
     public function verifyOtp($email, $otp)
@@ -53,7 +72,7 @@ class OtpHandlerRepository implements OtpHandlerRepositoryInterface
             return false;
         }
 
-        $otpCheck->delete(); // hapus OTP setelah diverifikasi
+        $otpCheck->delete();
         return true;
     }
 }
