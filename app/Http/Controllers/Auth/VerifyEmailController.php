@@ -24,44 +24,7 @@ class VerifyEmailController extends Controller
         $this->otpHandler = $otpHandler;
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/verify-email",
-     *     summary="Verify user's email address using OTP.",
-     *     operationId="verifyEmail",
-     * security={{"bearerAuth":{}}},
-     *     tags={"Authentication"},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             required={"email", "otp"},
-     *             @OA\Property(property="email", type="string", example="user@example.com"),
-     *             @OA\Property(property="otp", type="string", example="123456")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="OTP verified and email status updated.",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="OTP verified")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Invalid OTP or expired OTP.",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Invalid or OTP Expired")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="User not found.",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="User not found")
-     *         )
-     *     )
-     * )
-     */
+    
     public function verifyEmail(Request $request)
     {
         $request->validate([

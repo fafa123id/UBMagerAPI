@@ -17,44 +17,6 @@ class RegisteredUserController extends Controller
 {
     /**
      * Handle an incoming registration request.
-     *
-     * @OA\Post(
-     *     path="/api/register",
-     *     summary="Register a new user",
-     *     tags={"Authentication"},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             required={"name","email","password","password_confirmation","role_id","phone"},
-     *             @OA\Property(property="name", type="string", example="John Doe"),
-     *             @OA\Property(property="email", type="string", format="email", example="john@example.com"),
-     *             @OA\Property(property="password", type="string", format="password", example="password123"),
-     *             @OA\Property(property="password_confirmation", type="string", format="password", example="password123"),
-     *             @OA\Property(property="role_id", type="integer", example=2),
-     *             @OA\Property(property="phone", type="string", example="+6281234567890")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="Register successful",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Register Berhasil")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=422,
-     *         description="Validation Error",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
-     *             @OA\Property(
-     *                 property="errors",
-     *                 type="object",
-     *                 example={"email": {"The email has already been taken."}}
-     *             )
-     *         )
-     *     )
-     * )
-     *
      * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request): JsonResponse
