@@ -41,6 +41,12 @@ return [
                 'format_to_use_for_docs' => env('L5_FORMAT_TO_USE_FOR_DOCS', 'json'),
 
                 /*
+                 * Host and schemes untuk force HTTPS
+                 */
+                'host' => env('L5_SWAGGER_CONST_HOST', 'web.anishouse.my.id'),
+                'schemes' => ['https'], // TAMBAH INI - Force HTTPS
+
+                /*
                  * Absolute paths to directory containing the swagger annotations are stored.
                  */
                 'annotations' => [
@@ -308,11 +314,12 @@ return [
                 ],
             ],
         ],
+        
         /*
          * Constants which can be used in annotations
          */
         'constants' => [
-            'L5_SWAGGER_CONST_HOST' => env('L5_SWAGGER_CONST_HOST', config('app.url') . '/api'),
+            'L5_SWAGGER_CONST_HOST' => env('L5_SWAGGER_CONST_HOST', config('app.url') . '/api'),,
         ],
     ],
 ];
