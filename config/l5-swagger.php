@@ -254,7 +254,7 @@ return [
          * Configs plugin allows to fetch external configs instead of passing them to SwaggerUIBundle.
          * See more at: https://github.com/swagger-api/swagger-ui#configs-plugin
          */
-        'additional_config_url' => null,
+        'additional_config_url' => env('L5_SWAGGER_ADDITIONAL_CONFIG_URL', null),
 
         /*
          * Apply a sort to the operation list of each API. It can be 'alpha' (sort by paths alphanumerically),
