@@ -25,7 +25,7 @@ use OpenApi\Annotations as OA;
  *     securityScheme="bearerAuth",
  * )
  *  @OA\Server(
- *      url="{{baseUrl}}",
+ *      url=L5_SWAGGER_CONST_HOST,
  *      description="API Server"
  * )
  * 
