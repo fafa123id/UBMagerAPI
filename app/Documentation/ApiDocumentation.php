@@ -16,7 +16,7 @@ use OpenApi\Annotations as OA;
  *      )
  * )
  * @OA\SecurityScheme(
- *     type="https",
+ *     type="http",
  *     description="Login with email and password to get the authentication token",
  *     name="Authorization",
  *     in="header",
