@@ -31,7 +31,7 @@ class ProductController extends Controller
             [
                 'status' => 200,
                 'message' => 'Product retrieved successfully',
-                'data' => ProductResource::collection($this->products->all($queries, $typeList, $categoryList)),
+                'data' => ProductResource::collection($this->products->all($typeList, $categoryList, $queries)),
             ]
         );
     }
