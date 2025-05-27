@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             //make same with Transaction model
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('history_id')->constrained()->onDelete('cascade');
             $table->decimal('total_price', 10, 2);
             $table->string('payment_method')->default('cash');
             $table->string('status')->default('pending');
