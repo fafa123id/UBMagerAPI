@@ -169,7 +169,7 @@ class CheckoutController extends Controller
 
         // Temukan transaksi berdasarkan order_id
         $transaction = Transaction::where('receipt', $receipt)->first();
-
+        
         if (!$transaction) {
             Log::error("Transaction not found: {$receipt}");
             return response()->json(['message' => 'Transaction not found'], 404);
@@ -180,7 +180,11 @@ class CheckoutController extends Controller
             Log::error("Amount mismatch for {$receipt}. Expected: {$transaction->total_price}, Received: {$grossAmount}");
             return response()->json(['message' => 'Amount mismatch'], 400);
         }
-
+        $order = $transaction->orders()->first();
+        if (!$order) {
+            Log::error("Order not found for transaction: {$receipt}");
+            return response()->json(['message' => 'Order not found'], 404);
+        }
         DB::beginTransaction();
 
         try {
@@ -188,6 +192,7 @@ class CheckoutController extends Controller
             if ($transactionStatus == 'capture') {
                 if ($fraudStatus == 'accept') {
                     $transaction->update(['status' => 'success']);
+                    $order->update(['status' => 'processing']);
                 } else {
                     $transaction->update(['status' => 'challenge']);
                 }
