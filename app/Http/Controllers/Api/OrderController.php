@@ -13,8 +13,8 @@ class OrderController extends Controller
         $orders = auth()->user()->product()->orders()
             ->with(['user', 'transaction', 'product'])
             ->get();
-            
 
+        
         return response()->json([
             'success' => true,
             'data' => $orders,
