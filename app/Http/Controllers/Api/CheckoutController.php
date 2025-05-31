@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Validator;
 use Midtrans\Config;
 use Midtrans\Snap;
 use Midtrans\Notification;
+use Midtrans\Transaction as MidtransTransaction;
 
 class CheckoutController extends Controller
 {
@@ -169,7 +170,7 @@ class CheckoutController extends Controller
 
         // Temukan transaksi berdasarkan order_id
         $transaction = Transaction::where('receipt', $receipt)->first();
-        
+
         if (!$transaction) {
             Log::error("Transaction not found: {$receipt}");
             return response()->json(['message' => 'Transaction not found'], 404);
@@ -332,7 +333,8 @@ class CheckoutController extends Controller
             $order->product->increment('quantity', $order->quantity);
         }
     }
-    public function cancelTransaction($id){
+    public function cancelTransaction($id)
+    {
         $transaction = auth()->user()->transaction()->find($id);
         if (!$transaction) {
             return response()->json([
@@ -355,8 +357,9 @@ class CheckoutController extends Controller
 
             // Restore product stock
             $this->restoreProductStock($transaction);
-
+            MidtransTransaction::cancel($transaction->receipt);
             DB::commit();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Transaction cancelled successfully'
