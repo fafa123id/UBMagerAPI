@@ -79,7 +79,7 @@ class CheckoutController extends Controller
                 'transaction_id' => $transaction->id,
                 'product_id' => $product->id,
                 'quantity' => $request->quantity,
-                'price' => $product->price,
+                'total_price' => $product->price,
                 'status' => 'pending',
             ]);
 
