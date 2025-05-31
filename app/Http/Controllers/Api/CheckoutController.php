@@ -332,4 +332,41 @@ class CheckoutController extends Controller
             $order->product->increment('quantity', $order->quantity);
         }
     }
+    public function cancelTransaction($id){
+        $transaction = auth()->user()->transaction()->find($id);
+        if (!$transaction) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Transaction not found'
+            ], 404);
+        }
+
+        if ($transaction->status !== 'pending') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Only pending transactions can be cancelled'
+            ], 400);
+        }
+
+        DB::beginTransaction();
+        try {
+            // Update transaction status
+            $transaction->update(['status' => 'cancelled']);
+
+            // Restore product stock
+            $this->restoreProductStock($transaction);
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Transaction cancelled successfully'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to cancel transaction: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }
