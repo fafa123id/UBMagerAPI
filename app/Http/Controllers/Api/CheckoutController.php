@@ -9,6 +9,7 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Midtrans\Config;
 use Midtrans\Snap;
@@ -48,7 +49,7 @@ class CheckoutController extends Controller
 
             $user = Auth::user();
             $product = Product::findOrFail($request->product_id);
-            
+
             // Check stock
             if ($product->quantity < $request->quantity) {
                 return response()->json([
@@ -145,7 +146,7 @@ class CheckoutController extends Controller
 
         } catch (\Exception $e) {
             DB::rollback();
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Checkout failed: ' . $e->getMessage()
@@ -158,60 +159,64 @@ class CheckoutController extends Controller
      */
     public function handleNotification(Request $request)
     {
+        // Ambil data dari notifikasi
+        $transactionStatus = $request->input('transaction_status');
+        $fraudStatus = $request->input('fraud_status');
+        $receipt = $request->input('order_id'); // Menggunakan order_id sebagai receipt
+        $grossAmount = $request->input('gross_amount'); // Jumlah total transaksi
+        $transactionId = $request->input('transaction_id'); // ID transaksi dari Midtrans
+
+        // Temukan transaksi berdasarkan order_id
+        $transaction = Transaction::where('receipt', $receipt)->first();
+
+        if (!$transaction) {
+            Log::error("Transaction not found: {$receipt}");
+            return response()->json(['message' => 'Transaction not found'], 404);
+        }
+
+        // Verifikasi jumlah yang diterima
+        if ((float) $grossAmount != (float) $transaction->total_price) {
+            Log::error("Amount mismatch for {$receipt}. Expected: {$transaction->total_price}, Received: {$grossAmount}");
+            return response()->json(['message' => 'Amount mismatch'], 400);
+        }
+
+        DB::beginTransaction();
+
         try {
-            $notification = new Notification();
-
-            $transactionStatus = $notification->transaction_status;
-            $fraudStatus = $notification->fraud_status;
-            $receipt = $notification->order_id;
-
-            // Find transaction
-            $transaction = Transaction::where('receipt', $receipt)->first();
-
-            if (!$transaction) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Transaction not found'
-                ], 404);
-            }
-
-            DB::beginTransaction();
-
-            // Update transaction and order status based on notification
+            // Update status transaksi di database
             if ($transactionStatus == 'capture') {
-                if ($fraudStatus == 'challenge') {
-                    $this->updateTransactionStatus($transaction, 'challenge');
-                } else if ($fraudStatus == 'accept') {
-                    $this->updateTransactionStatus($transaction, 'success');
+                if ($fraudStatus == 'accept') {
+                    $transaction->update(['status' => 'success']);
+                } else {
+                    $transaction->update(['status' => 'challenge']);
                 }
-            } else if ($transactionStatus == 'settlement') {
-                $this->updateTransactionStatus($transaction, 'success');
-            } else if ($transactionStatus == 'cancel' || 
-                      $transactionStatus == 'deny' || 
-                      $transactionStatus == 'expire') {
-                $this->updateTransactionStatus($transaction, 'failed');
-                // Restore product stock
+            } elseif ($transactionStatus == 'settlement') {
+                $transaction->update(['status' => 'success']);
+            } elseif (
+                $transactionStatus == 'cancel' ||
+                $transactionStatus == 'deny' ||
+                $transactionStatus == 'expire'
+            ) {
+                $transaction->update(['status' => 'failed']);
+                // Restore stock jika perlu
                 $this->restoreProductStock($transaction);
-            } else if ($transactionStatus == 'pending') {
-                $this->updateTransactionStatus($transaction, 'pending');
+            } elseif ($transactionStatus == 'pending') {
+                $transaction->update(['status' => 'pending']);
             }
+
+            // Log status perubahan
+            Log::info("Transaction {$receipt} status updated to {$transaction->status}");
 
             DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Notification processed successfully'
-            ]);
+            return response()->json(['message' => 'OK'], 200);
 
         } catch (\Exception $e) {
             DB::rollback();
-            
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to process notification: ' . $e->getMessage()
-            ], 500);
+            Log::error('Error processing notification: ' . $e->getMessage());
+            return response()->json(['message' => 'Error processing notification'], 500);
         }
     }
+
 
     /**
      * Get transaction status
@@ -266,7 +271,7 @@ class CheckoutController extends Controller
     {
         try {
             $user = Auth::user();
-            
+
             $transactions = Transaction::with(['orders.product'])
                 ->where('user_id', $user->id)
                 ->orderBy('created_at', 'desc')
