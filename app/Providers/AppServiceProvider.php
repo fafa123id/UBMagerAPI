@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Transaction;
 use App\Observers\ProductObserver;
+use App\Observers\TransactionObserver;
 use App\Services\UserRoleId;
 use App\Models\Product;
 use App\Services\OtpMailer;
@@ -31,10 +33,6 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Concrete\ProductRepository::class
         );
         $this->app->bind(
-            \App\Repositories\Abstract\CartRepositoryInterface::class,
-            \App\Repositories\Concrete\CartRepository::class
-        );
-        $this->app->bind(
             \App\Repositories\Abstract\UserRepositoryInterface::class,
             \App\Repositories\Concrete\UserRepository::class
         );
@@ -49,5 +47,6 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
         Product::observe(ProductObserver::class);
+        Transaction::observe(TransactionObserver::class);
     }
 }
