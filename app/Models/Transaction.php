@@ -12,6 +12,11 @@ class Transaction extends Model
         'payment_method',
         'status',
         'receipt',
+        'link_payment',
+    ];
+
+    protected $casts = [
+        'total_price' => 'decimal:2'
     ];
 
     public function user()

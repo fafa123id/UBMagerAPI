@@ -11,10 +11,12 @@ class Order extends Model
         'transaction_id',
         'product_id',
         'quantity',
-        'total_price',
+        'price',
         'status',
     ];
-
+    protected $casts = [
+        'price' => 'decimal:2'
+    ];
     public function user()
     {
         return $this->belongsTo(User::class);

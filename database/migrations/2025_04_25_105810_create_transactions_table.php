@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('payment_method')->default('cash');
             $table->string('status')->default('pending');
             $table->string('receipt')->nullable();
+            $table->string('link_payment')->nullable();
             $table->timestamps();
         });
     }

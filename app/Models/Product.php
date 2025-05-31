@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    protected $fillable = ['name', 'type','category','quantity','price','description', 'status','user_id'];
+    protected $fillable = ['name', 'type', 'category', 'quantity', 'price', 'description', 'status', 'user_id'];
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -15,10 +15,9 @@ class Product extends Model
     {
         return $this->hasMany(Order::class);
     }
-    public function carts()
-    {
-        return $this->hasMany(Cart::class);
-    }
+    protected $casts = [
+        'price' => 'decimal:2'
+    ];
 
 }
 
