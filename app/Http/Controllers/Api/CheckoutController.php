@@ -74,12 +74,12 @@ class CheckoutController extends Controller
             ]);
 
             // Create order
-            $order = Order::create([
+            Order::create([
                 'user_id' => $user->id,
                 'transaction_id' => $transaction->id,
                 'product_id' => $product->id,
                 'quantity' => $request->quantity,
-                'total_price' => $product->price,
+                'total_price' => $totalPrice, // Menggunakan totalPrice yang sudah dihitung
                 'status' => 'pending',
             ]);
 
@@ -153,6 +153,7 @@ class CheckoutController extends Controller
             ], 500);
         }
     }
+
 
     /**
      * Handle Midtrans notification callback

@@ -11,7 +11,7 @@ class Order extends Model
         'transaction_id',
         'product_id',
         'quantity',
-        'price',
+        'total_price',
         'status',
     ];
     protected $casts = [
