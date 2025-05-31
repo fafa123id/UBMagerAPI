@@ -10,7 +10,7 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         // Get all orders for the authenticated user
-        $orders = auth()->user()->ordersThroughProducts()->with(['user', 'transaction', 'product'])->get();
+        $orders = auth()->user()->ordersThroughProduc()->get();
 
 
         return response()->json([
