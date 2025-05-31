@@ -12,6 +12,7 @@
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
+        "midtrans/midtrans-php": "^2.6",
         "twilio/sdk": "^8.5",
         "vonage/client": "^4.1",
         "zircote/swagger-php": "^5.1"
