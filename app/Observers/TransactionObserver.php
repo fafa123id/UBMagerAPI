@@ -3,7 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Transaction;
-
+use Midtrans\Transaction as MidtransTransaction;
 class TransactionObserver
 {
     /**
@@ -21,6 +21,7 @@ class TransactionObserver
     {
         if ($transaction->status === "failed" || $transaction->status === "cancelled") {
             $transaction->orders()->update(['status' => 'cancelled']);
+            MidtransTransaction::cancel($transaction->receipt);
         }
     }
 
