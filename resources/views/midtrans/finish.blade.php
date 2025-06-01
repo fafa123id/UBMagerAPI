@@ -1,33 +1,35 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Payment Completed</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script>
-        // Detect if in Android WebView
-        function isAndroidApp() {
-            return typeof AndroidInterface !== 'undefined';
-        }
+   <!DOCTYPE html>
+   <html lang="en">
+   <head>
+       <meta charset="UTF-8">
+       <title>Payment Finished</title>
+       <script>
+           // Jika menggunakan WebView di mobile app (Android/iOS),
+           // biasanya ada metode khusus untuk close WebView misal:
+           // - Di Android WebView: window.AndroidInterface.close(); (jika sudah disediakan)
+           // - Di iOS WKWebView: gunakan postMessage ke native code
 
-        // Detect if in iOS WebView (via injected JS bridge, opsional)
-        function isIOSApp() {
-            return window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.closeWindow;
-        }
-
-        window.onload = function () {
-            // Try close WebView via deep linking
-            if (isAndroidApp()) {
-                AndroidInterface.close(); // Panggil method di WebView Android
-            } else if (isIOSApp()) {
-                window.webkit.messageHandlers.closeWindow.postMessage(null); // iOS bridge
-            } else {
-                // Fallback: coba auto close tab
-                window.close();
-            }
-        };
-    </script>
-</head>
-<body>
-    <p style="text-align:center; margin-top: 50px;">Thank you! Finishing payment...</p>
-</body>
-</html>
+           // Contoh fallback: tutup tab/window browser (jika bisa)
+           window.onload = function() {
+               // Kirim pesan ke native app jika perlu
+               if (window.ReactNativeWebView) {
+                   // untuk React Native WebView
+                   window.ReactNativeWebView.postMessage('paymentSuccess');
+               } else if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.nativeApp) {
+                   // untuk iOS WKWebView (Swift)
+                   window.webkit.messageHandlers.nativeApp.postMessage('paymentSuccess');
+               } else if (window.AndroidInterface && window.AndroidInterface.close) {
+                   // untuk Android WebView Bridge
+                   window.AndroidInterface.close();
+               } else {
+                   // fallback: coba tutup jendela (hanya jika di browser)
+                   window.open('', '_self').close();
+               }
+           };
+       </script>
+   </head>
+   <body>
+       <h3>Payment successful. You can close this page.</h3>
+   </body>
+   </html>
+   
