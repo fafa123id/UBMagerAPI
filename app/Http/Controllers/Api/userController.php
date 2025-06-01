@@ -17,6 +17,7 @@ class userController extends Controller
     }
 
     /**
+     * GET: /api/user
      * Display the authenticated user's profile.
      * This method retrieves the profile of the authenticated user.
      * @authenticated
@@ -27,6 +28,7 @@ class userController extends Controller
     }
 
     /**
+     * GET: /api/user/{id}
      * Display a specific user by ID.
      * This method retrieves a user by their ID.
      */
@@ -36,6 +38,7 @@ class userController extends Controller
     }
 
     /**
+     * PUT: /api/user/{id}
      * Update the authenticated user's profile.
      * This method allows the authenticated user to update their profile information.
      * @authenticated
@@ -58,7 +61,6 @@ class userController extends Controller
             $imagePath = config('filesystems.disks.s3.url') . $request->file('image')->store('images', 's3');
             $request->merge(['image' => $imagePath]);
         }
-        dd($request->all());
         return $this->users->update($id, $request->all());
     }
 }

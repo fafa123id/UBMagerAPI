@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 class RatingController extends Controller
 {
     /**
+     * POST: /api/rating/{id}
      * Store a new rating for a product by buyer.
      * This method allows a user to rate a product after purchasing it, including an optional comment and image.
      * @authenticated

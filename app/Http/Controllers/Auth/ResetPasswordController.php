@@ -19,6 +19,7 @@ class ResetPasswordController extends Controller
         $this->otpHandler = $otpHandler;
     }
     /**
+     * POST: /api/forgot-password/verify
      * Send token to the user's for reset forgotten password.
      * This method generates a random token in response that used to reset password.
      */
@@ -54,6 +55,7 @@ class ResetPasswordController extends Controller
     }
 
     /**
+     * POST: /api/reset-password
      * Reset the user's password using the provided token.
      * This method validates the token and updates the user's password.
      */
@@ -107,6 +109,7 @@ class ResetPasswordController extends Controller
     }
 
     /**
+     * POST: /api/new-password
      * Change the authenticated user's password.
      * This method allows the authenticated user to change their password by providing the old password and the new password.
      * @authenticated

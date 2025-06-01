@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 class NegoController extends Controller
 {
     /**
+     * POST: /api/nego
      * Request a negotiation for a product.
      * This method allows a user to request a negotiation on a product by providing the product ID and the proposed negotiation price.
      * @authenticated
@@ -48,6 +49,7 @@ class NegoController extends Controller
         ]);
     }
     /**
+     * GET: /api/nego
      * Get all negotiation requests made by the authenticated user.
      * This method retrieves all negotiation requests made by the authenticated user, filtered by status if provided.
      * @authenticated
@@ -67,6 +69,7 @@ class NegoController extends Controller
         ]);
     }
     /**
+     * GET: /api/nego/{id}
      * Get the details of a specific negotiation request made by the authenticated user.
      * This method retrieves the details of a specific negotiation request made by the authenticated user, including the associated product.
      * @authenticated
@@ -81,6 +84,7 @@ class NegoController extends Controller
         ]);
     }
     /**
+     * GET: /api/nego/cancel/{id}
      * Cancel a negotiation request made by the authenticated user.
      * This method allows the authenticated user to cancel a negotiation request they have made.
      * @authenticated
@@ -98,6 +102,7 @@ class NegoController extends Controller
 
     //for seller
     /**
+     * GET: /api/nego-seller
      * Get all negotiation requests for products owned by seller.
      * This method retrieves all negotiation requests for products owned by the authenticated user, filtered by status if provided.
      * @authenticated
@@ -122,6 +127,7 @@ class NegoController extends Controller
         ]);
     }
     /**
+     * GET: /api/nego-seller/{id}
      * Get the details of a specific negotiation request for products owned by the seller.
      * This method retrieves the details of a specific negotiation request for products owned by the authenticated user, including the associated product.
      * @authenticated
@@ -140,6 +146,7 @@ class NegoController extends Controller
         ]);
     }
     /**
+     * GET: /api/nego/decline/{id}
      * Decline a negotiation request for products owned by the seller.
      * This method allows the authenticated user to decline a negotiation request they have received for a product they own.
      * @authenticated
@@ -165,6 +172,7 @@ class NegoController extends Controller
         ]);
     }
     /**
+     * GET: /api/nego/accept/{id}
      * Accept a negotiation request for products owned by the seller.
      * This method allows the authenticated user to accept a negotiation request they have received for a product they own.
      * @authenticated
