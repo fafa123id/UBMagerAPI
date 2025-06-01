@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 class RatingController extends Controller
 {
     /**
+     * Store a new rating for a product by buyer.
+     * This method allows a user to rate a product after purchasing it, including an optional comment and image.
      * @authenticated
      */
     public function store(Request $request, $id)

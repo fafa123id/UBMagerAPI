@@ -17,6 +17,8 @@ class userController extends Controller
     }
 
     /**
+     * Display the authenticated user's profile.
+     * This method retrieves the profile of the authenticated user.
      * @authenticated
      */
     public function index()
@@ -24,13 +26,18 @@ class userController extends Controller
         return $this->users->self();
     }
 
-
+    /**
+     * Display a specific user by ID.
+     * This method retrieves a user by their ID.
+     */
     public function show($id)
     {
         return $this->users->find($id);
     }
 
     /**
+     * Update the authenticated user's profile.
+     * This method allows the authenticated user to update their profile information.
      * @authenticated
      */
     public function update(Request $request, $id)

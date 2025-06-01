@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 class NegoController extends Controller
 {
     /**
+     * Request a negotiation for a product.
+     * This method allows a user to request a negotiation on a product by providing the product ID and the proposed negotiation price.
      * @authenticated
      */
     public function requestNego(Request $request)
@@ -46,6 +48,8 @@ class NegoController extends Controller
         ]);
     }
     /**
+     * Get all negotiation requests made by the authenticated user.
+     * This method retrieves all negotiation requests made by the authenticated user, filtered by status if provided.
      * @authenticated
      */
     public function myNegos()
@@ -63,6 +67,8 @@ class NegoController extends Controller
         ]);
     }
     /**
+     * Get the details of a specific negotiation request made by the authenticated user.
+     * This method retrieves the details of a specific negotiation request made by the authenticated user, including the associated product.
      * @authenticated
      */
     public function negoDetail($id)
@@ -75,6 +81,8 @@ class NegoController extends Controller
         ]);
     }
     /**
+     * Cancel a negotiation request made by the authenticated user.
+     * This method allows the authenticated user to cancel a negotiation request they have made.
      * @authenticated
      */
     public function cancelNego($id)
@@ -90,6 +98,8 @@ class NegoController extends Controller
 
     //for seller
     /**
+     * Get all negotiation requests for products owned by seller.
+     * This method retrieves all negotiation requests for products owned by the authenticated user, filtered by status if provided.
      * @authenticated
      */
     public function sellerAll()
@@ -112,6 +122,8 @@ class NegoController extends Controller
         ]);
     }
     /**
+     * Get the details of a specific negotiation request for products owned by the seller.
+     * This method retrieves the details of a specific negotiation request for products owned by the authenticated user, including the associated product.
      * @authenticated
      */
     public function show($id)
@@ -128,6 +140,8 @@ class NegoController extends Controller
         ]);
     }
     /**
+     * Decline a negotiation request for products owned by the seller.
+     * This method allows the authenticated user to decline a negotiation request they have received for a product they own.
      * @authenticated
      */
     public function declineNego($id)
@@ -151,6 +165,8 @@ class NegoController extends Controller
         ]);
     }
     /**
+     * Accept a negotiation request for products owned by the seller.
+     * This method allows the authenticated user to accept a negotiation request they have received for a product they own.
      * @authenticated
      */
     public function acceptNego($id)

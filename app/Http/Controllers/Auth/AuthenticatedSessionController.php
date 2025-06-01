@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\Auth;
 class AuthenticatedSessionController extends Controller
 {
 
+    /**
+     * Login a user and return a token.
+     * This method authenticates the user and generates a token for API access.
+     */
     public function store(LoginRequest $request): JsonResponse
     {
         $request->authenticate();
@@ -27,6 +31,8 @@ class AuthenticatedSessionController extends Controller
         return response()->json($data, 201);
     }
     /**
+     * Logout the authenticated user and delete their token.
+     * This method revokes the user's token, effectively logging them out.
      * @authenticated
      */
     public function destroy(Request $request): JsonResponse

@@ -27,10 +27,11 @@ class CheckoutController extends Controller
         Config::$is3ds = config('midtrans.is_3ds');
     }
 
+  
     /**
-     * Create checkout and generate Midtrans payment link
-     */
-    /**
+     * Checkout a product by user
+     * 
+     * Auth dulu bang
      * @authenticated
      */
     public function checkout(Request $request)
@@ -197,6 +198,11 @@ class CheckoutController extends Controller
         }
     }
 
+    /**
+     * Handle Midtrans notification
+     * Ini tidak penting untuk diakses user
+     * Ini hanya untuk Midtrans mengirimkan notifikasi
+     */
     public function handleNotification(Request $request)
     {
         // Ambil data dari notifikasi
@@ -262,10 +268,11 @@ class CheckoutController extends Controller
     }
 
 
+
     /**
-     * Get transaction status
-     */
-    /**
+     * Get transaction status by receipt
+     * This endpoint is used to check the status of a transaction by its receipt number.
+     * It returns the transaction details including status, total price, payment method, and associated orders.
      * @authenticated
      */
     public function getTransactionStatus($receipt)
@@ -311,10 +318,12 @@ class CheckoutController extends Controller
         }
     }
 
+
     /**
-     * Get user transactions
-     */
-    /**
+     * Get all transactions of the authenticated user
+     * This endpoint retrieves all transactions made by the authenticated user.
+     * It returns a list of transactions with their details including receipt, total price, status, payment method,
+     * and associated orders.
      * @authenticated
      */
     public function getUserTransactions()
@@ -378,6 +387,8 @@ class CheckoutController extends Controller
         }
     }
     /**
+     * Cancel a transaction
+     * This endpoint allows the authenticated user to cancel a transaction.
      * @authenticated
      */
     public function cancelTransaction($id)

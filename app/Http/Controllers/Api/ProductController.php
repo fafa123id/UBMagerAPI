@@ -19,7 +19,10 @@ class ProductController extends Controller
     {
         $this->products = $products;
     }
-
+    /**
+     * Display a listing of the products.
+     * This method retrieves all products based on the provided type, category, and query parameters.
+     */
     public function index(Request $request)
     {
         $type = $request->query("type");
@@ -38,24 +41,36 @@ class ProductController extends Controller
         );
     }
 
+    /**
+     * Display a specific product by ID.
+     * This method retrieves a product by its ID.
+     */
     public function show($id)
     {
         return $this->products->find($id);
     }
 
-
+    /**
+     * Get all product's type.
+     * This method retrieves all products of a specific type.
+     */
     public function getType()
     {
         return $this->products->getType();
     }
 
-
+    /**
+     * Get all product's category by type.
+     * This method retrieves all categories of products based on the provided type.
+     */
     public function getCategoryByType($type)
     {
         return $this->products->getCategoryByType($type);
     }
 
     /**
+     * Store a newly created product for seller.
+     * This method allows the authenticated user to create a new product with the provided details.
      * @authenticated
      */
     public function store(Request $request)
@@ -85,6 +100,8 @@ class ProductController extends Controller
     }
 
     /**
+     * Update the specified product by ID for seller.
+     * This method allows the authenticated user to update an existing product with the provided details.
      * @authenticated
      */
     public function update(Request $request, $id)
@@ -126,6 +143,9 @@ class ProductController extends Controller
     }
 
     /**
+     * Remove the specified product by ID for seller.
+     * This method allows the authenticated user to delete a product by its ID.
+     * it is not yet implemented in the repository.
      * @authenticated
      */
     public function destroy($id)

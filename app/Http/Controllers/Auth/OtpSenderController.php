@@ -18,13 +18,18 @@ class OtpSenderController extends Controller
     }
     /**
      * @authenticated
+     * Send OTP to the user's email for account verification.
+     * This method generates a random OTP code and sends it to the user's email for verification purposes.
      */
     public function otpVerifySend(Request $request)
     {
         return $this->sendOtp($request->email, 'verify your account', 'Email Verification');
     }
 
-
+    /**
+     * Send OTP to the user's email for password reset.
+     * This method generates a random OTP code and sends it to the user's email for resetting their password.
+     */
     public function otpResetSend(Request $request)
     {
         return $this->sendOtp($request->email, 'reset your password', 'Password Reset');

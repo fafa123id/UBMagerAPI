@@ -18,7 +18,10 @@ class ResetPasswordController extends Controller
     {
         $this->otpHandler = $otpHandler;
     }
-
+    /**
+     * Send token to the user's for reset forgotten password.
+     * This method generates a random token in response that used to reset password.
+     */
     public function verifyOtp(Request $request)
     {
         $request->validate([
@@ -50,7 +53,10 @@ class ResetPasswordController extends Controller
         ]);
     }
 
-
+    /**
+     * Reset the user's password using the provided token.
+     * This method validates the token and updates the user's password.
+     */
     public function resetPassword(Request $request)
     {
         $request->validate([
@@ -101,6 +107,8 @@ class ResetPasswordController extends Controller
     }
 
     /**
+     * Change the authenticated user's password.
+     * This method allows the authenticated user to change their password by providing the old password and the new password.
      * @authenticated
      */
     public function newPassword(Request $request)

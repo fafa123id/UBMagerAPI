@@ -10,6 +10,8 @@ use App\Models\Transaction;
 class HistoryController extends Controller
 {
     /**
+     * Display a listing of the transactions for the authenticated user.
+     * This method retrieves all transactions and their associated orders and products.
      * @authenticated
      */
     public function index(Request $request)
@@ -25,6 +27,8 @@ class HistoryController extends Controller
         ]);
     }
     /**
+     * Get a specific transaction by ID for the authenticated user.
+     * This method retrieves the transaction details along with its associated orders and products.
      * @authenticated
      */
     public function show($id)

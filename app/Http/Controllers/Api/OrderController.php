@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 class OrderController extends Controller
 {
     /**
+     * Display a listing of the processing orders for seller.
+     * This method retrieves all orders and their associated products for the authenticated user.
      * @authenticated
      */
     public function index(Request $request)
@@ -22,6 +24,8 @@ class OrderController extends Controller
         ]);
     }
     /**
+     * Procces order by seller after buyer pay.
+     * This method retrieves the order details along with its associated products.
      * @authenticated
      */
     public function proccessOrder(Request $request, $id)
@@ -45,6 +49,8 @@ class OrderController extends Controller
         ]);
     }
     /**
+     * Finish order by buyer after buyer receive the product.
+     * This method updates the order status to 'finished' by the buyer confirms receipt of the product.
      * @authenticated
      */
     public function finishOrder(Request $request, $id)
