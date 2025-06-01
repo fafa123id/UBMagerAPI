@@ -58,8 +58,7 @@ class CheckoutController extends Controller
                         'message' => 'Invalid or inactive negotiation'
                     ], 400);
                 }
-                if ($nego->product_id !== $request->product_id) {
-                    dd($nego->product_id, $request->product_id);
+                if ($nego->product_id != $request->product_id) {
                     // Check if negotiation ID matches the product ID
                     return response()->json([
                         'success' => false,
