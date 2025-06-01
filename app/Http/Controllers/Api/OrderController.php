@@ -41,7 +41,7 @@ class OrderController extends Controller
     public function finishOrder(Request $request, $id)
     {
         // Find the order by ID
-        $order = auth()->user()->orders()->findOrFail($id);
+        $order = auth()->user()->order()->findOrFail($id);
 
         if ($order->status !== 'proccessed') {
             return response()->json([
