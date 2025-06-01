@@ -86,10 +86,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getRatingFromAllProduct()
     {
         return $this->product
-            ->map(fn($product) => $product->getRattingAttribute ?? 0)
+            ->map(fn($product) => $product->ratting)
             ->filter(fn($rating) => $rating > 0)
-            ->avg();
+            ->avg() ?? 0;
     }
+
 
 
 }
