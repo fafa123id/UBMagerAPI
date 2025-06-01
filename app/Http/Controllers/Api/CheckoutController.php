@@ -98,7 +98,7 @@ class CheckoutController extends Controller
                     'price' => (int) $product->price,
                     'quantity' => $request->quantity,
                     'name' => $product->name,
-                    "merchant_name"=>$product->user()->name,
+                    "merchant_name"=>$product->user->name,
                     'category' => $product->category,
                 ]
             ];
