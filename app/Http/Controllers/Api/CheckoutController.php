@@ -58,13 +58,21 @@ class CheckoutController extends Controller
                         'message' => 'Invalid or inactive negotiation'
                     ], 400);
                 }
+                if ($request->nego_id !== $request->product_id) {
+                    // Check if negotiation ID matches the product ID
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Negotiation ID does not match the request'
+                    ], 400);
+                }
                 $product = Product::findOrFail($nego->product_id);
+
                 $product->price = $nego->nego_price;
             } else {
                 // Default product retrieval
                 $product = Product::findOrFail($request->product_id);
             }
-            
+
 
             // Check stock
             if ($product->quantity < $request->quantity) {
