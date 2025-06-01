@@ -26,7 +26,7 @@ class VerifyEmailController extends Controller
 
     /**
      * POST: /api/verify-email
-     * Verify the user's email using OTP.
+     * (Verify the user's email using OTP.)
      * This method validates the OTP sent to the user's email and updates the user's email status to verified.
      * @authenticated
      */

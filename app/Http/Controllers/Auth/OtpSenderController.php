@@ -18,7 +18,7 @@ class OtpSenderController extends Controller
     }
     /**
      * POST: /api/verify-email/send
-     * Send OTP to the user's email for account verification.
+     * (Send OTP to the user's email for account verification.)
      * This method generates a random OTP code and sends it to the user's email for verification purposes.
      * @authenticated
      */
@@ -29,7 +29,7 @@ class OtpSenderController extends Controller
 
     /**
      * POST: /api/forgot-password
-     * Send OTP to the user's email for password reset.
+     * (Send OTP to the user's email for password reset.)
      * This method generates a random OTP code and sends it to the user's email for resetting their password.
      */
     public function otpResetSend(Request $request)

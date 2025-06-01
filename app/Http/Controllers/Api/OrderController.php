@@ -9,7 +9,7 @@ class OrderController extends Controller
 {
     /**
      * GET: /api/orders
-     * Display a listing of the processing orders for seller.
+     * (Display a listing of the processing orders for seller.)
      * This method retrieves all orders and their associated products for the authenticated user.
      * @authenticated
      */
@@ -26,7 +26,7 @@ class OrderController extends Controller
     }
     /**
      * GET: /api/orders/{id}/process
-     * Procces order by seller after buyer pay.
+     * (Procces order by seller after buyer pay.)
      * This method retrieves the order details along with its associated products.
      * @authenticated
      */
@@ -52,7 +52,7 @@ class OrderController extends Controller
     }
     /**
      * GET: /api/orders/{id}/finish
-     * Finish order by buyer after buyer receive the product.
+     * (Finish order by buyer after buyer receive the product.)
      * This method updates the order status to 'finished' by the buyer confirms receipt of the product.
      * @authenticated
      */

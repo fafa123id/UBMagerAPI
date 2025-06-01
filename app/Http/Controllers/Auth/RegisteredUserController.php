@@ -17,7 +17,7 @@ class RegisteredUserController extends Controller
 {
     /**
      * POST: /api/register
-     * Register a new user.
+     * (Register a new user.)
      * This method creates a new user, hashes the password, and generates an API token for the user.
      * @throws \Illuminate\Validation\ValidationException
      */
