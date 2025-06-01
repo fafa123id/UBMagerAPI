@@ -197,10 +197,6 @@ class CheckoutController extends Controller
         }
     }
 
-
-    /**
-     * Handle Midtrans notification callback
-     */
     public function handleNotification(Request $request)
     {
         // Ambil data dari notifikasi

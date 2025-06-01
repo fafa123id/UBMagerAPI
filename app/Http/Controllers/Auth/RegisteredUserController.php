@@ -16,7 +16,6 @@ use OpenApi\Annotations as OA;
 class RegisteredUserController extends Controller
 {
     /**
-     * Handle an incoming registration request.
      * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request): JsonResponse
