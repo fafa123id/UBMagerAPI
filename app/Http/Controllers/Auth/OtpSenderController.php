@@ -17,9 +17,9 @@ class OtpSenderController extends Controller
         $this->otpHandler = $otpHandler;
     }
     /**
-     * @authenticated
      * Send OTP to the user's email for account verification.
      * This method generates a random OTP code and sends it to the user's email for verification purposes.
+     * @authenticated
      */
     public function otpVerifySend(Request $request)
     {

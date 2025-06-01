@@ -30,8 +30,8 @@ class CheckoutController extends Controller
   
     /**
      * Checkout a product by user
-     * 
-     * Auth dulu bang
+     * This endpoint allows the authenticated user to checkout a product.
+     * It validates the request, checks product availability, and processes the payment through Midtrans.
      * @authenticated
      */
     public function checkout(Request $request)
@@ -200,8 +200,8 @@ class CheckoutController extends Controller
 
     /**
      * Handle Midtrans notification
-     * Ini tidak penting untuk diakses user
-     * Ini hanya untuk Midtrans mengirimkan notifikasi
+     * This endpoint processes notifications from Midtrans regarding transaction status updates.
+     * it is not neccessary to user, but it is used to handle payment notifications from Midtrans.
      */
     public function handleNotification(Request $request)
     {
