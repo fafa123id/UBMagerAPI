@@ -12,41 +12,23 @@ class HistoryController extends Controller
     public function index(Request $request)
     {
         // Get all transactions for the authenticated user
-        $transactions = auth()->user()->transaction()->with('orders.product')->get();
+        $transactions = auth()->user()->transaction()->with(['orders.product','orders.transaction'])->get();
 
         // Kumpulkan semua orders dari semua transaksi
         $allOrders = $transactions->flatMap->orders;
-
-        // Kelompokkan berdasarkan status
-        $pendingOrders = $allOrders->where('status', 'pending');
-        $processingOrders = $allOrders->where('status', 'processing');
-        $completedOrders = $allOrders->where('status', 'completed');
-        $cancelledOrders = $allOrders->where('status', 'cancelled');
-
-        // Ambil url_payment dari transaksi dengan status pending (asumsikan hanya satu)
-        $pendingPaymentLink = $transactions->where('status', 'pending')->pluck('link_payment');
         return response()->json([
             'success' => true,
-            'data' => [
-                'pending' =>
-                    [
-                        $pendingOrders->value(),
-                        'url_payment'->$pendingPaymentLink?: null,
-                    ],
-                'processing' => $processingOrders->value(),
-                'completed' => $completedOrders->value(),
-                'cancelled' => $cancelledOrders->value(),
-            ],
+            'data' => $allOrders,
         ]);
     }
     public function show($id)
     {
         // Get a specific transaction by ID for the authenticated user
-        $transaction = auth()->user()->transaction()->with('orders.product')->findOrFail($id);
+        $transaction = auth()->user()->transaction()->with(['orders.product','orders.transaction'])->findOrFail($id);
 
         return response()->json([
             'success' => true,
-            'data' => $transaction->orders->get(),
+            'data' => $transaction->orders->first(),
         ]);
     }
 }
