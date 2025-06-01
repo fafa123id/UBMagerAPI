@@ -30,6 +30,9 @@ class CheckoutController extends Controller
     /**
      * Create checkout and generate Midtrans payment link
      */
+    /**
+     * @authenticated
+     */
     public function checkout(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -266,6 +269,9 @@ class CheckoutController extends Controller
     /**
      * Get transaction status
      */
+    /**
+     * @authenticated
+     */
     public function getTransactionStatus($receipt)
     {
         try {
@@ -312,6 +318,9 @@ class CheckoutController extends Controller
     /**
      * Get user transactions
      */
+    /**
+     * @authenticated
+     */
     public function getUserTransactions()
     {
         try {
@@ -356,6 +365,7 @@ class CheckoutController extends Controller
     /**
      * Update transaction and order status
      */
+
     private function updateTransactionStatus($transaction, $status)
     {
         $transaction->update(['status' => $status]);
@@ -371,6 +381,9 @@ class CheckoutController extends Controller
             $order->product->increment('quantity', $order->quantity);
         }
     }
+    /**
+     * @authenticated
+     */
     public function cancelTransaction($id)
     {
         $transaction = auth()->user()->transaction()->find($id);

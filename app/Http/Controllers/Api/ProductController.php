@@ -55,7 +55,9 @@ class ProductController extends Controller
         return $this->products->getCategoryByType($type);
     }
 
-
+    /**
+     * @authenticated
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -82,7 +84,9 @@ class ProductController extends Controller
         return $this->products->create($validated);
     }
 
-
+    /**
+     * @authenticated
+     */
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
@@ -121,7 +125,9 @@ class ProductController extends Controller
         return $updated;
     }
 
-    
+    /**
+     * @authenticated
+     */
     public function destroy($id)
     {
         return $this->products->delete($id);

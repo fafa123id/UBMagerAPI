@@ -9,26 +9,30 @@ use Illuminate\Support\Facades\Storage;
 
 class userController extends Controller
 {
-    
+
     protected $users;
     public function __construct(UserRepositoryInterface $userRepository)
     {
         $this->users = $userRepository;
     }
 
-    
+    /**
+     * @authenticated
+     */
     public function index()
     {
         return $this->users->self();
     }
 
-    
+
     public function show($id)
     {
         return $this->users->find($id);
     }
 
-   
+    /**
+     * @authenticated
+     */
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -47,7 +51,7 @@ class userController extends Controller
             $imagePath = config('filesystems.disks.s3.url') . $request->file('image')->store('images', 's3');
             $request->merge(['image' => $imagePath]);
         }
-        dd ($request->all());
+        dd($request->all());
         return $this->users->update($id, $request->all());
     }
 }

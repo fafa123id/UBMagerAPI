@@ -24,7 +24,9 @@ class VerifyEmailController extends Controller
         $this->otpHandler = $otpHandler;
     }
 
-    
+    /**
+     * @authenticated
+     */
     public function verifyEmail(Request $request)
     {
         $request->validate([

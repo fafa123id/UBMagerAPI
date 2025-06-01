@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
+    /**
+     * @authenticated
+     */
     public function index(Request $request)
     {
         // Get all orders for the authenticated user
@@ -18,6 +21,9 @@ class OrderController extends Controller
             'data' => $orders,
         ]);
     }
+    /**
+     * @authenticated
+     */
     public function proccessOrder(Request $request, $id)
     {
         // Find the order by ID
@@ -38,6 +44,9 @@ class OrderController extends Controller
             'data' => $order,
         ]);
     }
+    /**
+     * @authenticated
+     */
     public function finishOrder(Request $request, $id)
     {
         // Find the order by ID

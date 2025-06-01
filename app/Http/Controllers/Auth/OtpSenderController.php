@@ -16,13 +16,15 @@ class OtpSenderController extends Controller
     {
         $this->otpHandler = $otpHandler;
     }
-
+    /**
+     * @authenticated
+     */
     public function otpVerifySend(Request $request)
     {
         return $this->sendOtp($request->email, 'verify your account', 'Email Verification');
     }
 
-    
+
     public function otpResetSend(Request $request)
     {
         return $this->sendOtp($request->email, 'reset your password', 'Password Reset');

@@ -100,7 +100,9 @@ class ResetPasswordController extends Controller
         ]);
     }
 
-
+    /**
+     * @authenticated
+     */
     public function newPassword(Request $request)
     {
         $request->validate([

@@ -9,10 +9,13 @@ use App\Models\Transaction;
 
 class HistoryController extends Controller
 {
+    /**
+     * @authenticated
+     */
     public function index(Request $request)
     {
         // Get all transactions for the authenticated user
-        $transactions = auth()->user()->transaction()->with(['orders.product','orders.transaction'])->get();
+        $transactions = auth()->user()->transaction()->with(['orders.product', 'orders.transaction'])->get();
 
         // Kumpulkan semua orders dari semua transaksi
         $allOrders = $transactions->flatMap->orders;
@@ -21,10 +24,13 @@ class HistoryController extends Controller
             'data' => $allOrders,
         ]);
     }
+    /**
+     * @authenticated
+     */
     public function show($id)
     {
         // Get a specific transaction by ID for the authenticated user
-        $transaction = auth()->user()->transaction()->with(['orders.product','orders.transaction'])->findOrFail($id);
+        $transaction = auth()->user()->transaction()->with(['orders.product', 'orders.transaction'])->findOrFail($id);
 
         return response()->json([
             'success' => true,

@@ -7,6 +7,9 @@ use App\Http\Controllers\Controller;
 
 class RatingController extends Controller
 {
+    /**
+     * @authenticated
+     */
     public function store(Request $request, $id)
     {
         // Validate the request data
@@ -38,10 +41,10 @@ class RatingController extends Controller
         $validatedData['product_id'] = $order->product_id;
         if ($request->hasFile('image')) {
             // Store the image and get its path
-            $imagePath = config('filesystems.disks.s3.url'). $request->file('image')->store('ratings', 'public');
+            $imagePath = config('filesystems.disks.s3.url') . $request->file('image')->store('ratings', 'public');
             $validatedData['image'] = $imagePath;
         }
-           
+
 
         // Create a new rating for the product
         $order->update(['is_rated' => true]);

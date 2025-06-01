@@ -11,28 +11,30 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthenticatedSessionController extends Controller
 {
-    
+
     public function store(LoginRequest $request): JsonResponse
     {
         $request->authenticate();
-        $user=Auth::user();
+        $user = Auth::user();
         $user->tokens()->delete();
 
         $data =
-        [
-            'token'=>$user->createToken("thetoken". $user->email)->plainTextToken,
-            'message'=>'Login Berhasil'
-        ];
+            [
+                'token' => $user->createToken("thetoken" . $user->email)->plainTextToken,
+                'message' => 'Login Berhasil'
+            ];
 
-        return response()->json($data,201);
+        return response()->json($data, 201);
     }
-
-        public function destroy(Request $request): JsonResponse
+    /**
+     * @authenticated
+     */
+    public function destroy(Request $request): JsonResponse
     {
         auth()->user()->tokens()->delete();
 
         return response()->json([
-            'message'=>'Berhasil logout'
-        ],201);
+            'message' => 'Berhasil logout'
+        ], 201);
     }
 }

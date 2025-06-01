@@ -9,6 +9,9 @@ use Illuminate\Http\Request;
 
 class NegoController extends Controller
 {
+    /**
+     * @authenticated
+     */
     public function requestNego(Request $request)
     {
         $request->validate([
@@ -42,6 +45,9 @@ class NegoController extends Controller
             'message' => 'Nego request created successfully.',
         ]);
     }
+    /**
+     * @authenticated
+     */
     public function myNegos()
     {
         $filter = request()->query('filter');
@@ -56,6 +62,9 @@ class NegoController extends Controller
             'data' => $negos,
         ]);
     }
+    /**
+     * @authenticated
+     */
     public function negoDetail($id)
     {
         $nego = auth()->user()->nego()->with('product')->findOrFail($id);
@@ -65,6 +74,9 @@ class NegoController extends Controller
             'data' => $nego,
         ]);
     }
+    /**
+     * @authenticated
+     */
     public function cancelNego($id)
     {
         $nego = auth()->user()->nego()->findOrFail($id);
@@ -77,6 +89,9 @@ class NegoController extends Controller
     }
 
     //for seller
+    /**
+     * @authenticated
+     */
     public function sellerAll()
     {
         $filter = request()->query('filter');
@@ -96,6 +111,9 @@ class NegoController extends Controller
             'data' => $negos,
         ]);
     }
+    /**
+     * @authenticated
+     */
     public function show($id)
     {
         $nego = Nego::with('product')
@@ -109,6 +127,9 @@ class NegoController extends Controller
             'data' => $nego,
         ]);
     }
+    /**
+     * @authenticated
+     */
     public function declineNego($id)
     {
         $nego = Nego::with('product')
@@ -129,6 +150,9 @@ class NegoController extends Controller
             'message' => 'Nego request declined successfully.',
         ]);
     }
+    /**
+     * @authenticated
+     */
     public function acceptNego($id)
     {
         $nego = Nego::with('product')
