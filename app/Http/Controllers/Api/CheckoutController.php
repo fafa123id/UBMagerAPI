@@ -100,6 +100,13 @@ class CheckoutController extends Controller
                     'name' => $product->name,
                     "merchant_name"=>$product->user->name,
                     'category' => $product->category,
+                ],
+                
+                [
+                    'id' => 'APP-FEE',
+                    'price' => 3000,
+                    'quantity' => 1,
+                    'name' => 'Biaya Aplikasi',
                 ]
             ];
 
