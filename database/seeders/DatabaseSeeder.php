@@ -63,17 +63,41 @@ class DatabaseSeeder extends Seeder
             'status' => 'available',
             'image1' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Product_sample_icon_picture.png/640px-Product_sample_icon_picture.png',
         ]);
+        $user1->product()->create([
+            'name' => 'Product 2',
+            'type' => 'Clothing',
+            'category' => 'Fashion',
+            'quantity' => 5,
+            'price' => 200000,
+            'description' => 'This is a description for Product 2.',
+            'status' => 'available',
+            'image1' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Product_sample_icon_picture.png/640px-Product_sample_icon_picture.png',
+        ]);
+
+        $user2 = User::where('email', 'buyer@user.test')->first();
 
         Rating::create([
-            'user_id' => $user1->id,
+            'user_id' => $user2->id,
             'product_id' => 1,
             'rating' => 4,
             'comment' => 'Great product!',
         ]);
         Rating::create([
-            'user_id' => $user1->id,
-            'product_id' => 1,
+            'user_id' => $user2->id,
+            'product_id' => 2,
             'rating' => 1,
+            'comment' => 'bad quality!',
+        ]);
+        Rating::create([
+            'user_id' => $user2->id,
+            'product_id' => 2,
+            'rating' => 5,
+            'comment' => 'bad quality!',
+        ]);
+        Rating::create([
+            'user_id' => $user2->id,
+            'product_id' => 1,
+            'rating' => 3,
             'comment' => 'bad quality!',
         ]);
     }   
