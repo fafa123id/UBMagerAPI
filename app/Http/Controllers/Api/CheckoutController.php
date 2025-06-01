@@ -365,10 +365,6 @@ class CheckoutController extends Controller
         
         try {
             // Update transaction status
-            try{
-                MidtransTransaction::cancel($transaction->receipt);
-            }catch(\Exception $e){}
-            
             $transaction->update(['status' => 'cancelled']);
 
             // Restore product stock
