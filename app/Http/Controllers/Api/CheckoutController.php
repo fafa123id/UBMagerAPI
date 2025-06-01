@@ -351,13 +351,14 @@ class CheckoutController extends Controller
         }
 
         DB::beginTransaction();
+        MidtransTransaction::cancel($transaction->receipt);
         try {
             // Update transaction status
             $transaction->update(['status' => 'cancelled']);
 
             // Restore product stock
             $this->restoreProductStock($transaction);
-            MidtransTransaction::cancel($transaction->receipt);
+            
             DB::commit();
 
             return response()->json([
