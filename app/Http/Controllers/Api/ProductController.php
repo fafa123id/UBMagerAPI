@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\successReturn;
+use App\Models\Product;
 use App\Repositories\Abstract\ProductRepositoryInterface;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 
 
@@ -41,7 +43,7 @@ class ProductController extends Controller
         return $this->products->find($id);
     }
 
-    
+
     public function getType()
     {
         return $this->products->getType();
@@ -53,7 +55,7 @@ class ProductController extends Controller
         return $this->products->getCategoryByType($type);
     }
 
-    
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -64,11 +66,23 @@ class ProductController extends Controller
             'quantity' => 'nullable|integer|min:0',
             'price' => 'required|numeric|min:0',
             'status' => 'in:available,unavailable',
+            'image1' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'image2' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'image3' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
+        if (request()->hasFile('image1')) {
+            $validated['image1'] = config('filesystems.disks.s3.url') . $request->file('image1')->store('images', 's3');
+        }
+        if (request()->hasFile('image2')) {
+            $validated['image2'] = config('filesystems.disks.s3.url') . $request->file('image2')->store('images', 's3');
+        }
+        if (request()->hasFile('image3')) {
+            $validated['image3'] = config('filesystems.disks.s3.url') . $request->file('image3')->store('images', 's3');
+        }
         return $this->products->create($validated);
     }
 
-    
+
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
@@ -79,8 +93,29 @@ class ProductController extends Controller
             'quantity' => 'sometimes|nullable|integer|min:0',
             'price' => 'sometimes|required|numeric|min:0',
             'status' => 'in:available,unavailable',
+            'image1' => 'sometimes|required|image|mimes:jpeg,png,jpg|max:2048',
+            'image2' => 'sometimes|nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'image3' => 'sometimes|nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
-
+        $product = Product::findOrFail($id);
+        if ($request->hasFile('image1')) {
+            Storage::disk('s3')->delete($product->image1);
+            $validated['image1'] = config('filesystems.disks.s3.url') . $request->file('image1')->store('images', 's3');
+        }
+        if ($request->hasFile('image2')) {
+            // Delete the old image2 if it exists
+            if ($product->image2 && Storage::disk('s3')->exists($product->image2)) {
+                Storage::disk('s3')->delete($product->image2);
+            }
+            $validated['image2'] = config('filesystems.disks.s3.url') . $request->file('image2')->store('images', 's3');
+        }
+        if ($request->hasFile('image3')) {
+            // Delete the old image3 if it exists
+            if ($product->image3 && Storage::disk('s3')->exists($product->image3)) {
+                Storage::disk('s3')->delete($product->image3);
+            }
+            $validated['image3'] = config('filesystems.disks.s3.url') . $request->file('image3')->store('images', 's3');
+        }
         $updated = $this->products->update($id, $validated);
 
         return $updated;

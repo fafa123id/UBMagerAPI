@@ -26,6 +26,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'status',
         'phone',
         'address',
+        'image',
     ];
 
     /**
@@ -70,5 +71,16 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasManyThrough(Order::class, Product::class, 'user_id', 'product_id', 'id', 'id');
     }
-
+    public function receivedNegos()
+    {
+        return $this->hasManyThrough(Nego::class, Product::class, 'user_id', 'product_id');
+    }
+    public function nego()
+    {
+        return $this->hasMany(Nego::class);
+    }
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
+    }
 }

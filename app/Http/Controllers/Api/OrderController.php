@@ -18,4 +18,44 @@ class OrderController extends Controller
             'data' => $orders,
         ]);
     }
+    public function proccessOrder(Request $request, $id)
+    {
+        // Find the order by ID
+        $order = auth()->user()->ordersThroughProducts()->findOrFail($id);
+
+        if ($order->status !== 'processing') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order is not in a processing state',
+            ], 400);
+        }
+        // Update the order status to 'proccess'
+        $order->update(['status' => 'proccessed']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Order is being processed',
+            'data' => $order,
+        ]);
+    }
+    public function finishOrder(Request $request, $id)
+    {
+        // Find the order by ID
+        $order = auth()->user()->orders()->findOrFail($id);
+
+        if ($order->status !== 'proccessed') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order is not in a processed state',
+            ], 400);
+        }
+        // Update the order status to 'finished'
+        $order->update(['status' => 'finished']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Order has been finished',
+            'data' => $order,
+        ]);
+    }
 }

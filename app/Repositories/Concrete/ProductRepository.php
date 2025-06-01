@@ -6,6 +6,7 @@ use App\Http\Resources\ProductResource;
 use App\Http\Resources\successReturn;
 use App\Models\Product;
 use App\Repositories\Abstract\ProductRepositoryInterface;
+use Illuminate\Support\Facades\Storage;
 
 class ProductRepository implements ProductRepositoryInterface
 {
@@ -94,6 +95,14 @@ class ProductRepository implements ProductRepositoryInterface
                 'message' => 'Product not found',
                 'status' => 404,
             ]);
+        }
+        Storage::disk('s3')->delete($product->image1);
+        
+        if ($product->image2!== null) {
+            Storage::disk('s3')->delete($product->image2);
+        }
+        if ($product->image3!== null) {
+            Storage::disk('s3')->delete($product->image3);
         }
         $product->delete();
         return new successReturn(

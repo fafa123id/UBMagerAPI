@@ -20,8 +20,10 @@ class TransactionObserver
     public function updated(Transaction $transaction): void
     {
         if ($transaction->status === "failed" || $transaction->status === "cancelled") {
-            $transaction->orders()->update(['status' => 'cancelled']);
-            
+            $transaction->orders()->update(['status' => 'cancelled']);   
+        }
+        if ($transaction->status === "success") {
+            $transaction->orders()->update(['status' => 'processing']);
         }
     }
 

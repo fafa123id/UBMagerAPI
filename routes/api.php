@@ -9,3 +9,5 @@ require __DIR__.'/auth.php';
 require __DIR__.'/Api/transaction.php';
 require __DIR__.'/Api/order.php';
 require __DIR__.'/Api/history.php';
+require __DIR__.'/Api/nego.php';
+require __DIR__.'/Api/rating.php';

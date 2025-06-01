@@ -36,6 +36,7 @@ class CheckoutController extends Controller
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
             'address' => 'nullable|string|max:255',
+            'nego_id' => 'nullable|integer|min:0',
         ]);
 
         if ($validator->fails()) {
@@ -48,9 +49,22 @@ class CheckoutController extends Controller
 
         try {
             DB::beginTransaction();
-
             $user = Auth::user();
-            $product = Product::findOrFail($request->product_id);
+            if ($request->nego_id) {
+                $nego = $user->nego()->find($request->nego_id);
+                if (!$nego || $nego->status !== 'accepted') {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Invalid or inactive negotiation'
+                    ], 400);
+                }
+                $product = Product::findOrFail($nego->product_id);
+                $product->price = $nego->nego_price;
+            } else {
+                // Default product retrieval
+                $product = Product::findOrFail($request->product_id);
+            }
+            
 
             // Check stock
             if ($product->quantity < $request->quantity) {
@@ -98,15 +112,21 @@ class CheckoutController extends Controller
                     'price' => (int) $product->price,
                     'quantity' => $request->quantity,
                     'name' => $product->name,
-                    "merchant_name"=>$product->user->name,
+                    "merchant_name" => $product->user->name,
                     'category' => $product->category,
                 ],
-                
+
                 [
                     'id' => 'APP-FEE',
-                    'price' => 3000,
+                    'price' => 2000,
                     'quantity' => 1,
                     'name' => 'Biaya Aplikasi',
+                ],
+                [
+                    'id' => 'OTH-FEE',
+                    'price' => 1000,
+                    'quantity' => 1,
+                    'name' => 'Biaya Lain-lain',
                 ]
             ];
 
@@ -204,7 +224,6 @@ class CheckoutController extends Controller
             if ($transactionStatus == 'capture') {
                 if ($fraudStatus == 'accept') {
                     $transaction->update(['status' => 'success']);
-                    $order->update(['status' => 'processing']);
                 } else {
                     $transaction->update(['status' => 'challenge']);
                 }
@@ -215,7 +234,7 @@ class CheckoutController extends Controller
                 $transactionStatus == 'deny' ||
                 $transactionStatus == 'expire'
             ) {
-                $transaction->update(['status' => 'failed']);
+                $transaction->update(['status' => 'cancelled']);
                 // Restore stock jika perlu
                 $this->restoreProductStock($transaction);
             } elseif ($transactionStatus == 'pending') {
@@ -362,13 +381,13 @@ class CheckoutController extends Controller
         }
 
         DB::beginTransaction();
-        
+
         try {
             // Update transaction status
-            $transaction->update(['status' => 'cancelled','link_payment' => null]);
+            $transaction->update(['status' => 'cancelled', 'link_payment' => null]);
             // Restore product stock
             $this->restoreProductStock($transaction);
-            
+
             DB::commit();
 
             return response()->json([

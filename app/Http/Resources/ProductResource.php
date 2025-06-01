@@ -18,6 +18,10 @@ class ProductResource extends JsonResource
             'price' => $this->price,
             'status' => $this->status,
             'owner' => $this->user->name ?? null,
+            'image1' => $this->image1,
+            'image2' => $this->image2?? null,
+            'image3' => $this->image3?? null,
+            'rating' => $this->getRattingAttribute(),
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at'=> $this->updated_at->toDateTimeString(),
         ];

@@ -18,6 +18,9 @@ class CreateProductsTable extends Migration
             $table->decimal('price', 10, 2); 
             $table->enum('status', ['available', 'unavailable'])->default('available'); 
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('image1');
+            $table->string('image2')->nullable();
+            $table->string('image3')->nullable();
             $table->timestamps(); 
         });
     }
