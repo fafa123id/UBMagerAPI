@@ -16,7 +16,7 @@ class RatingController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $order = auth()->user()->orders()->where('id', $id)->first();
+        $order = auth()->user()->order()->where('id', $id)->first();
         if (!$order) {
             return response()->json([
                 'success' => false,
