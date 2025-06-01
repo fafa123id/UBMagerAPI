@@ -51,6 +51,17 @@ class DatabaseSeeder extends Seeder
             'email_verified_at' => now(),
             'status' => 'verified',
         ]);
+        User::create([
+            'name' => 'Scribe Test',
+            'email' => 'scribe@test',
+            'phone' => '08123456782',
+            'password' => Hash::make('password123'),
+            'role_id' => 1,
+            'address' => 'Jl. Scribe No. 1, Malang',
+            'image' => 'https://ui-avatars.com/api/?name=Scribe+Test&background=random&color=fff',
+            'email_verified_at' => now(),
+            'status' => 'verified',
+        ]);
 
         $user1 = User::where('email', 'seller@admin.test')->first();
         $user1->product()->create([
@@ -73,6 +84,7 @@ class DatabaseSeeder extends Seeder
             'status' => 'available',
             'image1' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Product_sample_icon_picture.png/640px-Product_sample_icon_picture.png',
         ]);
+
 
         $user2 = User::where('email', 'buyer@user.test')->first();
 
