@@ -21,7 +21,8 @@ class ProductController extends Controller
     }
     /**
      * GET: /api/product
-     * (Display a listing of the products.)
+     * 
+     * Display a listing of the products.
      * This method retrieves all products based on the provided type, category, and query parameters.
      */
     public function index(Request $request)
@@ -44,7 +45,8 @@ class ProductController extends Controller
 
     /**
      * GET: /api/product/{id}
-     * (Display a specific product by ID.)
+     * 
+     * Display a specific product by ID.
      * This method retrieves a product by its ID.
      */
     public function show($id)
@@ -54,7 +56,8 @@ class ProductController extends Controller
 
     /**
      * GET: /api/product-type
-     * (Get all product's type.)
+     * 
+     * Get all product's type.
      * This method retrieves all products of a specific type.
      */
     public function getType()
@@ -64,7 +67,8 @@ class ProductController extends Controller
 
     /**
      * GET: /api/product-category/{type}
-     * (Get all product's category by type.)
+     * 
+     * Get all product's category by type.
      * This method retrieves all categories of products based on the provided type.
      */
     public function getCategoryByType($type)
@@ -74,7 +78,8 @@ class ProductController extends Controller
 
     /**
      * POST: /api/product
-     * (Store a newly created product for seller.)
+     * 
+     * Store a newly created product for seller.
      * This method allows the authenticated user to create a new product with the provided details.
      * @authenticated
      */
@@ -106,7 +111,8 @@ class ProductController extends Controller
 
     /**
      * PUT: /api/product/{id}
-     * (Update the specified product by ID for seller.)
+     * 
+     * Update the specified product by ID for seller.
      * This method allows the authenticated user to update an existing product with the provided details.
      * @authenticated
      */
@@ -150,7 +156,8 @@ class ProductController extends Controller
 
     /**
      * DELETE: /api/product/{id}
-     * (Remove the specified product by ID for seller.)
+     * 
+     * Remove the specified product by ID for seller.
      * This method allows the authenticated user to delete a product by its ID.
      * @authenticated
      */

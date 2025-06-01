@@ -18,7 +18,8 @@ class userController extends Controller
 
     /**
      * GET: /api/user
-     * (Display the authenticated user's profile.)
+     * 
+     * Display the authenticated user's profile.
      * This method retrieves the profile of the authenticated user.
      * @authenticated
      */
@@ -29,7 +30,8 @@ class userController extends Controller
 
     /**
      * GET: /api/user/{id}
-     * (Display a specific user by ID.)
+     * 
+     * Display a specific user by ID.
      * This method retrieves a user by their ID.
      */
     public function show($id)
@@ -39,7 +41,8 @@ class userController extends Controller
 
     /**
      * PUT: /api/user/{id}
-     * (Update the authenticated user's profile.)
+     * 
+     * Update the authenticated user's profile.
      * This method allows the authenticated user to update their profile information.
      * @authenticated
      */

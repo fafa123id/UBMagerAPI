@@ -11,7 +11,8 @@ class HistoryController extends Controller
 {
     /**
      * GET: /api/history
-     * (Display a listing of the transactions for the authenticated user.)
+     * 
+     * Display a listing of the transactions for the authenticated user.
      * This method retrieves all transactions and their associated orders and products.
      * @authenticated
      */
@@ -29,7 +30,9 @@ class HistoryController extends Controller
     }
     /**
      * GET: /api/history/{id}
-     * (Get a specific transaction by ID for the authenticated user.)
+     * 
+     * Get a specific transaction by ID for the authenticated user.
+     * 
      * This method retrieves the transaction details along with its associated orders and products.
      * @authenticated
      */

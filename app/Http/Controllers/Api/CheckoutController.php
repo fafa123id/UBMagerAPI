@@ -30,7 +30,8 @@ class CheckoutController extends Controller
   
     /**
      * POST: /api/checkout
-     * (Checkout a product by user)
+     * 
+     * Checkout a product by user
      * This endpoint allows the authenticated user to checkout a product.
      * It validates the request, checks product availability, and processes the payment through Midtrans.
      * @authenticated
@@ -201,7 +202,8 @@ class CheckoutController extends Controller
 
     /**
      * POST: /api/midtrans/notification
-     * (Handle Midtrans notification)
+     * 
+     * Handle Midtrans notification
      * This endpoint processes notifications from Midtrans regarding transaction status updates.
      * it is not neccessary to user, but it is used to handle payment notifications from Midtrans.
      */
@@ -273,7 +275,8 @@ class CheckoutController extends Controller
 
     /**
      * GET: /api/transaction/{receipt}
-     * (Get transaction status by receipt)
+     * 
+     * Get transaction status by receipt
      * This endpoint is used to check the status of a transaction by its receipt number.
      * It returns the transaction details including status, total price, payment method, and associated orders.
      * @authenticated
@@ -324,7 +327,9 @@ class CheckoutController extends Controller
 
     /**
      * GET: /api/transactions
-     * (Get all transactions of the authenticated user)
+     * 
+     * Get all transactions of the authenticated user
+     * 
      * This endpoint retrieves all transactions made by the authenticated user.
      * It returns a list of transactions with their details including receipt, total price, status, payment method,
      * and associated orders.
@@ -392,7 +397,8 @@ class CheckoutController extends Controller
     }
     /**
      * GET: /api/transactions/cancel/{id}
-     * (Cancel a transaction)
+     * 
+     * Cancel a transaction
      * This endpoint allows the authenticated user to cancel a transaction.
      * @authenticated
      */
@@ -438,7 +444,9 @@ class CheckoutController extends Controller
 
     /**
      * GET: /api/payment/finish
+     * 
      * Finish transaction view
+     * 
      * This method returns a view for the finish page after a successful transaction.
      * It is handled by the Midtrans callback after payment completion.
      */

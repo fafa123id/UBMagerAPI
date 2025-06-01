@@ -14,7 +14,8 @@ class AuthenticatedSessionController extends Controller
 
     /**
      * POST: /api/login
-     * (Login a user and return a token.)
+     * 
+     * Login a user and return a token.
      * This method authenticates the user and generates a token for API access.
      */
     public function store(LoginRequest $request): JsonResponse
@@ -33,7 +34,8 @@ class AuthenticatedSessionController extends Controller
     }
     /**
      * POST: /api/logout
-     * (Logout the authenticated user and delete their token.)
+     * 
+     * Logout the authenticated user and delete their token.
      * This method revokes the user's token, effectively logging them out.
      * @authenticated
      */
