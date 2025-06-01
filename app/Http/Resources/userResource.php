@@ -24,7 +24,7 @@ class userResource extends JsonResource
                 'image' => $this->image ?? null,
                 'created_at' => $this->created_at,
                 'updated_at' => $this->updated_at,
-
+                'rating'=> $this->role_id == 1 ? $this->getRatingFromAllProduct() : null,
             ];
     }
 }
