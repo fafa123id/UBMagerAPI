@@ -29,6 +29,12 @@ class RatingController extends Controller
                 'message' => 'You can only rate products from finished orders.',
             ], 400);
         }
+        if ($order->isRated()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You have already rated this product.',
+            ], 400);
+        }
         $validatedData['product_id'] = $order->product_id;
         if ($request->hasFile('image')) {
             // Store the image and get its path
@@ -36,7 +42,9 @@ class RatingController extends Controller
             $validatedData['image'] = $imagePath;
         }
            
+
         // Create a new rating for the product
+        $validatedData['is_rated'] = true;
         $rating = auth()->user()->ratings()->create($validatedData);
 
         return response()->json([

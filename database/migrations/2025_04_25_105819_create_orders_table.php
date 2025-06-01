@@ -21,6 +21,7 @@ return new class extends Migration
             $table->decimal('total_price', 10, 2);
             $table->string('status')->default('pending');
             $table->string('address')->nullable();
+            $table->boolean('is_rated')->default(false);
             $table->timestamps();
         });
     }

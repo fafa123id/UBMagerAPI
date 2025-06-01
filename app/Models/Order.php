@@ -14,6 +14,7 @@ class Order extends Model
         'total_price',
         'status',
         'address',
+        'is_rated',
     ];
     protected $casts = [
         'price' => 'decimal:2'
@@ -31,6 +32,10 @@ class Order extends Model
     public function product()
     {
         return $this->belongsTo(Product::class); // ✅ pakai belongsTo, bukan hasOne
+    }
+    public function isRated()
+    {
+        return $this->is_rated; // ✅ mengembalikan status apakah sudah di-rating
     }
 }
 
