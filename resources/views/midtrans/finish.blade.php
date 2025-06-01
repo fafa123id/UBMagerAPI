@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Payment Completed</title>
+    <title>Action Finished</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script>
         window.onload = function () {
