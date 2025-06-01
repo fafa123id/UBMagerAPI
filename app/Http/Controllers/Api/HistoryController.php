@@ -30,12 +30,12 @@ class HistoryController extends Controller
             'data' => [
                 'pending' =>
                     [
-                        $pendingOrders->get(),
+                        $pendingOrders->value(),
                         'url_payment'->$pendingPaymentLink?: null,
                     ],
-                'processing' => $processingOrders->get(),
-                'completed' => $completedOrders->get(),
-                'cancelled' => $cancelledOrders->get(),
+                'processing' => $processingOrders->value(),
+                'completed' => $completedOrders->value(),
+                'cancelled' => $cancelledOrders->value(),
             ],
         ]);
     }
