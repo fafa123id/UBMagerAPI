@@ -21,7 +21,7 @@ class TransactionObserver
     {
         if ($transaction->status === "failed" || $transaction->status === "cancelled") {
             $transaction->orders()->update(['status' => 'cancelled']);
-            $transaction->update(['link_payment'=>null]);
+            
         }
     }
 
