@@ -430,4 +430,13 @@ class CheckoutController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Finish transaction view
+     * This method returns a view for the finish page after a successful transaction.
+     * It is handled by the Midtrans callback after payment completion.
+     */
+    public function finish(){
+        return view('midtrans.finish');
+    }
 }
