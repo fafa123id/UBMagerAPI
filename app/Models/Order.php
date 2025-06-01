@@ -13,6 +13,7 @@ class Order extends Model
         'quantity',
         'total_price',
         'status',
+        'address',
     ];
     protected $casts = [
         'price' => 'decimal:2'

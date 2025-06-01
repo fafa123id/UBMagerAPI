@@ -35,6 +35,7 @@ class CheckoutController extends Controller
         $validator = Validator::make($request->all(), [
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
+            'address' => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -60,7 +61,7 @@ class CheckoutController extends Controller
             }
 
             // Calculate total price
-            $totalPrice = $product->price * $request->quantity;
+            $totalPrice = $product->price * $request->quantity + (2000 + 1000);
 
             // Generate unique transaction receipt
             $receipt = 'TRX-' . time() . '-' . rand(1000, 9999);
@@ -82,6 +83,7 @@ class CheckoutController extends Controller
                 'quantity' => $request->quantity,
                 'total_price' => $totalPrice, // Menggunakan totalPrice yang sudah dihitung
                 'status' => 'pending',
+                'address' => $request->address ?? $user->address, // Gunakan alamat user jika tidak ada di request
             ]);
 
             // Prepare Midtrans transaction data
@@ -96,6 +98,8 @@ class CheckoutController extends Controller
                     'price' => (int) $product->price,
                     'quantity' => $request->quantity,
                     'name' => $product->name,
+                    "merchant_name"=>$product->user()->name,
+                    'category' => $product->category,
                 ]
             ];
 
@@ -351,9 +355,13 @@ class CheckoutController extends Controller
         }
 
         DB::beginTransaction();
-        MidtransTransaction::cancel($transaction->receipt);
+        
         try {
             // Update transaction status
+            try{
+                MidtransTransaction::cancel($transaction->receipt);
+            }catch(\Exception $e){}
+            
             $transaction->update(['status' => 'cancelled']);
 
             // Restore product stock
