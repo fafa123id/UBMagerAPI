@@ -44,7 +44,7 @@ class RatingController extends Controller
            
 
         // Create a new rating for the product
-        $validatedData['is_rated'] = true;
+        $order->update(['is_rated' => true]);
         $rating = auth()->user()->ratings()->create($validatedData);
 
         return response()->json([
