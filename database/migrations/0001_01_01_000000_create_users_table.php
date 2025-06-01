@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('password');
             $table->tinyInteger('role_id')->default(0);
             $table->enum('status', ['verified', 'unverified'])->default('unverified');
+            $table->text('address')->nullable();
             $table->rememberToken();
             $table->timestamps();
         

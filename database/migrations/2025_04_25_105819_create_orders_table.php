@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('quantity')->default(1);
             $table->decimal('total_price', 10, 2);
             $table->string('status')->default('pending');
+            $table->string('address')->nullable();
             $table->timestamps();
         });
     }

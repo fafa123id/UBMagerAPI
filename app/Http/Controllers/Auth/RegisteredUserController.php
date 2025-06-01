@@ -29,16 +29,18 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role_id' => ['required', 'integer'],
+            'role_id' => ['nullable', 'integer'],
             'phone' => ['required', 'string', 'unique:users,phone', 'regex:/^(\+62|62|0)8[1-9][0-9]{6,9}$/', 'max:15'],
+            'address' => ['required', 'string', 'max:255'],
         ]);
 
         User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'role_id' => $request->role_id,
+            'role_id' => $request->role_id?? 0,
             'phone' => $request->phone,
             'password' => Hash::make($request->string('password')),
+            'address' => $request->address,
         ]);
 
         return response()->json([
