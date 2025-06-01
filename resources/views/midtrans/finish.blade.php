@@ -23,11 +23,6 @@
             } else {
                 // Fallback: coba auto close tab
                 window.close();
-
-                // Atau redirect ke halaman sukses statis
-                setTimeout(function () {
-                    window.location.href = "https://yourdomain.com/success";
-                }, 2000);
             }
         };
     </script>
