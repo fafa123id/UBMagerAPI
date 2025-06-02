@@ -66,6 +66,12 @@ class userController extends Controller
         }
         return $this->users->update($id, $request->all());
     }
+    /**
+     * GET: /api/be-mitra
+     *
+     * Change the authenticated user's role to seller.
+     * @authenticated
+     */
     public function changeRole()
     {
         auth()->user()->update(['role_id' => 1]);
