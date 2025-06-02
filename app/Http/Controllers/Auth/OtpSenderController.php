@@ -25,6 +25,9 @@ class OtpSenderController extends Controller
      */
     public function otpVerifySend(Request $request)
     {
+        $request->validate([
+            'email' =>'required|email',
+        ]);
         return $this->sendOtp($request->email, 'verify your account', 'Email Verification');
     }
 
@@ -36,6 +39,9 @@ class OtpSenderController extends Controller
      */
     public function otpResetSend(Request $request)
     {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
         return $this->sendOtp($request->email, 'reset your password', 'Password Reset');
     }
 
