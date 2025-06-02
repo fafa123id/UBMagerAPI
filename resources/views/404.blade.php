@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Selamat Datang di Portal UBMAGER</title>
+    <title>File Not Found</title>
     <link rel="icon" href="https://ubmagerbucket.s3.ap-southeast-1.amazonaws.com/favicon.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -55,9 +55,14 @@
         }
 
         .logo {
-            width: 150px;
+            max-width: 80px;
+            /* Batasi lebar maksimum logo */
             height: auto;
-            margin-bottom: 30px;
+            /* Pertahankan rasio aspek */
+            display: block;
+            /* Menghilangkan margin bawah default pada img */
+            margin: 0 auto 20px auto;
+            /* Pusatkan logo dan beri jarak bawah */
             animation: bounceIn 1s ease-out;
         }
 
@@ -108,26 +113,6 @@
             flex-wrap: wrap;
             justify-content: center;
             gap: 20px;
-        }
-
-        /* Styling untuk img.logo */
-        .logo {
-            max-width: 80px;
-            /* Batasi lebar maksimum logo */
-            height: auto;
-            /* Pertahankan rasio aspek */
-            display: block;
-            /* Menghilangkan margin bawah default pada img */
-            margin: 0 auto 20px auto;
-            /* Pusatkan logo dan beri jarak bawah */
-        }
-
-        /* Opsional: Styling untuk div.logo-wrapper */
-        .logo-wrapper {
-            text-align: center;
-            /* Memastikan img di tengah jika display:block */
-            margin-bottom: 20px;
-            /* Jarak antara wrapper logo dan container */
         }
 
         .btn {
@@ -258,11 +243,7 @@
 <body>
     <div class="particles" id="particles-js"></div>
     <div class="container">
-        <div class="logo-wrapper">
-            <img src="https://ubmagerbucket.s3.ap-southeast-1.amazonaws.com/favicon.png" alt="UBMAGER Logo" class="logo">
-        </div>
-
-
+        <img src="https://ubmagerbucket.s3.ap-southeast-1.amazonaws.com/favicon.png" alt="UBMAGER Logo" class="logo">
         <h1>File not found</h1>
         <p>Published by UBMAGER</p>
     </div>
