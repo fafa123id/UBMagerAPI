@@ -55,7 +55,6 @@ class OtpDocumentation
      *     )
      * )
      */
-    public function otpVerifySend() {}
 
     /**
      * @OA\Post(
@@ -96,5 +95,4 @@ class OtpDocumentation
      *     )
      * )
      */
-    public function otpResetSend() {}
 }
