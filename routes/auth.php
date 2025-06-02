@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\userController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\OtpSenderController;
 use App\Http\Controllers\Auth\RegisteredUserController;
@@ -24,3 +25,4 @@ Route::post('/login', [AuthenticatedSessionController::class, 'store'])
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth:sanctum')
     ->name('logout');
+Route::get('/be-mitra',[userController::class,'changeRole'])->middleware(['auth:sanctum']);

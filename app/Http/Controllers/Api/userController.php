@@ -66,4 +66,15 @@ class userController extends Controller
         }
         return $this->users->update($id, $request->all());
     }
+    public function changeRole()
+    {
+        auth()->user()->update(['role_id' => 1]);
+        return response()->json(
+            [
+                'success' => true,
+                'message' => 'Role changed successfully'
+            ],
+            200
+        );
+    }
 }
