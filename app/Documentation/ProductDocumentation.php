@@ -17,6 +17,7 @@ namespace App\Documentation;
  *     @OA\Property(property="price", type="number", format="float", description="Product price"),
  *     @OA\Property(property="status", type="string", enum={"available","unavailable"}, description="Product availability status"),
  *     @OA\Property(property="user_id", type="integer", description="Owner user ID"),
+ *     @OA\Property(property="owner", type="string", nullable=true, description="Name of product owner"),
  *     @OA\Property(property="image1", type="string", description="Primary product image URL"),
  *     @OA\Property(property="image2", type="string", nullable=true, description="Secondary product image URL"),
  *     @OA\Property(property="image3", type="string", nullable=true, description="Tertiary product image URL"),
