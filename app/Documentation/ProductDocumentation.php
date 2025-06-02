@@ -16,13 +16,44 @@ namespace App\Documentation;
  *     @OA\Property(property="quantity", type="integer", description="Product quantity in stock"),
  *     @OA\Property(property="price", type="number", format="float", description="Product price"),
  *     @OA\Property(property="status", type="string", enum={"available","unavailable"}, description="Product availability status"),
- *     @OA\Property(property="owner", type="string", nullable=true, description="Name of product owner"),
+ *     @OA\Property(property="user_id", type="integer", description="Owner user ID"),
  *     @OA\Property(property="image1", type="string", description="Primary product image URL"),
  *     @OA\Property(property="image2", type="string", nullable=true, description="Secondary product image URL"),
  *     @OA\Property(property="image3", type="string", nullable=true, description="Tertiary product image URL"),
  *     @OA\Property(property="rating", type="number", format="float", description="Average product rating"),
  *     @OA\Property(property="created_at", type="string", format="date-time", description="Creation timestamp"),
  *     @OA\Property(property="updated_at", type="string", format="date-time", description="Update timestamp"),
+ *     @OA\Property(
+ *         property="user",
+ *         description="Product owner information",
+ *         ref="#/components/schemas/UserResource"
+ *     ),
+ *     @OA\Property(
+ *         property="orders",
+ *         type="array",
+ *         description="Orders for this product",
+ *         @OA\Items(ref="#/components/schemas/Order")
+ *     ),
+ *     @OA\Property(
+ *         property="nego",
+ *         type="array",
+ *         description="Negotiations for this product",
+ *         @OA\Items(ref="#/components/schemas/Nego")
+ *     ),
+ *     @OA\Property(
+ *         property="ratings",
+ *         type="array",
+ *         description="Ratings for this product",
+ *         @OA\Items(ref="#/components/schemas/Rating")
+ *     )
+ * )
+ * @OA\Property(property="owner", type="string", nullable=true, description="Name of product owner"),
+ * @OA\Property(property="image1", type="string", description="Primary product image URL"),
+ * @OA\Property(property="image2", type="string", nullable=true, description="Secondary product image URL"),
+ * @OA\Property(property="image3", type="string", nullable=true, description="Tertiary product image URL"),
+ * @OA\Property(property="rating", type="number", format="float", description="Average product rating"),
+ * @OA\Property(property="created_at", type="string", format="date-time", description="Creation timestamp"),
+ * @OA\Property(property="updated_at", type="string", format="date-time", description="Update timestamp"),
  * )
  * 
  * @OA\Get(

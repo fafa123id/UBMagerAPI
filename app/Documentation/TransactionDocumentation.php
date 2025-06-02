@@ -17,7 +17,18 @@ namespace App\Documentation;
  *     @OA\Property(property="receipt", type="string", description="Transaction receipt number"),
  *     @OA\Property(property="link_payment", type="string", nullable=true, description="Payment link from Midtrans"),
  *     @OA\Property(property="created_at", type="string", format="date-time", description="Creation timestamp"),
- *     @OA\Property(property="updated_at", type="string", format="date-time", description="Update timestamp")
+ *     @OA\Property(property="updated_at", type="string", format="date-time", description="Update timestamp"),
+ *     @OA\Property(
+ *         property="user",
+ *         description="User who made the transaction",
+ *         ref="#/components/schemas/UserResource"
+ *     ),
+ *     @OA\Property(
+ *         property="orders",
+ *         type="array",
+ *         description="Orders in this transaction",
+ *         @OA\Items(ref="#/components/schemas/Order")
+ *     )
  * )
  *
  * @OA\Post(

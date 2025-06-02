@@ -15,7 +15,17 @@ namespace App\Documentation;
  *     @OA\Property(property="nego_price", type="number", format="float", description="Negotiated price"),
  *     @OA\Property(property="status", type="string", enum={"pending","accepted","declined","cancelled"}, description="Negotiation status"),
  *     @OA\Property(property="created_at", type="string", format="date-time", description="Creation timestamp"),
- *     @OA\Property(property="updated_at", type="string", format="date-time", description="Update timestamp")
+ *     @OA\Property(property="updated_at", type="string", format="date-time", description="Update timestamp"),
+ *     @OA\Property(
+ *         property="user",
+ *         description="User who initiated the negotiation",
+ *         ref="#/components/schemas/UserResource"
+ *     ),
+ *     @OA\Property(
+ *         property="product",
+ *         description="Product being negotiated",
+ *         ref="#/components/schemas/Product"
+ *     )
  * )
  *
  * @OA\Post(

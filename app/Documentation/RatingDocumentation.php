@@ -16,7 +16,17 @@ namespace App\Documentation;
  *     @OA\Property(property="comment", type="string", nullable=true, description="Rating comment"),
  *     @OA\Property(property="image", type="string", nullable=true, description="Rating image URL"),
  *     @OA\Property(property="created_at", type="string", format="date-time", description="Creation timestamp"),
- *     @OA\Property(property="updated_at", type="string", format="date-time", description="Update timestamp")
+ *     @OA\Property(property="updated_at", type="string", format="date-time", description="Update timestamp"),
+ *     @OA\Property(
+ *         property="user",
+ *         description="User who gave the rating",
+ *         ref="#/components/schemas/UserResource"
+ *     ),
+ *     @OA\Property(
+ *         property="product",
+ *         description="Product being rated",
+ *         ref="#/components/schemas/Product"
+ *     )
  * )
  *
  * @OA\Post(

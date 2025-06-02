@@ -19,7 +19,22 @@ namespace App\Documentation;
  *     @OA\Property(property="address", type="string", description="Delivery address"),
  *     @OA\Property(property="is_rated", type="boolean", description="Whether order has been rated"),
  *     @OA\Property(property="created_at", type="string", format="date-time", description="Creation timestamp"),
- *     @OA\Property(property="updated_at", type="string", format="date-time", description="Update timestamp")
+ *     @OA\Property(property="updated_at", type="string", format="date-time", description="Update timestamp"),
+ *     @OA\Property(
+ *         property="user",
+ *         description="User who placed the order",
+ *         ref="#/components/schemas/UserResource"
+ *     ),
+ *     @OA\Property(
+ *         property="transaction",
+ *         description="Associated transaction",
+ *         ref="#/components/schemas/Transaction"
+ *     ),
+ *     @OA\Property(
+ *         property="product",
+ *         description="Ordered product",
+ *         ref="#/components/schemas/Product"
+ *     )
  * )
  *
  * @OA\Get(
