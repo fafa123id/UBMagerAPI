@@ -87,30 +87,76 @@ class DatabaseSeeder extends Seeder
 
 
         $user2 = User::where('email', 'buyer@user.test')->first();
+        $user3 = User::where('email', 'scribe@test')->first();
+        $user3->product()->create([
+            'name' => 'Product 3',
+            'type' => 'Clothing',
+            'category' => 'Fashion',
+            'quantity' => 5,
+            'price' => 200000,
+            'description' => 'This is a description for Product 3.',
+            'status' => 'available',
+            'image1' => 'URL_ADDRESS.wikimedia.org/wikipedia/commons/thumb/1/14/Product_sample_icon_picture.png/640px-Product_sample_icon_picture.png',
+        ]);
+        $user3->transaction()->create([
+            'user_id' => $user3->id,
+            'total_price' => 1000000,
+        ]);
+        $user3->order()->create([
+            'user_id' => $user3->id,
+            'product_id' => 3,
+            'transaction_id' => 1,
+            'quantity' => 1,
+            'total_price' => 1000000,
+            'address' => 'Jl. User No. 1, Malang',
+            'status' => 'pending',
+        ]);
+        $user3->nego()->create([
+            'user_id' => $user3->id,
+            'product_id' => 1,
+            'nego_price' => 1000000,
+        ]);
+        $user2->transaction()->create([
+            'user_id' => $user2->id,
+            'total_price' => 1000000,
+        ]);
+        $user2->order()->create([
+            'user_id' => $user2->id,
+            'product_id' => 3,
+            'transaction_id' => 2,
+            'total_price' => 1000000,
+            'address' => 'Jl. User No. 1, Malang',
 
+        ]);
+        $user2->nego()->create([
+            'user_id' => $user2->id,
+            'product_id' => 3,
+            'nego_price' => 1000000,
+            'status' => 'pending',
+        ]);
         Rating::create([
             'user_id' => $user2->id,
-            'product_id' => 1,
+            'product_id' => 3,
             'rating' => 4,
             'comment' => 'Great product!',
         ]);
         Rating::create([
             'user_id' => $user2->id,
-            'product_id' => 2,
+            'product_id' => 3,
             'rating' => 1,
             'comment' => 'bad quality!',
         ]);
         Rating::create([
             'user_id' => $user2->id,
-            'product_id' => 2,
+            'product_id' => 3,
             'rating' => 5,
             'comment' => 'bad quality!',
         ]);
         Rating::create([
             'user_id' => $user2->id,
-            'product_id' => 1,
+            'product_id' => 3,
             'rating' => 3,
             'comment' => 'bad quality!',
         ]);
-    }   
+    }
 }
