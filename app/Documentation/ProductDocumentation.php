@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Documentation;
+
 /**
  * @OA\Tag(
  *     name="Product",
@@ -48,13 +50,6 @@ namespace App\Documentation;
  *         @OA\Items(ref="#/components/schemas/Rating")
  *     )
  * )
- * @OA\Property(property="owner", type="string", nullable=true, description="Name of product owner"),
- * @OA\Property(property="image1", type="string", description="Primary product image URL"),
- * @OA\Property(property="image2", type="string", nullable=true, description="Secondary product image URL"),
- * @OA\Property(property="image3", type="string", nullable=true, description="Tertiary product image URL"),
- * @OA\Property(property="rating", type="number", format="float", description="Average product rating"),
- * @OA\Property(property="created_at", type="string", format="date-time", description="Creation timestamp"),
- * @OA\Property(property="updated_at", type="string", format="date-time", description="Update timestamp"),
  * )
  * 
  * @OA\Get(
@@ -266,6 +261,4 @@ namespace App\Documentation;
  *     )
  * )
  */
-class ProductDocumentation
-{
-}
+class ProductDocumentation {}
