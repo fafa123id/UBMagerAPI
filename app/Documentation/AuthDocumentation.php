@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Documentation;
 
 /**
@@ -310,9 +311,30 @@ namespace App\Documentation;
  *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse")
  *     )
  * )
+ * @OA\Get(
+ *     path="/api/be-mitra",
+ *     operationId="changeToBeMitra",
+ *     tags={"Authentication"},
+ *     summary="Change user role to seller (mitra)",
+ *     description="Change the authenticated user's role from buyer (role_id=0) to seller (role_id=1)",
+ *     security={{"bearerAuth":{}}},
+ *     @OA\Response(
+ *         response=200,
+ *         description="Role changed successfully",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="success", type="boolean", example=true),
+ *             @OA\Property(property="message", type="string", example="Role changed successfully")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=401,
+ *         description="Unauthenticated",
+ *         @OA\JsonContent(ref="#/components/schemas/FailResponse")
+ *     )
+ * )
  */
 
- 
+
 class AuthDocumentation
 {
     // This class is only for documentation purposes
