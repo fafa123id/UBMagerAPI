@@ -267,7 +267,52 @@ namespace App\Documentation;
  *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse")
  *     )
  * )
+ *
+ * @OA\Post(
+ *     path="/api/new-password",
+ *     operationId="newPassword",
+ *     tags={"Authentication"},
+ *     summary="Change user password",
+ *     description="Change the authenticated user's password by providing the old password and new password",
+ *     security={{"bearerAuth":{}}},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"old_password", "password", "password_confirmation"},
+ *             @OA\Property(property="old_password", type="string", description="Current password"),
+ *             @OA\Property(property="password", type="string", format="password", description="New password (minimum 6 characters)"),
+ *             @OA\Property(property="password_confirmation", type="string", format="password", description="Password confirmation")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Password changed successfully",
+ *         @OA\JsonContent(ref="#/components/schemas/SuccessResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Invalid old password",
+ *         @OA\JsonContent(ref="#/components/schemas/FailResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=401,
+ *         description="Unauthenticated",
+ *         @OA\JsonContent(ref="#/components/schemas/FailResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="User not found",
+ *         @OA\JsonContent(ref="#/components/schemas/FailResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Validation error",
+ *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse")
+ *     )
+ * )
  */
+
+ 
 class AuthDocumentation
 {
     // This class is only for documentation purposes
