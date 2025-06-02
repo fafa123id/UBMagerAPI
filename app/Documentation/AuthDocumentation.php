@@ -103,7 +103,7 @@ namespace App\Documentation;
  *     path="/api/verify-email/send",
  *     operationId="sendEmailVerificationOtp",
  *     summary="Send OTP for email verification",
- *     tags={"OTP"},
+ *     tags={"Authentication"},
  *     security={{"bearerAuth":{}}},
  *     @OA\RequestBody(
  *         required=true,
