@@ -1,5 +1,6 @@
 <?php
 namespace App\Documentation;
+
 /**
  * @OA\Tag(
  *     name="Order",
@@ -33,7 +34,7 @@ namespace App\Documentation;
  *     @OA\Property(
  *         property="product",
  *         description="Ordered product",
- *         ref="#/components/schemas/Product"
+ *         ref="#/components/schemas/ProductResource"
  *     )
  * )
  *
@@ -51,6 +52,11 @@ namespace App\Documentation;
  *             @OA\Property(property="success", type="boolean", example=true),
  *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Order"))
  *         )
+ *     ),
+ *     @OA\Response(
+ *         response=401,
+ *         description="Unauthorized - Seller access required",
+ *         @OA\JsonContent(ref="#/components/schemas/FailResponse")
  *     )
  * )
  *
@@ -59,7 +65,7 @@ namespace App\Documentation;
  *     operationId="processOrder",
  *     tags={"Order"},
  *     summary="Process order",
- *     description="Mark order as processed by seller",
+ *     description="Mark order as processed by seller (changes status from processing to proccessed)",
  *     security={{"bearerAuth":{}}},
  *     @OA\Parameter(
  *         name="id",
@@ -79,7 +85,18 @@ namespace App\Documentation;
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Order is not in processing state"
+ *         description="Order is not in processing state",
+ *         @OA\JsonContent(ref="#/components/schemas/FailResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=401,
+ *         description="Unauthorized - Seller access required",
+ *         @OA\JsonContent(ref="#/components/schemas/FailResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Order not found",
+ *         @OA\JsonContent(ref="#/components/schemas/FailResponse")
  *     )
  * )
  *
@@ -88,7 +105,7 @@ namespace App\Documentation;
  *     operationId="finishOrder",
  *     tags={"Order"},
  *     summary="Finish order",
- *     description="Mark order as finished by buyer",
+ *     description="Mark order as finished by buyer (changes status from proccessed to finished)",
  *     security={{"bearerAuth":{}}},
  *     @OA\Parameter(
  *         name="id",
@@ -105,9 +122,25 @@ namespace App\Documentation;
  *             @OA\Property(property="message", type="string", example="Order finished successfully"),
  *             @OA\Property(property="data", ref="#/components/schemas/Order")
  *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Order is not in proccessed state",
+ *         @OA\JsonContent(ref="#/components/schemas/FailResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=401,
+ *         description="Unauthorized - Buyer access required",
+ *         @OA\JsonContent(ref="#/components/schemas/FailResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Order not found",
+ *         @OA\JsonContent(ref="#/components/schemas/FailResponse")
  *     )
  * )
  */
 class OrderDocumentation
 {
+    // This class is only for documentation purposes
 }

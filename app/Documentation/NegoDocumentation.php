@@ -1,5 +1,6 @@
 <?php
 namespace App\Documentation;
+
 /**
  * @OA\Tag(
  *     name="Negotiation",
@@ -13,9 +14,9 @@ namespace App\Documentation;
  *     @OA\Property(property="user_id", type="integer", description="User ID who initiated negotiation"),
  *     @OA\Property(property="product_id", type="integer", description="Product ID being negotiated"),
  *     @OA\Property(property="nego_price", type="number", format="float", description="Negotiated price"),
- *     @OA\Property(property="status", type="string", enum={"pending","accepted","declined","cancelled"}, description="Negotiation status"),
- *     @OA\Property(property="created_at", type="string", format="date-time", description="Creation timestamp"),
- *     @OA\Property(property="updated_at", type="string", format="date-time", description="Update timestamp"),
+ *     @OA\Property(property="status", type="string", enum={"pending","accepted","rejected","cancelled"}, description="Negotiation status"),
+ *     @OA\Property(property="created_at", type="string", format="date-time"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time"),
  *     @OA\Property(
  *         property="user",
  *         description="User who initiated the negotiation",
@@ -24,7 +25,7 @@ namespace App\Documentation;
  *     @OA\Property(
  *         property="product",
  *         description="Product being negotiated",
- *         ref="#/components/schemas/Product"
+ *         ref="#/components/schemas/ProductResource"
  *     )
  * )
  *
@@ -39,22 +40,28 @@ namespace App\Documentation;
  *         required=true,
  *         @OA\JsonContent(
  *             required={"product_id", "nego_price"},
- *             @OA\Property(property="product_id", type="integer", description="Product ID to negotiate"),
- *             @OA\Property(property="nego_price", type="number", format="float", description="Proposed negotiation price")
+ *             @OA\Property(property="product_id", type="integer", description="Product ID"),
+ *             @OA\Property(property="nego_price", type="number", format="float", minimum=0, description="Proposed negotiation price")
  *         )
  *     ),
  *     @OA\Response(
- *         response=201,
+ *         response=200,
  *         description="Negotiation request created successfully",
  *         @OA\JsonContent(
  *             @OA\Property(property="success", type="boolean", example=true),
- *             @OA\Property(property="message", type="string", example="Negotiation request submitted successfully"),
+ *             @OA\Property(property="message", type="string", example="Nego request created successfully."),
  *             @OA\Property(property="data", ref="#/components/schemas/Nego")
  *         )
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Validation error or product not negotiable"
+ *         description="Product not negotiable or validation error",
+ *         @OA\JsonContent(ref="#/components/schemas/FailResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Validation error",
+ *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse")
  *     )
  * )
  *
@@ -62,15 +69,26 @@ namespace App\Documentation;
  *     path="/api/nego",
  *     operationId="myNegos",
  *     tags={"Negotiation"},
- *     summary="Get user negotiations",
- *     description="Get all negotiations initiated by authenticated user",
+ *     summary="Get user's negotiations",
+ *     description="Retrieve all negotiation requests made by the authenticated user",
  *     security={{"bearerAuth":{}}},
+ *     @OA\Parameter(
+ *         name="filter",
+ *         in="query",
+ *         description="Filter by status (comma-separated)",
+ *         required=false,
+ *         @OA\Schema(type="string", example="pending,accepted")
+ *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Successful operation",
+ *         description="Negotiations retrieved successfully",
  *         @OA\JsonContent(
  *             @OA\Property(property="success", type="boolean", example=true),
- *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Nego"))
+ *             @OA\Property(
+ *                 property="data",
+ *                 type="array",
+ *                 @OA\Items(ref="#/components/schemas/Nego")
+ *             )
  *         )
  *     )
  * )
@@ -80,7 +98,7 @@ namespace App\Documentation;
  *     operationId="negoDetail",
  *     tags={"Negotiation"},
  *     summary="Get negotiation details",
- *     description="Get details of a specific negotiation",
+ *     description="Retrieve details of a specific negotiation",
  *     security={{"bearerAuth":{}}},
  *     @OA\Parameter(
  *         name="id",
@@ -91,11 +109,16 @@ namespace App\Documentation;
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Successful operation",
+ *         description="Negotiation details retrieved successfully",
  *         @OA\JsonContent(
  *             @OA\Property(property="success", type="boolean", example=true),
  *             @OA\Property(property="data", ref="#/components/schemas/Nego")
  *         )
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Negotiation not found",
+ *         @OA\JsonContent(ref="#/components/schemas/FailResponse")
  *     )
  * )
  *
@@ -104,7 +127,7 @@ namespace App\Documentation;
  *     operationId="cancelNego",
  *     tags={"Negotiation"},
  *     summary="Cancel negotiation",
- *     description="Cancel a pending negotiation",
+ *     description="Cancel a negotiation request",
  *     security={{"bearerAuth":{}}},
  *     @OA\Parameter(
  *         name="id",
@@ -118,8 +141,14 @@ namespace App\Documentation;
  *         description="Negotiation cancelled successfully",
  *         @OA\JsonContent(
  *             @OA\Property(property="success", type="boolean", example=true),
- *             @OA\Property(property="message", type="string", example="Negotiation cancelled successfully")
+ *             @OA\Property(property="message", type="string"),
+ *             @OA\Property(property="data", ref="#/components/schemas/Nego")
  *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Cannot cancel negotiation",
+ *         @OA\JsonContent(ref="#/components/schemas/FailResponse")
  *     )
  * )
  *
@@ -127,16 +156,25 @@ namespace App\Documentation;
  *     path="/api/nego-seller",
  *     operationId="sellerNegos",
  *     tags={"Negotiation"},
- *     summary="Get seller negotiations",
- *     description="Get all negotiations for products owned by authenticated seller",
+ *     summary="Get seller's received negotiations",
+ *     description="Retrieve all negotiation requests received by the seller",
  *     security={{"bearerAuth":{}}},
  *     @OA\Response(
  *         response=200,
- *         description="Successful operation",
+ *         description="Seller negotiations retrieved successfully",
  *         @OA\JsonContent(
  *             @OA\Property(property="success", type="boolean", example=true),
- *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Nego"))
+ *             @OA\Property(
+ *                 property="data",
+ *                 type="array",
+ *                 @OA\Items(ref="#/components/schemas/Nego")
+ *             )
  *         )
+ *     ),
+ *     @OA\Response(
+ *         response=401,
+ *         description="Unauthorized - Seller access required",
+ *         @OA\JsonContent(ref="#/components/schemas/FailResponse")
  *     )
  * )
  *
@@ -145,7 +183,7 @@ namespace App\Documentation;
  *     operationId="sellerNegoDetail",
  *     tags={"Negotiation"},
  *     summary="Get seller negotiation details",
- *     description="Get details of a specific negotiation for seller",
+ *     description="Retrieve details of a specific negotiation for seller",
  *     security={{"bearerAuth":{}}},
  *     @OA\Parameter(
  *         name="id",
@@ -156,11 +194,21 @@ namespace App\Documentation;
  *     ),
  *     @OA\Response(
  *         response=200,
- *         description="Successful operation",
+ *         description="Seller negotiation details retrieved successfully",
  *         @OA\JsonContent(
  *             @OA\Property(property="success", type="boolean", example=true),
  *             @OA\Property(property="data", ref="#/components/schemas/Nego")
  *         )
+ *     ),
+ *     @OA\Response(
+ *         response=401,
+ *         description="Unauthorized - Seller access required",
+ *         @OA\JsonContent(ref="#/components/schemas/FailResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Negotiation not found",
+ *         @OA\JsonContent(ref="#/components/schemas/FailResponse")
  *     )
  * )
  *
@@ -169,7 +217,7 @@ namespace App\Documentation;
  *     operationId="acceptNego",
  *     tags={"Negotiation"},
  *     summary="Accept negotiation",
- *     description="Accept a negotiation request as seller",
+ *     description="Accept a negotiation request (seller only)",
  *     security={{"bearerAuth":{}}},
  *     @OA\Parameter(
  *         name="id",
@@ -183,8 +231,19 @@ namespace App\Documentation;
  *         description="Negotiation accepted successfully",
  *         @OA\JsonContent(
  *             @OA\Property(property="success", type="boolean", example=true),
- *             @OA\Property(property="message", type="string", example="Negotiation accepted successfully")
+ *             @OA\Property(property="message", type="string"),
+ *             @OA\Property(property="data", ref="#/components/schemas/Nego")
  *         )
+ *     ),
+ *     @OA\Response(
+ *         response=401,
+ *         description="Unauthorized - Seller access required",
+ *         @OA\JsonContent(ref="#/components/schemas/FailResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Cannot accept negotiation",
+ *         @OA\JsonContent(ref="#/components/schemas/FailResponse")
  *     )
  * )
  *
@@ -193,7 +252,7 @@ namespace App\Documentation;
  *     operationId="declineNego",
  *     tags={"Negotiation"},
  *     summary="Decline negotiation",
- *     description="Decline a negotiation request as seller",
+ *     description="Decline a negotiation request (seller only)",
  *     security={{"bearerAuth":{}}},
  *     @OA\Parameter(
  *         name="id",
@@ -207,11 +266,23 @@ namespace App\Documentation;
  *         description="Negotiation declined successfully",
  *         @OA\JsonContent(
  *             @OA\Property(property="success", type="boolean", example=true),
- *             @OA\Property(property="message", type="string", example="Negotiation declined successfully")
+ *             @OA\Property(property="message", type="string"),
+ *             @OA\Property(property="data", ref="#/components/schemas/Nego")
  *         )
+ *     ),
+ *     @OA\Response(
+ *         response=401,
+ *         description="Unauthorized - Seller access required",
+ *         @OA\JsonContent(ref="#/components/schemas/FailResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Cannot decline negotiation",
+ *         @OA\JsonContent(ref="#/components/schemas/FailResponse")
  *     )
  * )
  */
 class NegoDocumentation
 {
+    // This class is only for documentation purposes
 }

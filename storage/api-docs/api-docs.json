@@ -19,13 +19,108 @@
         }
     ],
     "paths": {
+        "/api/register": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Register a new user",
+                "description": "Create a new user account",
+                "operationId": "register",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "password_confirmation",
+                                    "phone",
+                                    "address"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "User name",
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "description": "User email",
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "password": {
+                                        "description": "User password",
+                                        "type": "string",
+                                        "format": "password"
+                                    },
+                                    "password_confirmation": {
+                                        "description": "Password confirmation",
+                                        "type": "string",
+                                        "format": "password"
+                                    },
+                                    "role_id": {
+                                        "description": "User role (0=buyer, 1=seller)",
+                                        "type": "integer",
+                                        "default": 0
+                                    },
+                                    "phone": {
+                                        "description": "User phone number",
+                                        "type": "string"
+                                    },
+                                    "address": {
+                                        "description": "User address",
+                                        "type": "string"
+                                    },
+                                    "image": {
+                                        "description": "User profile image",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User registered successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Register Berhasil"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/login": {
             "post": {
                 "tags": [
                     "Authentication"
                 ],
                 "summary": "Login user",
-                "description": "Authenticates user and returns a token",
+                "description": "Authenticate user and return access token",
                 "operationId": "login",
                 "requestBody": {
                     "required": true,
@@ -40,14 +135,12 @@
                                     "email": {
                                         "description": "User email",
                                         "type": "string",
-                                        "format": "email",
-                                        "example": "user@example.com"
+                                        "format": "email"
                                     },
                                     "password": {
                                         "description": "User password",
                                         "type": "string",
-                                        "format": "password",
-                                        "example": "password123"
+                                        "format": "password"
                                     }
                                 },
                                 "type": "object"
@@ -56,15 +149,15 @@
                     }
                 },
                 "responses": {
-                    "201": {
+                    "200": {
                         "description": "Login successful",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "token": {
-                                            "type": "string",
-                                            "example": "1|laravel_sanctum_MQxyqMYMHVkH5OzJAMOFfgdv4nFhSltI4w65eUZH"
+                                            "description": "Access token",
+                                            "type": "string"
                                         },
                                         "message": {
                                             "type": "string",
@@ -77,10 +170,24 @@
                         }
                     },
                     "422": {
-                        "description": "Validation error"
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
                     },
-                    "401": {
-                        "description": "Invalid credentials"
+                    "429": {
+                        "description": "Too many login attempts",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -91,10 +198,10 @@
                     "Authentication"
                 ],
                 "summary": "Logout user",
-                "description": "Destroys the user's current authenticated session and removes tokens",
+                "description": "Revoke user access token",
                 "operationId": "logout",
                 "responses": {
-                    "201": {
+                    "200": {
                         "description": "Logout successful",
                         "content": {
                             "application/json": {
@@ -111,7 +218,14 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated"
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -121,349 +235,41 @@
                 ]
             }
         },
-        "/api/register": {
+        "/api/verify-email/send": {
             "post": {
                 "tags": [
                     "Authentication"
                 ],
-                "summary": "Register a new user",
-                "operationId": "bf259135e47008dbee3402cfbcf346b8",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "name",
-                                    "email",
-                                    "password",
-                                    "password_confirmation",
-                                    "role_id",
-                                    "phone"
-                                ],
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "John Doe"
-                                    },
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "john@example.com"
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "password123"
-                                    },
-                                    "password_confirmation": {
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "password123"
-                                    },
-                                    "role_id": {
-                                        "type": "integer",
-                                        "example": 2
-                                    },
-                                    "phone": {
-                                        "type": "string",
-                                        "example": "+6281234567890"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Register successful",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Register Berhasil"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "The given data was invalid."
-                                        },
-                                        "errors": {
-                                            "type": "object",
-                                            "example": {
-                                                "email": [
-                                                    "The email has already been taken."
-                                                ]
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/forgot-password/verify": {
-            "post": {
-                "tags": [
-                    "Authentication"
-                ],
-                "summary": "Verify OTP sent to the user's email to reset password.",
-                "operationId": "verifyOtp",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "email",
-                                    "otp"
-                                ],
-                                "properties": {
-                                    "email": {
-                                        "type": "string",
-                                        "example": "user@example.com"
-                                    },
-                                    "otp": {
-                                        "type": "string",
-                                        "example": "123456"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
+                "summary": "Send email verification OTP",
+                "description": "Send OTP to user's email for verification",
+                "operationId": "sendEmailVerification",
                 "responses": {
                     "200": {
-                        "description": "OTP verified and token generated.",
+                        "description": "OTP sent successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "OTP verified"
-                                        },
-                                        "token": {
-                                            "type": "string",
-                                            "example": "abcdef1234567890"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/SuccessResponse"
                                 }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Invalid OTP or expired OTP.",
+                    "429": {
+                        "description": "Too many requests",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Invalid or OTP Expired"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/reset-password": {
-            "post": {
-                "tags": [
-                    "Authentication"
-                ],
-                "summary": "Reset user password using the reset token.",
-                "operationId": "resetPassword",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "email",
-                                    "password",
-                                    "password_confirmation",
-                                    "token"
-                                ],
-                                "properties": {
-                                    "email": {
-                                        "type": "string",
-                                        "example": "user@example.com"
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "example": "newPassword123"
-                                    },
-                                    "password_confirmation": {
-                                        "type": "string",
-                                        "example": "newPassword123"
-                                    },
-                                    "token": {
-                                        "type": "string",
-                                        "example": "abcdef1234567890"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Password successfully reset.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Password reset successfully"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/FailResponse"
                                 }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Token expired or invalid.",
+                    "409": {
+                        "description": "Email already verified",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Token expired"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "User not found or token not found.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "User not found"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/new-password": {
-            "post": {
-                "tags": [
-                    "Authentication"
-                ],
-                "summary": "Allow authenticated user to change their own password.",
-                "operationId": "newPassword",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "old_password",
-                                    "password",
-                                    "password_confirmation"
-                                ],
-                                "properties": {
-                                    "old_password": {
-                                        "type": "string",
-                                        "example": "oldPassword123"
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "example": "newPassword123"
-                                    },
-                                    "password_confirmation": {
-                                        "type": "string",
-                                        "example": "newPassword123"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Password successfully changed.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Password reset successfully"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid old password or token.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Invalid token"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "User not found.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "User not found"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/FailResponse"
                                 }
                             }
                         }
@@ -481,7 +287,8 @@
                 "tags": [
                     "Authentication"
                 ],
-                "summary": "Verify user's email address using OTP.",
+                "summary": "Verify email with OTP",
+                "description": "Verify user's email using OTP",
                 "operationId": "verifyEmail",
                 "requestBody": {
                     "required": true,
@@ -494,12 +301,13 @@
                                 ],
                                 "properties": {
                                     "email": {
+                                        "description": "User email",
                                         "type": "string",
-                                        "example": "user@example.com"
+                                        "format": "email"
                                     },
                                     "otp": {
-                                        "type": "string",
-                                        "example": "123456"
+                                        "description": "OTP code",
+                                        "type": "string"
                                     }
                                 },
                                 "type": "object"
@@ -509,559 +317,21 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "OTP verified and email status updated.",
+                        "description": "Email verified successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "OTP verified"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/SuccessResponse"
                                 }
                             }
                         }
                     },
                     "400": {
-                        "description": "Invalid OTP or expired OTP.",
+                        "description": "Invalid or expired OTP",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Invalid or OTP Expired"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "User not found.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "User not found"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/cart": {
-            "get": {
-                "tags": [
-                    "Cart"
-                ],
-                "summary": "Get all items in user's cart",
-                "description": "Returns a list of all items in the authenticated user's cart",
-                "operationId": "getCartItems",
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "integer",
-                                            "example": 200
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Cart retrieved successfully"
-                                        },
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/Cart"
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized - Authentication required"
-                    },
-                    "500": {
-                        "description": "Internal server error"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "post": {
-                "tags": [
-                    "Cart"
-                ],
-                "summary": "Add item to cart",
-                "description": "Adds a product to the user's cart",
-                "operationId": "addToCart",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "product_id",
-                                    "amount"
-                                ],
-                                "properties": {
-                                    "product_id": {
-                                        "description": "Product ID to add to cart",
-                                        "type": "integer",
-                                        "example": 1
-                                    },
-                                    "amount": {
-                                        "description": "Quantity to add",
-                                        "type": "integer",
-                                        "example": 1
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Item added to cart successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Cart"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Validation error"
-                    },
-                    "401": {
-                        "description": "Unauthorized - Authentication required"
-                    },
-                    "404": {
-                        "description": "Product not found"
-                    },
-                    "500": {
-                        "description": "Internal server error"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "Cart"
-                ],
-                "summary": "Clear entire cart",
-                "description": "Removes all items from the user's cart",
-                "operationId": "clearCart",
-                "responses": {
-                    "200": {
-                        "description": "Cart cleared successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "integer",
-                                            "example": 200
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "All cart deleted"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized - Authentication required"
-                    },
-                    "500": {
-                        "description": "Internal server error"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/cart/{id}": {
-            "get": {
-                "tags": [
-                    "Cart"
-                ],
-                "summary": "Get specific cart item",
-                "description": "Returns a specific cart item by ID",
-                "operationId": "getCartItem",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Cart item ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Cart"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Cart item not found"
-                    },
-                    "401": {
-                        "description": "Unauthorized - Authentication required"
-                    },
-                    "500": {
-                        "description": "Internal server error"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "put": {
-                "tags": [
-                    "Cart"
-                ],
-                "summary": "Update cart item quantity",
-                "description": "Updates the quantity of a specific item in the cart",
-                "operationId": "updateCartItem",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Cart item ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "amount"
-                                ],
-                                "properties": {
-                                    "amount": {
-                                        "description": "New quantity",
-                                        "type": "integer",
-                                        "example": 3
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Cart item updated successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Cart"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Validation error"
-                    },
-                    "401": {
-                        "description": "Unauthorized - Authentication required"
-                    },
-                    "404": {
-                        "description": "Cart item not found"
-                    },
-                    "500": {
-                        "description": "Internal server error"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "Cart"
-                ],
-                "summary": "Remove item from cart",
-                "description": "Removes a specific item from the cart completely",
-                "operationId": "removeCartItem",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Cart item ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Cart item removed successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "integer",
-                                            "example": 200
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Cart deleted"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized - Authentication required"
-                    },
-                    "404": {
-                        "description": "Cart item not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "integer",
-                                            "example": 404
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Cart not found"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/cart/{id}/add-one": {
-            "post": {
-                "tags": [
-                    "Cart"
-                ],
-                "summary": "Increment cart item by one",
-                "description": "Increases the quantity of a specific cart item by one",
-                "operationId": "incrementCartItem",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Cart item ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Cart item quantity increased successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Cart"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized - Authentication required"
-                    },
-                    "404": {
-                        "description": "Cart item not found"
-                    },
-                    "500": {
-                        "description": "Internal server error"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/cart/{id}/remove-one": {
-            "post": {
-                "tags": [
-                    "Cart"
-                ],
-                "summary": "Decrement cart item by one",
-                "description": "Decreases the quantity of a specific cart item by one. If quantity becomes zero, removes the item completely",
-                "operationId": "decrementCartItem",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Cart item ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Cart item quantity decreased or item removed successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Cart"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized - Authentication required"
-                    },
-                    "404": {
-                        "description": "Cart item not found"
-                    },
-                    "500": {
-                        "description": "Internal server error"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/verify-email/send": {
-            "post": {
-                "tags": [
-                    "OTP"
-                ],
-                "summary": "Send OTP for email verification",
-                "operationId": "6db454c0bb642336dfe7c2184e0f1e15",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "email"
-                                ],
-                                "properties": {
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "user@example.com"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "OTP sent successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "OTP sent successfully"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "500": {
-                        "description": "Failed to send OTP",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Failed to send OTP"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/FailResponse"
                                 }
                             }
                         }
@@ -1077,10 +347,11 @@
         "/api/forgot-password": {
             "post": {
                 "tags": [
-                    "OTP"
+                    "Authentication"
                 ],
-                "summary": "Send OTP for password reset",
-                "operationId": "4fc190b381bf1cee5203dd962294d592",
+                "summary": "Send password reset OTP",
+                "description": "Send OTP to user's email for password reset",
+                "operationId": "forgotPassword",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -1091,9 +362,9 @@
                                 ],
                                 "properties": {
                                     "email": {
+                                        "description": "User email",
                                         "type": "string",
-                                        "format": "email",
-                                        "example": "user@example.com"
+                                        "format": "email"
                                     }
                                 },
                                 "type": "object"
@@ -1107,29 +378,27 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "OTP sent successfully"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/SuccessResponse"
                                 }
                             }
                         }
                     },
-                    "500": {
-                        "description": "Failed to send OTP",
+                    "429": {
+                        "description": "Too many requests",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Failed to send OTP"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
                                 }
                             }
                         }
@@ -1137,130 +406,32 @@
                 }
             }
         },
-        "/api/product": {
-            "get": {
-                "tags": [
-                    "Product"
-                ],
-                "summary": "Get list of products",
-                "description": "Returns list of products with optional filtering by type, category, and search query",
-                "operationId": "getProductsList",
-                "parameters": [
-                    {
-                        "name": "type",
-                        "in": "query",
-                        "description": "Filter by product type(s), comma-separated. Use 'all' for all types",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "category",
-                        "in": "query",
-                        "description": "Filter by product category(ies), comma-separated. Use 'all' for all categories",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "query",
-                        "in": "query",
-                        "description": "Search query string",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "integer",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Product retrieved successfully"
-                                        },
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/Product"
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "500": {
-                        "description": "Server error"
-                    }
-                }
-            },
+        "/api/forgot-password/verify": {
             "post": {
                 "tags": [
-                    "Product"
+                    "Authentication"
                 ],
-                "summary": "Create a new product",
-                "description": "Stores a new product in the database",
-                "operationId": "storeProduct",
+                "summary": "Verify password reset OTP",
+                "description": "Verify OTP and get reset token",
+                "operationId": "verifyPasswordResetOtp",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "name",
-                                    "type",
-                                    "category",
-                                    "description",
-                                    "price"
+                                    "email",
+                                    "otp"
                                 ],
                                 "properties": {
-                                    "name": {
+                                    "email": {
+                                        "description": "User email",
                                         "type": "string",
-                                        "example": "Product Name"
+                                        "format": "email"
                                     },
-                                    "type": {
-                                        "type": "string",
-                                        "example": "electronics"
-                                    },
-                                    "category": {
-                                        "type": "string",
-                                        "example": "smartphone"
-                                    },
-                                    "description": {
-                                        "type": "string",
-                                        "example": "Product description"
-                                    },
-                                    "quantity": {
-                                        "type": "integer",
-                                        "example": 10
-                                    },
-                                    "price": {
-                                        "type": "number",
-                                        "format": "float",
-                                        "example": 599.99
-                                    },
-                                    "status": {
-                                        "type": "string",
-                                        "enum": [
-                                            "available",
-                                            "unavailable"
-                                        ],
-                                        "example": "available"
+                                    "otp": {
+                                        "description": "OTP code",
+                                        "type": "string"
                                     }
                                 },
                                 "type": "object"
@@ -1270,24 +441,343 @@
                 },
                 "responses": {
                     "200": {
+                        "description": "OTP verified, reset token provided",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "properties": {
+                                                        "token": {
+                                                            "description": "Reset token",
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid or expired OTP",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/reset-password": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Reset password",
+                "description": "Reset user password using reset token",
+                "operationId": "resetPassword",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password",
+                                    "password_confirmation",
+                                    "token"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "description": "User email",
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "password": {
+                                        "description": "New password",
+                                        "type": "string",
+                                        "format": "password"
+                                    },
+                                    "password_confirmation": {
+                                        "description": "Password confirmation",
+                                        "type": "string",
+                                        "format": "password"
+                                    },
+                                    "token": {
+                                        "description": "Reset token",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password reset successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid or expired token",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/history": {
+            "get": {
+                "tags": [
+                    "History"
+                ],
+                "summary": "Get user transaction history",
+                "description": "Get all transaction history with orders for authenticated user",
+                "operationId": "getHistory",
+                "responses": {
+                    "200": {
                         "description": "Successful operation",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
-                                            "type": "integer",
+                                        "success": {
+                                            "type": "boolean",
                                             "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Product created successfully"
                                         },
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/Product"
+                                                "properties": {
+                                                    "transaction": {
+                                                        "$ref": "#/components/schemas/Transaction"
+                                                    },
+                                                    "orders": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "$ref": "#/components/schemas/Order"
+                                                        }
+                                                    }
+                                                },
+                                                "type": "object"
                                             }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/history/{id}": {
+            "get": {
+                "tags": [
+                    "History"
+                ],
+                "summary": "Get transaction history detail",
+                "description": "Get details of a specific transaction with orders from history",
+                "operationId": "getHistoryDetail",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Transaction ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "transaction": {
+                                                    "$ref": "#/components/schemas/Transaction"
+                                                },
+                                                "orders": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Order"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Transaction not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/nego": {
+            "get": {
+                "tags": [
+                    "Negotiation"
+                ],
+                "summary": "Get user's negotiations",
+                "description": "Retrieve all negotiation requests made by the authenticated user",
+                "operationId": "myNegos",
+                "parameters": [
+                    {
+                        "name": "filter",
+                        "in": "query",
+                        "description": "Filter by status (comma-separated)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "pending,accepted"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Negotiations retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Nego"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Negotiation"
+                ],
+                "summary": "Request price negotiation",
+                "description": "Submit a price negotiation request for a product",
+                "operationId": "requestNego",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "product_id",
+                                    "nego_price"
+                                ],
+                                "properties": {
+                                    "product_id": {
+                                        "description": "Product ID",
+                                        "type": "integer"
+                                    },
+                                    "nego_price": {
+                                        "description": "Proposed negotiation price",
+                                        "type": "number",
+                                        "format": "float",
+                                        "minimum": 0
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Negotiation request created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Nego request created successfully."
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Nego"
                                         }
                                     },
                                     "type": "object"
@@ -1296,10 +786,801 @@
                         }
                     },
                     "400": {
-                        "description": "Validation error"
+                        "description": "Product not negotiable or validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
                     },
-                    "500": {
-                        "description": "Server error"
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/nego/{id}": {
+            "get": {
+                "tags": [
+                    "Negotiation"
+                ],
+                "summary": "Get negotiation details",
+                "description": "Retrieve details of a specific negotiation",
+                "operationId": "negoDetail",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Negotiation ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Negotiation details retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Nego"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Negotiation not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/nego/cancel/{id}": {
+            "get": {
+                "tags": [
+                    "Negotiation"
+                ],
+                "summary": "Cancel negotiation",
+                "description": "Cancel a negotiation request",
+                "operationId": "cancelNego",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Negotiation ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Negotiation cancelled successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Nego"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot cancel negotiation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/nego-seller": {
+            "get": {
+                "tags": [
+                    "Negotiation"
+                ],
+                "summary": "Get seller's received negotiations",
+                "description": "Retrieve all negotiation requests received by the seller",
+                "operationId": "sellerNegos",
+                "responses": {
+                    "200": {
+                        "description": "Seller negotiations retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Nego"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - Seller access required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/nego-seller/{id}": {
+            "get": {
+                "tags": [
+                    "Negotiation"
+                ],
+                "summary": "Get seller negotiation details",
+                "description": "Retrieve details of a specific negotiation for seller",
+                "operationId": "sellerNegoDetail",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Negotiation ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Seller negotiation details retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Nego"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - Seller access required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Negotiation not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/nego/accept/{id}": {
+            "get": {
+                "tags": [
+                    "Negotiation"
+                ],
+                "summary": "Accept negotiation",
+                "description": "Accept a negotiation request (seller only)",
+                "operationId": "acceptNego",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Negotiation ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Negotiation accepted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Nego"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - Seller access required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot accept negotiation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/nego/decline/{id}": {
+            "get": {
+                "tags": [
+                    "Negotiation"
+                ],
+                "summary": "Decline negotiation",
+                "description": "Decline a negotiation request (seller only)",
+                "operationId": "declineNego",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Negotiation ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Negotiation declined successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Nego"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - Seller access required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot decline negotiation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/orders": {
+            "get": {
+                "tags": [
+                    "Order"
+                ],
+                "summary": "Get seller orders",
+                "description": "Get all orders for products owned by authenticated seller",
+                "operationId": "getOrders",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Order"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - Seller access required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/orders/{id}/process": {
+            "get": {
+                "tags": [
+                    "Order"
+                ],
+                "summary": "Process order",
+                "description": "Mark order as processed by seller (changes status from processing to proccessed)",
+                "operationId": "processOrder",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Order ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order processed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Order processed successfully"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Order"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Order is not in processing state",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - Seller access required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Order not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/orders/{id}/finish": {
+            "get": {
+                "tags": [
+                    "Order"
+                ],
+                "summary": "Finish order",
+                "description": "Mark order as finished by buyer (changes status from proccessed to finished)",
+                "operationId": "finishOrder",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Order ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order finished successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Order finished successfully"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Order"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Order is not in proccessed state",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - Buyer access required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Order not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/product": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Get all products",
+                "description": "Retrieve all products with optional filtering by type, category, and search query",
+                "operationId": "getProducts",
+                "parameters": [
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "Filter by product type (comma-separated for multiple)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "category",
+                        "in": "query",
+                        "description": "Filter by product category (comma-separated for multiple)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "query",
+                        "in": "query",
+                        "description": "Search query for product name or owner name",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Products retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/ProductResource"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Create a new product",
+                "description": "Store a newly created product for seller",
+                "operationId": "storeProduct",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "type",
+                                    "category",
+                                    "description",
+                                    "price",
+                                    "image1"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "Product name",
+                                        "type": "string"
+                                    },
+                                    "type": {
+                                        "description": "Product type",
+                                        "type": "string"
+                                    },
+                                    "category": {
+                                        "description": "Product category",
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "description": "Product description",
+                                        "type": "string"
+                                    },
+                                    "quantity": {
+                                        "description": "Product quantity",
+                                        "type": "integer",
+                                        "minimum": 0
+                                    },
+                                    "price": {
+                                        "description": "Product price",
+                                        "type": "number",
+                                        "format": "float",
+                                        "minimum": 0
+                                    },
+                                    "status": {
+                                        "description": "Product status",
+                                        "type": "string",
+                                        "enum": [
+                                            "available",
+                                            "unavailable"
+                                        ]
+                                    },
+                                    "image1": {
+                                        "description": "Primary product image",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "image2": {
+                                        "description": "Secondary product image",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "image3": {
+                                        "description": "Tertiary product image",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Product created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/ProductResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - Seller access required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -1314,9 +1595,9 @@
                 "tags": [
                     "Product"
                 ],
-                "summary": "Get product information",
-                "description": "Returns product data for a specific ID",
-                "operationId": "getProductById",
+                "summary": "Get product by ID",
+                "description": "Retrieve a specific product by its ID",
+                "operationId": "getProduct",
                 "parameters": [
                     {
                         "name": "id",
@@ -1324,43 +1605,42 @@
                         "description": "Product ID",
                         "required": true,
                         "schema": {
-                            "type": "integer",
-                            "format": "int64"
+                            "type": "integer"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful operation",
+                        "description": "Product retrieved successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "integer",
-                                            "example": true
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
                                         },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Product retrieved successfully"
-                                        },
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/Product"
-                                            }
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/ProductResource"
+                                                }
+                                            },
+                                            "type": "object"
                                         }
-                                    },
-                                    "type": "object"
+                                    ]
                                 }
                             }
                         }
                     },
                     "404": {
-                        "description": "Product not found"
-                    },
-                    "500": {
-                        "description": "Server error"
+                        "description": "Product not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
                     }
                 }
             },
@@ -1368,8 +1648,8 @@
                 "tags": [
                     "Product"
                 ],
-                "summary": "Update an existing product",
-                "description": "Updates a product's information",
+                "summary": "Update a product",
+                "description": "Update an existing product (seller only)",
                 "operationId": "updateProduct",
                 "parameters": [
                     {
@@ -1378,49 +1658,65 @@
                         "description": "Product ID",
                         "required": true,
                         "schema": {
-                            "type": "integer",
-                            "format": "int64"
+                            "type": "integer"
                         }
                     }
                 ],
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "properties": {
                                     "name": {
-                                        "type": "string",
-                                        "example": "Updated Product Name"
+                                        "description": "Product name",
+                                        "type": "string"
                                     },
                                     "type": {
-                                        "type": "string",
-                                        "example": "electronics"
+                                        "description": "Product type",
+                                        "type": "string"
                                     },
                                     "category": {
-                                        "type": "string",
-                                        "example": "laptop"
+                                        "description": "Product category",
+                                        "type": "string"
                                     },
                                     "description": {
-                                        "type": "string",
-                                        "example": "Updated product description"
+                                        "description": "Product description",
+                                        "type": "string"
                                     },
                                     "quantity": {
+                                        "description": "Product quantity",
                                         "type": "integer",
-                                        "example": 15
+                                        "minimum": 0
                                     },
                                     "price": {
+                                        "description": "Product price",
                                         "type": "number",
                                         "format": "float",
-                                        "example": 899.99
+                                        "minimum": 0
                                     },
                                     "status": {
+                                        "description": "Product status",
                                         "type": "string",
                                         "enum": [
                                             "available",
                                             "unavailable"
-                                        ],
-                                        "example": "available"
+                                        ]
+                                    },
+                                    "image1": {
+                                        "description": "Primary product image",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "image2": {
+                                        "description": "Secondary product image",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "image3": {
+                                        "description": "Tertiary product image",
+                                        "type": "string",
+                                        "format": "binary"
                                     }
                                 },
                                 "type": "object"
@@ -1430,39 +1726,46 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Successful operation",
+                        "description": "Product updated successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "integer",
-                                            "example": true
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
                                         },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Product updated successfully"
-                                        },
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/Product"
-                                            }
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/ProductResource"
+                                                }
+                                            },
+                                            "type": "object"
                                         }
-                                    },
-                                    "type": "object"
+                                    ]
                                 }
                             }
                         }
                     },
-                    "400": {
-                        "description": "Validation error"
-                    },
                     "404": {
-                        "description": "Product not found"
+                        "description": "Product not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
                     },
-                    "500": {
-                        "description": "Server error"
+                    "401": {
+                        "description": "Unauthorized - Seller access required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -1475,8 +1778,8 @@
                 "tags": [
                     "Product"
                 ],
-                "summary": "Delete product",
-                "description": "Deletes a product by ID",
+                "summary": "Delete a product",
+                "description": "Delete an existing product (seller only)",
                 "operationId": "deleteProduct",
                 "parameters": [
                     {
@@ -1485,20 +1788,40 @@
                         "description": "Product ID",
                         "required": true,
                         "schema": {
-                            "type": "integer",
-                            "format": "int64"
+                            "type": "integer"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Product deleted successfully"
+                        "description": "Product deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessResponse"
+                                }
+                            }
+                        }
                     },
                     "404": {
-                        "description": "Product not found"
+                        "description": "Product not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
                     },
-                    "500": {
-                        "description": "Server error"
+                    "401": {
+                        "description": "Unauthorized - Seller access required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -1514,11 +1837,11 @@
                     "Product"
                 ],
                 "summary": "Get all product types",
-                "description": "Returns a list of all product types available",
+                "description": "Retrieve all available product types",
                 "operationId": "getProductTypes",
                 "responses": {
                     "200": {
-                        "description": "Successful operation",
+                        "description": "Product types retrieved successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1529,9 +1852,6 @@
                                 }
                             }
                         }
-                    },
-                    "500": {
-                        "description": "Server error"
                     }
                 }
             }
@@ -1541,9 +1861,9 @@
                 "tags": [
                     "Product"
                 ],
-                "summary": "Get product categories by type",
-                "description": "Returns a list of product categories for a specific product type",
-                "operationId": "getCategoriesByType",
+                "summary": "Get categories by product type",
+                "description": "Retrieve all categories for a specific product type",
+                "operationId": "getProductCategories",
                 "parameters": [
                     {
                         "name": "type",
@@ -1557,7 +1877,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful operation",
+                        "description": "Product categories retrieved successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1568,12 +1888,490 @@
                                 }
                             }
                         }
+                    }
+                }
+            }
+        },
+        "/api/rating/{id}": {
+            "post": {
+                "tags": [
+                    "Rating"
+                ],
+                "summary": "Rate a product",
+                "description": "Submit a rating for a product after purchase (order must be finished and not yet rated)",
+                "operationId": "storeRating",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Order ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "rating"
+                                ],
+                                "properties": {
+                                    "rating": {
+                                        "description": "Rating value (1-5)",
+                                        "type": "integer",
+                                        "maximum": 5,
+                                        "minimum": 1
+                                    },
+                                    "comment": {
+                                        "description": "Rating comment",
+                                        "type": "string"
+                                    },
+                                    "image": {
+                                        "description": "Rating image",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Rating submitted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Rating submitted successfully"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Rating"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Order not eligible for rating (not finished, already rated, or not owned by user)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
                     },
                     "404": {
-                        "description": "Type not found"
+                        "description": "Order not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
                     },
-                    "500": {
-                        "description": "Server error"
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/checkout": {
+            "post": {
+                "tags": [
+                    "Transaction"
+                ],
+                "summary": "Checkout a product",
+                "description": "Process product checkout and create transaction",
+                "operationId": "checkout",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "product_id",
+                                    "quantity"
+                                ],
+                                "properties": {
+                                    "product_id": {
+                                        "description": "Product ID",
+                                        "type": "integer"
+                                    },
+                                    "quantity": {
+                                        "description": "Quantity to purchase",
+                                        "type": "integer",
+                                        "minimum": 1
+                                    },
+                                    "address": {
+                                        "description": "Delivery address",
+                                        "type": "string"
+                                    },
+                                    "nego_id": {
+                                        "description": "Negotiation ID if using negotiated price",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Checkout successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Transaction created successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "transaction": {
+                                                    "$ref": "#/components/schemas/Transaction"
+                                                },
+                                                "payment_url": {
+                                                    "description": "Midtrans payment URL",
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Insufficient stock or invalid negotiation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/transactions": {
+            "get": {
+                "tags": [
+                    "Transaction"
+                ],
+                "summary": "Get user transactions",
+                "description": "Retrieve all transactions for the authenticated user",
+                "operationId": "getUserTransactions",
+                "responses": {
+                    "200": {
+                        "description": "Transactions retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Transaction"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/transaction/{receipt}": {
+            "get": {
+                "tags": [
+                    "Transaction"
+                ],
+                "summary": "Get transaction status",
+                "description": "Get transaction status by receipt number",
+                "operationId": "getTransactionStatus",
+                "parameters": [
+                    {
+                        "name": "receipt",
+                        "in": "path",
+                        "description": "Transaction receipt number",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Transaction status retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Transaction"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Transaction not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/transaction/cancel/{id}": {
+            "get": {
+                "tags": [
+                    "Transaction"
+                ],
+                "summary": "Cancel transaction",
+                "description": "Cancel a pending transaction",
+                "operationId": "cancelTransaction",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Transaction ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Transaction cancelled successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Transaction"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot cancel transaction",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/midtrans/notification": {
+            "post": {
+                "tags": [
+                    "Transaction"
+                ],
+                "summary": "Midtrans payment notification",
+                "description": "Handle payment notification from Midtrans",
+                "operationId": "midtransNotification",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "order_id": {
+                                        "description": "Order ID",
+                                        "type": "string"
+                                    },
+                                    "status_code": {
+                                        "description": "Status code",
+                                        "type": "string"
+                                    },
+                                    "transaction_status": {
+                                        "description": "Transaction status",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Notification processed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/payment/finish": {
+            "get": {
+                "tags": [
+                    "Transaction"
+                ],
+                "summary": "Payment finish callback",
+                "description": "Handle payment finish callback from Midtrans",
+                "operationId": "paymentFinish",
+                "parameters": [
+                    {
+                        "name": "order_id",
+                        "in": "query",
+                        "description": "Order ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status_code",
+                        "in": "query",
+                        "description": "Status code",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "transaction_status",
+                        "in": "query",
+                        "description": "Transaction status",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Payment finish processed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -1581,13 +2379,14 @@
         "/api/user": {
             "get": {
                 "tags": [
-                    "Users"
+                    "User"
                 ],
-                "summary": "Get authenticated user information",
-                "operationId": "be161e26e01c8c16a62fd991f3f11336",
+                "summary": "Get authenticated user profile",
+                "description": "Retrieve the profile of the authenticated user",
+                "operationId": "getCurrentUser",
                 "responses": {
                     "200": {
-                        "description": "Successful operation",
+                        "description": "User profile retrieved successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1597,7 +2396,14 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated"
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -1610,10 +2416,11 @@
         "/api/user/{id}": {
             "get": {
                 "tags": [
-                    "Users"
+                    "User"
                 ],
                 "summary": "Get user by ID",
-                "operationId": "928dda31b6f55cbc99111cf99f906d5d",
+                "description": "Retrieve a specific user by their ID",
+                "operationId": "getUserById",
                 "parameters": [
                     {
                         "name": "id",
@@ -1627,7 +2434,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful operation",
+                        "description": "User retrieved successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1637,7 +2444,24 @@
                         }
                     },
                     "404": {
-                        "description": "User not found"
+                        "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -1648,10 +2472,11 @@
             },
             "put": {
                 "tags": [
-                    "Users"
+                    "User"
                 ],
-                "summary": "Update user information",
-                "operationId": "76da0382e73f9afb5099a1353f27be4f",
+                "summary": "Update user profile",
+                "description": "Update the authenticated user's profile information",
+                "operationId": "updateUser",
                 "parameters": [
                     {
                         "name": "id",
@@ -1666,29 +2491,30 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
-                                "required": [
-                                    "name",
-                                    "email",
-                                    "phone"
-                                ],
                                 "properties": {
                                     "name": {
-                                        "description": "User's name",
-                                        "type": "string",
-                                        "example": "John Doe"
+                                        "description": "User name",
+                                        "type": "string"
                                     },
                                     "email": {
-                                        "description": "User's email",
+                                        "description": "User email (will set status to unverified)",
                                         "type": "string",
-                                        "format": "email",
-                                        "example": "john@example.com"
+                                        "format": "email"
                                     },
                                     "phone": {
-                                        "description": "User's phone number",
+                                        "description": "User phone number",
+                                        "type": "string"
+                                    },
+                                    "address": {
+                                        "description": "User address",
+                                        "type": "string"
+                                    },
+                                    "image": {
+                                        "description": "User profile image",
                                         "type": "string",
-                                        "example": "1234567890"
+                                        "format": "binary"
                                     }
                                 },
                                 "type": "object"
@@ -1707,11 +2533,25 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "Validation error"
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
                     },
-                    "404": {
-                        "description": "User not found"
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FailResponse"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -1724,52 +2564,199 @@
     },
     "components": {
         "schemas": {
-            "Cart": {
+            "SuccessResponse": {
+                "title": "Success Response",
+                "description": "Standard success response wrapper",
+                "properties": {
+                    "status": {
+                        "description": "Response status",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "description": "Response message",
+                        "type": "string",
+                        "example": "Operation successful"
+                    },
+                    "data": {
+                        "description": "Response data",
+                        "oneOf": [
+                            {
+                                "type": "object"
+                            },
+                            {
+                                "type": "array",
+                                "items": {
+                                    "type": "object"
+                                }
+                            },
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    }
+                },
+                "type": "object"
+            },
+            "FailResponse": {
+                "title": "Fail Response",
+                "description": "Standard error response wrapper",
+                "properties": {
+                    "status": {
+                        "description": "Response status",
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "message": {
+                        "description": "Error message",
+                        "type": "string",
+                        "example": "Operation failed"
+                    },
+                    "data": {
+                        "description": "Additional error data",
+                        "type": "object",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ValidationErrorResponse": {
+                "title": "Validation Error Response",
+                "description": "Validation error response",
+                "properties": {
+                    "success": {
+                        "description": "Response status",
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "message": {
+                        "description": "Error message",
+                        "type": "string",
+                        "example": "Validation error"
+                    },
+                    "errors": {
+                        "description": "Validation errors",
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "Nego": {
                 "required": [
-                    "id",
-                    "user_name",
-                    "product_name",
-                    "product_category",
-                    "product_type",
-                    "price",
-                    "amount",
-                    "total_price"
+                    "user_id",
+                    "product_id",
+                    "nego_price",
+                    "status"
                 ],
                 "properties": {
                     "id": {
-                        "description": "Cart item ID",
+                        "description": "Negotiation ID",
                         "type": "integer",
                         "format": "int64"
                     },
-                    "user_name": {
-                        "description": "Name of the user who owns this cart item",
-                        "type": "string"
+                    "user_id": {
+                        "description": "User ID who initiated negotiation",
+                        "type": "integer"
                     },
-                    "product_name": {
-                        "description": "Name of the product in cart",
-                        "type": "string"
+                    "product_id": {
+                        "description": "Product ID being negotiated",
+                        "type": "integer"
                     },
-                    "product_category": {
-                        "description": "Category of the product",
-                        "type": "string"
-                    },
-                    "product_type": {
-                        "description": "Type of the product",
-                        "type": "string"
-                    },
-                    "price": {
-                        "description": "Price of the product",
+                    "nego_price": {
+                        "description": "Negotiated price",
                         "type": "number",
                         "format": "float"
                     },
-                    "amount": {
-                        "description": "Quantity of product in cart",
+                    "status": {
+                        "description": "Negotiation status",
+                        "type": "string",
+                        "enum": [
+                            "pending",
+                            "accepted",
+                            "rejected",
+                            "cancelled"
+                        ]
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/UserResource"
+                    },
+                    "product": {
+                        "$ref": "#/components/schemas/ProductResource"
+                    }
+                },
+                "type": "object"
+            },
+            "Order": {
+                "required": [
+                    "user_id",
+                    "transaction_id",
+                    "product_id",
+                    "quantity",
+                    "total_price",
+                    "status"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "Order ID",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "user_id": {
+                        "description": "User ID who placed the order",
+                        "type": "integer"
+                    },
+                    "transaction_id": {
+                        "description": "Associated transaction ID",
+                        "type": "integer"
+                    },
+                    "product_id": {
+                        "description": "Product ID",
+                        "type": "integer"
+                    },
+                    "quantity": {
+                        "description": "Order quantity",
                         "type": "integer"
                     },
                     "total_price": {
-                        "description": "Total price (price × amount)",
+                        "description": "Total order amount",
                         "type": "number",
                         "format": "float"
+                    },
+                    "status": {
+                        "description": "Order status",
+                        "type": "string",
+                        "enum": [
+                            "pending",
+                            "processing",
+                            "proccessed",
+                            "finished",
+                            "cancelled"
+                        ]
+                    },
+                    "address": {
+                        "description": "Delivery address",
+                        "type": "string"
+                    },
+                    "is_rated": {
+                        "description": "Whether order has been rated",
+                        "type": "boolean"
                     },
                     "created_at": {
                         "description": "Creation timestamp",
@@ -1780,18 +2767,22 @@
                         "description": "Update timestamp",
                         "type": "string",
                         "format": "date-time"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/UserResource"
+                    },
+                    "transaction": {
+                        "$ref": "#/components/schemas/Transaction"
+                    },
+                    "product": {
+                        "$ref": "#/components/schemas/ProductResource"
                     }
                 },
                 "type": "object"
             },
-            "Product": {
-                "required": [
-                    "name",
-                    "type",
-                    "category",
-                    "description",
-                    "price"
-                ],
+            "ProductResource": {
+                "title": "Product Resource",
+                "description": "Product resource representation",
                 "properties": {
                     "id": {
                         "description": "Product ID",
@@ -1815,16 +2806,18 @@
                         "type": "string"
                     },
                     "quantity": {
-                        "description": "Product quantity in stock",
-                        "type": "integer"
+                        "description": "Product quantity",
+                        "type": "integer",
+                        "minimum": 0
                     },
                     "price": {
                         "description": "Product price",
                         "type": "number",
-                        "format": "float"
+                        "format": "float",
+                        "minimum": 0
                     },
                     "status": {
-                        "description": "Product availability status",
+                        "description": "Product status",
                         "type": "string",
                         "enum": [
                             "available",
@@ -1833,6 +2826,74 @@
                     },
                     "owner": {
                         "description": "Name of product owner",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "image1": {
+                        "description": "Primary product image URL",
+                        "type": "string"
+                    },
+                    "image2": {
+                        "description": "Secondary product image URL",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "image3": {
+                        "description": "Tertiary product image URL",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "rating": {
+                        "description": "Average product rating",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "created_at": {
+                        "description": "Creation timestamp",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "Update timestamp",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Rating": {
+                "required": [
+                    "user_id",
+                    "product_id",
+                    "rating"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "Rating ID",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "user_id": {
+                        "description": "User ID who gave the rating",
+                        "type": "integer"
+                    },
+                    "product_id": {
+                        "description": "Product ID being rated",
+                        "type": "integer"
+                    },
+                    "rating": {
+                        "description": "Rating value (1-5)",
+                        "type": "integer",
+                        "maximum": 5,
+                        "minimum": 1
+                    },
+                    "comment": {
+                        "description": "Rating comment",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "image": {
+                        "description": "Rating image URL",
                         "type": "string",
                         "nullable": true
                     },
@@ -1845,6 +2906,79 @@
                         "description": "Update timestamp",
                         "type": "string",
                         "format": "date-time"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/UserResource"
+                    },
+                    "product": {
+                        "$ref": "#/components/schemas/ProductResource"
+                    }
+                },
+                "type": "object"
+            },
+            "Transaction": {
+                "required": [
+                    "user_id",
+                    "total_price",
+                    "payment_method",
+                    "status",
+                    "receipt"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "Transaction ID",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "user_id": {
+                        "description": "User ID",
+                        "type": "integer"
+                    },
+                    "total_price": {
+                        "description": "Total transaction price",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "payment_method": {
+                        "description": "Payment method",
+                        "type": "string"
+                    },
+                    "status": {
+                        "description": "Transaction status",
+                        "type": "string",
+                        "enum": [
+                            "pending",
+                            "success",
+                            "failed",
+                            "cancelled"
+                        ]
+                    },
+                    "receipt": {
+                        "description": "Transaction receipt number",
+                        "type": "string"
+                    },
+                    "link_payment": {
+                        "description": "Payment link from Midtrans",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/UserResource"
+                    },
+                    "orders": {
+                        "description": "Orders associated with this transaction",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Order"
+                        }
                     }
                 },
                 "type": "object"
@@ -1870,15 +3004,29 @@
                         "type": "string",
                         "example": "1234567890"
                     },
+                    "address": {
+                        "type": "string",
+                        "example": "123 Main St",
+                        "nullable": true
+                    },
+                    "image": {
+                        "type": "string",
+                        "example": "https://example.com/image.jpg",
+                        "nullable": true
+                    },
                     "created_at": {
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2023-01-01T00:00:00.000000Z"
+                        "format": "date-time"
                     },
                     "updated_at": {
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2023-01-01T00:00:00.000000Z"
+                        "format": "date-time"
+                    },
+                    "rating": {
+                        "description": "Average rating for sellers only",
+                        "type": "number",
+                        "format": "float",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -1901,20 +3049,32 @@
             "description": "API Endpoints for user authentication"
         },
         {
-            "name": "Cart",
-            "description": "API Endpoints for shopping cart management"
+            "name": "History",
+            "description": "API Endpoints for transaction history"
         },
         {
-            "name": "OTP",
-            "description": "API Endpoints for sending OTP for verification and password reset"
+            "name": "Negotiation",
+            "description": "API Endpoints for price negotiation"
+        },
+        {
+            "name": "Order",
+            "description": "API Endpoints for order management"
         },
         {
             "name": "Product",
             "description": "API Endpoints for managing products"
         },
         {
-            "name": "Users",
-            "description": "API endpoints for User management operations"
+            "name": "Rating",
+            "description": "API Endpoints for product rating"
+        },
+        {
+            "name": "Transaction",
+            "description": "API Endpoints for transaction management"
+        },
+        {
+            "name": "User",
+            "description": "API Endpoints for user management"
         }
     ]
 }

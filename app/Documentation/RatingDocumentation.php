@@ -1,5 +1,6 @@
 <?php
 namespace App\Documentation;
+
 /**
  * @OA\Tag(
  *     name="Rating",
@@ -25,7 +26,7 @@ namespace App\Documentation;
  *     @OA\Property(
  *         property="product",
  *         description="Product being rated",
- *         ref="#/components/schemas/Product"
+ *         ref="#/components/schemas/ProductResource"
  *     )
  * )
  *
@@ -34,7 +35,7 @@ namespace App\Documentation;
  *     operationId="storeRating",
  *     tags={"Rating"},
  *     summary="Rate a product",
- *     description="Submit a rating for a product after purchase",
+ *     description="Submit a rating for a product after purchase (order must be finished and not yet rated)",
  *     security={{"bearerAuth":{}}},
  *     @OA\Parameter(
  *         name="id",
@@ -56,7 +57,7 @@ namespace App\Documentation;
  *         )
  *     ),
  *     @OA\Response(
- *         response=201,
+ *         response=200,
  *         description="Rating submitted successfully",
  *         @OA\JsonContent(
  *             @OA\Property(property="success", type="boolean", example=true),
@@ -66,14 +67,22 @@ namespace App\Documentation;
  *     ),
  *     @OA\Response(
  *         response=400,
- *         description="Validation error or order not eligible for rating"
+ *         description="Order not eligible for rating (not finished, already rated, or not owned by user)",
+ *         @OA\JsonContent(ref="#/components/schemas/FailResponse")
  *     ),
  *     @OA\Response(
  *         response=404,
- *         description="Order not found"
+ *         description="Order not found",
+ *         @OA\JsonContent(ref="#/components/schemas/FailResponse")
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Validation error",
+ *         @OA\JsonContent(ref="#/components/schemas/ValidationErrorResponse")
  *     )
  * )
  */
 class RatingDocumentation
 {
+    // This class is only for documentation purposes
 }
