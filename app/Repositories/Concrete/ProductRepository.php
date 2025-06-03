@@ -12,7 +12,7 @@ class ProductRepository implements ProductRepositoryInterface
 {
     public function all($type, $category , $query)
     {
-        $products =  $products = Product::with(['user', 'ratings'])->query();
+        $products = Product::with(['user', 'ratings']);
         if ($type) {
             $products->whereIn('type', $type);
         }
