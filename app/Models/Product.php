@@ -32,7 +32,10 @@ class Product extends Model
     ];
     public function getRattingAttribute()
     {
-        return $this->ratings->avg('rating') ?? 0;
+        if ($this->relationLoaded('ratings') && $this->ratings->isNotEmpty()) {
+            return (float) $this->ratings->avg('rating');
+        }
+        return 0.0;
     }
 
 }

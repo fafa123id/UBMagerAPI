@@ -40,11 +40,11 @@ class ProductRepository implements ProductRepositoryInterface
     }
     public function find($id)
     {
-        $product = Product::with('user')->find($id);
+        $product = Product::with(['user', 'ratings'])->find($id);
         if (!$product) {
             return new failReturn([
-                'message' => 'Product not found',
                 'status' => 404,
+                'message' => 'Product not found',
             ]);
         }
         return new successReturn(
@@ -56,6 +56,17 @@ class ProductRepository implements ProductRepositoryInterface
         );
     }
 
+    public function all()
+    {
+        $products = Product::with(['user', 'ratings'])->get();
+        return new successReturn(
+            [
+                'status' => 200,
+                'message' => 'Products retrieved successfully',
+                'data' => ProductResource::collection($products),
+            ]
+        );
+    }
     public function create(array $data)
     {
         $product = auth()->user()->product()->create($data);
