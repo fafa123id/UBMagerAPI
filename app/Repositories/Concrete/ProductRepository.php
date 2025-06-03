@@ -12,7 +12,7 @@ class ProductRepository implements ProductRepositoryInterface
 {
     public function all($type, $category , $query)
     {
-        $products = Product::query();
+        $products =  $products = Product::with(['user', 'ratings'])->query();
         if ($type) {
             $products->whereIn('type', $type);
         }
@@ -56,17 +56,6 @@ class ProductRepository implements ProductRepositoryInterface
         );
     }
 
-    public function all()
-    {
-        $products = Product::with(['user', 'ratings'])->get();
-        return new successReturn(
-            [
-                'status' => 200,
-                'message' => 'Products retrieved successfully',
-                'data' => ProductResource::collection($products),
-            ]
-        );
-    }
     public function create(array $data)
     {
         $product = auth()->user()->product()->create($data);
