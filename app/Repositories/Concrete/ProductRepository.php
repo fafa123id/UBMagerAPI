@@ -40,7 +40,7 @@ class ProductRepository implements ProductRepositoryInterface
     }
     public function find($id)
     {
-        $product = Product::find($id);
+        $product = Product::with('user')->find($id);
         if (!$product) {
             return new failReturn([
                 'message' => 'Product not found',
