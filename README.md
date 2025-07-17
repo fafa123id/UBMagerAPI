@@ -15,16 +15,16 @@ Complete API documentation is available at: [documentation-link]
 ### 🚀 Getting Started  
 1. **Clone the Repository**  
    ```bash
-   git clone https://github.com/username/ubmager-api.git
+   git clone https://github.com/username/ubmager-api.git --branch dev
    cd ubmager-api
    ```  
 2. **Install Dependencies**  
    ```bash
-   npm install  # or yarn install
+   composer install＆＆ｃomposer require --dev
    ```  
 3. **Run the Server**  
    ```bash
-   npm start  # or yarn start
+   php artisan serve
    ```  
 
 ### 🤝 Contributing  
