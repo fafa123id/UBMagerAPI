@@ -10,12 +10,12 @@ UBMager API is the backend service for **UBMager**, a marketplace platform that 
 - **Reviews & Ratings** – Users can leave feedback on services received.  
 
 ### 📖 Documentation  
-Complete API documentation is available at: [documentation-link]  
+Complete API documentation is available at: https://api.ubmager.shop
 
 ### 🚀 Getting Started  
 1. **Clone the Repository**  
    ```bash
-   git clone https://github.com/username/ubmager-api.git --branch dev
+   git clone https://github.com/username/ubmager-api.git
    cd ubmager-api
    ```  
 2. **Install Dependencies**  
