@@ -1,4 +1,5 @@
-app-ubmager:
+services:
+  app-ubmager:
     build:
       context: .
       dockerfile: Dockerfile
