@@ -1,0 +1,13 @@
+app-ubmager:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ubmager_app
+    restart: unless-stopped
+    working_dir: /var/www/UBMagerAPI
+    env_file:
+      - ./.env
+    volumes:
+      - .:/var/www/UBMagerAPI
+    networks:
+      - laravel
