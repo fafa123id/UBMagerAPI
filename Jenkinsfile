@@ -1,24 +1,39 @@
 pipeline {
+
     agent any
 
     stages {
-        stage('Test SSH Connection to VPS') {
+        stage('Checkout Code from GitHub') {
             steps {
-                echo 'Mempersiapkan untuk tes koneksi...'
-                sshagent(['jenkins-ssh-key']) {
-                    sh '''
-                        # -v akan menampilkan log debug yang detail
-                        ssh -v -o StrictHostKeyChecking=no jenkins@localhost '
-                            echo "---"
-                            echo "--- KONEKSI BERHASIL! INI ISI FOLDER /home/jenkins/: ---"
-                            echo "---"
-                            ls -l
-                            echo "---"
-                            echo "--- TES SELESAI ---"
-                        '
-                    '''
-                }
+                echo 'Mengambil kode terbaru...'
+                checkout scm
             }
+        }
+
+        stage('Build and Deploy Application') {
+            steps {
+                
+                echo "--- MEMBANGUN IMAGE APLIKASI BARU ---"
+                sh 'docker-compose build --pull --no-cache app-ubmager'
+
+                echo "--- MEN-DEPLOY SEMUA LAYANAN ---"
+                sh 'docker-compose up -d'
+
+                echo "--- MEMBERSIHKAN IMAGE DOCKER LAMA ---"
+                sh 'docker image prune -f'
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+        }
+        success {
+            echo 'Pipeline berhasil!'
+        }
+        failure {
+            echo 'Pipeline GAGAL!'
         }
     }
 }
