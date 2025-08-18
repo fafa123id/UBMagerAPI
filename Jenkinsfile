@@ -16,16 +16,16 @@ pipeline {
                             cd /var/www/UBMagerAPI
 
                             echo "--- Mengambil kode aplikasi terbaru ---"
+                            git config --global --add safe.directory /var/www/UBMagerAPI
                             git pull origin dev-cicd
+                            
                             cd /var/www/
 
                             echo "--- Membangun image baru ---"
                             docker-compose build --pull --no-cache app-ubmager
                             
-                            docker-compose run --rm app-ubmager
-                            
                             echo "--- Men-deploy layanan ---"
-                            docker-compose up -d
+                            docker compose up -d
 
                             echo "--- Membersihkan sampah Docker ---"
                             docker image prune -f
