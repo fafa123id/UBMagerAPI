@@ -12,7 +12,7 @@ pipeline {
         stage('Deploy to Production Server') {
             steps {
                 echo 'Mempersiapkan untuk deploy ke VPS...'
-                sshagent(['vps-ssh-key']) {
+                sshagent(['jenkins-ssh-key']) {
                     sh '''
                         ssh -o StrictHostKeyChecking=no jenkins@localhost '
                             echo "--- BERHASIL LOGIN KE VPS SEBAGAI USER JENKINS ---"
