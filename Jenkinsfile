@@ -14,7 +14,7 @@ pipeline {
             steps {
                 
                 echo "--- MEMBANGUN IMAGE APLIKASI BARU ---"
-                sh 'docker compose build --pull --no-cache app-ubmager'
+                sh 'docker compose build --pull --no-cache'
 
                 echo "--- MEN-DEPLOY SEMUA LAYANAN ---"
                 sh 'docker compose up -d'
