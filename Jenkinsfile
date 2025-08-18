@@ -1,38 +1,39 @@
 pipeline {
+
     agent any
 
     stages {
-        stage('Checkout Jenkinsfile') {
+        stage('Checkout Code from GitHub') {
             steps {
+                echo 'Mengambil kode terbaru...'
                 checkout scm
             }
         }
-        stage('Deploy to Production Server') {
+
+        stage('Build and Deploy Application') {
             steps {
-                sshagent(['jenkins-ssh-key']) {
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no jenkins@localhost '
-                            
-                            cd /var/www/UBMagerAPI
+                
+                echo "--- MEMBANGUN IMAGE APLIKASI BARU ---"
+                sh 'docker compose build --pull --no-cache app-ubmager'
 
-                            echo "--- Mengambil kode aplikasi terbaru ---"
-                            git config --global --add safe.directory /var/www/UBMagerAPI
-                            git pull origin dev-cicd
-                            
-                            cd /var/www/
+                echo "--- MEN-DEPLOY SEMUA LAYANAN ---"
+                sh 'docker compose up -d'
 
-                            echo "--- Membangun image baru ---"
-                            docker-compose build --pull --no-cache app-ubmager
-                            
-                            echo "--- Men-deploy layanan ---"
-                            docker compose up -d
-
-                            echo "--- Membersihkan sampah Docker ---"
-                            docker image prune -f
-                        '
-                    '''
-                }
+                echo "--- MEMBERSIHKAN IMAGE DOCKER LAMA ---"
+                sh 'docker image prune -f'
             }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+        }
+        success {
+            echo 'Pipeline berhasil!'
+        }
+        failure {
+            echo 'Pipeline GAGAL!'
         }
     }
 }
