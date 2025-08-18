@@ -7,6 +7,11 @@ pipeline {
     }
     
     stages {
+        stage('Clean Workspace') {
+            steps {
+                deleteDir() 
+            }
+        }
         stage('Checkout Code from GitHub') {
             steps {
                 echo 'Mengambil kode terbaru...'
