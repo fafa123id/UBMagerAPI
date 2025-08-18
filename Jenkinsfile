@@ -20,7 +20,6 @@ pipeline {
                 
                 sh 'echo "$DOT_ENV" > .env'
                 
-                sh 'docker run --rm -v $(pwd):/app composer/composer:lts php artisan key:generate --force'
             }
         }
 
