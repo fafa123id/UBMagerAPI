@@ -1,7 +1,11 @@
 pipeline {
-
+    
     agent any
 
+    environment {
+        DOT_ENV = credentials('ubmager-env-prod')
+    }
+    
     stages {
         stage('Checkout Code from GitHub') {
             steps {
@@ -10,16 +14,25 @@ pipeline {
             }
         }
 
+        stage('Create .env from Credentials') {
+            steps {
+                echo 'Writing .env file from Jenkins credentials...'
+                
+                sh 'echo "$DOT_ENV" > .env'
+                
+                sh 'docker run --rm -v $(pwd):/app composer/composer:lts php artisan key:generate --force'
+            }
+        }
+
         stage('Build and Deploy Application') {
             steps {
-                
-                echo "--- MEMBANGUN IMAGE APLIKASI BARU ---"
+                echo '--- MEMBANGUN IMAGE APLIKASI BARU ---'
                 sh 'docker compose build --pull --no-cache'
 
-                echo "--- MEN-DEPLOY SEMUA LAYANAN ---"
+                echo '--- MEN-DEPLOY SEMUA LAYANAN ---'
                 sh 'docker compose up -d'
 
-                echo "--- MEMBERSIHKAN IMAGE DOCKER LAMA ---"
+                echo '--- MEMBERSIHKAN IMAGE DOCKER LAMA ---'
                 sh 'docker image prune -f'
             }
         }
