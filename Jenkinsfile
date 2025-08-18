@@ -1,26 +1,35 @@
 pipeline {
-
     agent any
 
     stages {
-        stage('Checkout Code from GitHub') {
+
+        stage('Prepare Workspace on Host') {
             steps {
-                echo 'Mengambil kode terbaru...'
-                checkout scm
+                ws('/var/www/UBMagerAPI') {
+                    
+                    echo '--- Membersihkan sisa-sisa file lama ---'
+                    sh 'git clean -fdx'
+                    
+                    echo '--- Mengambil kode terbaru dari GitHub ke direktori ini ---'
+                    checkout scm
+                }
             }
         }
 
+        // TAHAP 2: EKSEKUSI BUILD DARI LOKASI UTAMA
         stage('Build and Deploy Application') {
             steps {
-                
-                echo "--- MEMBANGUN IMAGE APLIKASI BARU ---"
-                sh 'docker compose build --pull --no-cache app-ubmager'
+                dir('/var/www/') {
+                    
+                    echo "--- Membangun image aplikasi baru ---"
+                    sh 'docker-compose build --pull --no-cache app-ubmager'
 
-                echo "--- MEN-DEPLOY SEMUA LAYANAN ---"
-                sh 'docker compose up -d'
+                    echo "--- Men-deploy semua layanan ---"
+                    sh 'docker-compose up -d'
 
-                echo "--- MEMBERSIHKAN IMAGE DOCKER LAMA ---"
-                sh 'docker image prune -f'
+                    echo "--- Membersihkan image Docker lama ---"
+                    sh 'docker image prune -f'
+                }
             }
         }
     }
