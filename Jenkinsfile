@@ -20,6 +20,9 @@ pipeline {
                 
                 sh 'echo "$DOT_ENV" > .env'
                 
+                echo '--- Menampilkan 5 baris pertama dari .env yang baru dibuat ---'
+                sh 'head -n 5 .env' 
+                
             }
         }
 
