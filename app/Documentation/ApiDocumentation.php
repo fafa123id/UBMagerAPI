@@ -5,7 +5,7 @@ use OpenApi\Annotations as OA;
 /** 
  * @OA\Info(
  *      version="1.0.0",
- *      title="UB Mager API Documentation Test",
+ *      title="UB Mager API Documentation",
  *      description="API Documentation for UB Mager E-commerce System",
  *      @OA\Contact(
  *          email="apiubmager@gmail.com"
