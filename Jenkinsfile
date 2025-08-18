@@ -14,10 +14,10 @@ pipeline {
             steps {
                 
                 echo "--- MEMBANGUN IMAGE APLIKASI BARU ---"
-                sh 'docker-compose build --pull --no-cache app-ubmager'
+                sh 'docker compose build --pull --no-cache app-ubmager'
 
                 echo "--- MEN-DEPLOY SEMUA LAYANAN ---"
-                sh 'docker-compose up -d'
+                sh 'docker compose up -d'
 
                 echo "--- MEMBERSIHKAN IMAGE DOCKER LAMA ---"
                 sh 'docker image prune -f'
