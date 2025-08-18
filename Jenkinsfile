@@ -1,51 +1,38 @@
 pipeline {
     agent any
 
-    parameters {
-        string(name: 'PROJECT_DIR', defaultValue: 'UBMagerAPI' )
-        string(name: 'SERVICE_NAME', defaultValue: 'app-ubmager')
-    }
-
     stages {
-        stage('Checkout Code') {
+
+        stage('Prepare Workspace on Host') {
             steps {
-                echo "Mengambil kode dari GitHub..."
-                cleanWs()
-                checkout scm
+                ws('/var/www/UBMagerAPI') {
+                    
+                    checkout scm
+                }
             }
         }
 
-        stage('Sync, Build, and Deploy') {
+        stage('Build and Deploy Application') {
             steps {
-                echo "Mempersiapkan untuk deploy ke VPS..."
-                sshagent(['jenkins-ssh-key']) {
-                    sh """
-                        echo "--- Sinkronisasi kode dari Jenkins ke /var/www/${params.PROJECT_DIR} ---"
-                        rsync -avz --delete --exclude='.git/' --exclude='.env' ./ jenkins@localhost:/var/www/${params.PROJECT_DIR}/
+                dir('/var/www/') {
+                    
+                    echo "--- Membangun image aplikasi baru ---"
+                    sh 'docker-compose build --pull --no-cache app-ubmager'
 
-                        # Sekarang, login ke VPS untuk menjalankan perintah Docker
-                        ssh -o StrictHostKeyChecking=no jenkins@localhost '
-                            
-                            echo "--- Berhasil login ke VPS ---"
-                        
-                            cd /var/www/
+                    echo "--- Men-deploy semua layanan ---"
+                    sh 'docker-compose up -d'
 
-                            echo "--- Membangun image baru dengan kode yang sudah disinkronkan ---"
-                            docker-compose build --pull --no-cache ${params.SERVICE_NAME}
-
-                            echo "--- Men-deploy semua layanan ---"
-                            docker-compose up -d ${params.SERVICE_NAME}
-
-                            echo "--- Membersihkan image Docker lama ---"
-                            docker image prune -f
-                        '
-                    """
+                    echo "--- Membersihkan image Docker lama ---"
+                    sh 'docker image prune -f'
                 }
             }
         }
     }
 
     post {
+        always {
+            cleanWs()
+        }
         success {
             echo 'Pipeline berhasil!'
         }
