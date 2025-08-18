@@ -9,7 +9,10 @@ services:
     env_file:
       - ./.env
     volumes:
-      - .:/var/www/UBMagerAPI
+      volumes:
+      - ./storage:/var/www/UBMagerAPI/storage
+      - ./bootstrap/cache:/var/www/UBMagerAPI/bootstrap/cache
+
     networks:
       - shared-network
   web-ubmager:
