@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Test SSH Connection to VPS') {
             steps {
-                echo 'Mempersiapkan untuk tes koneksi...'
+                echo 'Mempersiapkan untuk tes koneksi..'
                 sshagent(['vps-ssh-key']) {
                     sh '''
                         # -v akan menampilkan log debug yang detail
