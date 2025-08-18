@@ -2,42 +2,37 @@ pipeline {
     agent any
 
     stages {
-
-        stage('Prepare Workspace on Host') {
+        stage('Checkout Jenkinsfile') {
             steps {
-                ws('/var/www/UBMagerAPI') {
-                    
-                    checkout scm
-                }
+                checkout scm
             }
         }
-
-        stage('Build and Deploy Application') {
+        stage('Deploy to Production Server') {
             steps {
-                dir('/var/www/') {
-                    
-                    echo "--- Membangun image aplikasi baru ---"
-                    sh 'docker-compose build --pull --no-cache app-ubmager'
+                sshagent(['jenkins-ssh-key']) {
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no jenkins@localhost '
+                            
+                            cd /var/www/UBMagerAPI
 
-                    echo "--- Men-deploy semua layanan ---"
-                    sh 'docker-compose up -d'
+                            echo "--- Mengambil kode aplikasi terbaru ---"
+                            git config --global --add safe.directory /var/www/UBMagerAPI
+                            git pull origin dev-cicd
+                            
+                            cd /var/www/
 
-                    echo "--- Membersihkan image Docker lama ---"
-                    sh 'docker image prune -f'
+                            echo "--- Membangun image baru ---"
+                            docker-compose build --pull --no-cache app-ubmager
+                            
+                            echo "--- Men-deploy layanan ---"
+                            docker compose up -d
+
+                            echo "--- Membersihkan sampah Docker ---"
+                            docker image prune -f
+                        '
+                    '''
                 }
             }
-        }
-    }
-
-    post {
-        always {
-            cleanWs()
-        }
-        success {
-            echo 'Pipeline berhasil!'
-        }
-        failure {
-            echo 'Pipeline GAGAL!'
         }
     }
 }
