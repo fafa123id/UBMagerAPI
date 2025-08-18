@@ -19,7 +19,7 @@ pipeline {
                 echo 'Writing .env file from Jenkins credentials...'
                 
                 sh 'echo "$DOT_ENV" > .env'
-                
+
                 echo '--- Menampilkan 5 baris pertama dari .env yang baru dibuat ---'
                 sh 'head -n 5 .env' 
                 
@@ -29,7 +29,7 @@ pipeline {
         stage('Build and Deploy Application') {
             steps {
                 echo '--- MEMBANGUN IMAGE APLIKASI BARU ---'
-                sh 'docker compose build --pull --no-cache'
+                sh 'docker compose build'
 
                 echo '--- MEN-DEPLOY SEMUA LAYANAN ---'
                 sh 'docker compose up -d'

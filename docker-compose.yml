@@ -9,7 +9,6 @@ services:
     env_file:
       - ./.env
     volumes:
-      volumes:
       - ./storage:/var/www/UBMagerAPI/storage
       - ./bootstrap/cache:/var/www/UBMagerAPI/bootstrap/cache
 
