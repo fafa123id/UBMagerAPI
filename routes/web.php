@@ -13,4 +13,9 @@ Route::get('/api-routes', function () {
     })->values();
 
     return response()->json($routes);
+    
+});
+
+Route::get('/',function(){
+    return view('index');
 });
