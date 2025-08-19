@@ -1,10 +1,6 @@
 pipeline {
     
     agent any
-
-    environment {
-        DOT_ENV = credentials('ubmager-env-prod')
-    }
     
     stages {
         stage('Checkout Code from GitHub') {
@@ -16,12 +12,9 @@ pipeline {
 
         stage('Create .env from Credentials') {
             steps {
-                echo 'Writing .env file from Jenkins credentials...'
-                
-                sh 'echo $env.DOT_ENV > .env'
-
-                echo '--- Menampilkan 5 baris pertama dari .env yang baru dibuat ---'
-                sh 'head -n 5 .env' 
+                withCredentials([file(credentialsId: 'ubmager-env-prod', variable: 'DOTENV_FILE')]) {
+                    sh "cp \$DOTENV_FILE .env"
+                }
                 
             }
         }
@@ -41,6 +34,9 @@ pipeline {
     }
 
     post {
+        always {
+            cleanWs(deleteDirs: true, notFailBuild: true)
+        }
         success {
             echo 'Pipeline berhasil!'
         }
