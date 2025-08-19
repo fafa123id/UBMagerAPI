@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -66,16 +67,33 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
     <link rel="icon" type="image/png" href="https://img.icons8.com/?size=100&id=Oz14KBnT7lnn&format=png&color=000000">
 </head>
+
 <body>
     <div class="container">
         <h1>Welcome To Our API Portal</h1>
         <p>Published by UBMager</p>
+        <a href="{{config("app.url")}}/api/documentation"
+            class="group relative inline-flex items-center justify-center px-8 py-3 w-full sm:w-auto text-lg font-semibold text-gray-200 bg-gray-800/50 backdrop-blur-sm border border-gray-600 rounded-lg shadow-lg hover:bg-gray-700/70 hover:border-gray-500 transition-all duration-300 ease-in-out transform hover:scale-105">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6 mr-3 transition-transform duration-300 group-hover:rotate-12" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+            </svg>
+            Go to Documentation
+        </a>
         <h2>Available API Routes</h2>
         <ul id="routes-list" class="button-list"></ul>
     </div>
@@ -99,4 +117,5 @@
             });
     </script>
 </body>
+
 </html>
