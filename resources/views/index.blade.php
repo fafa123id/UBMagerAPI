@@ -4,119 +4,296 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal UBMager API</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>UBMager API Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="https://img.icons8.com/?size=100&id=Oz14KBnT7lnn&format=png&color=000000">
     <style>
+        :root {
+            --dark-bg: #11111b; /* Warna latar belakang utama yang lebih soft dari hitam pekat */
+            --primary-glow: #00ffc8;
+            --secondary-glow: #7a00ff;
+            --text-primary: #f0f0f5;
+            --text-secondary: #a0a0b0;
+            --glass-bg: rgba(22, 22, 34, 0.4); /* Latar belakang efek kaca */
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            background-color: #000;
-            color: #fff;
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
+            font-family: 'Poppins', Arial, sans-serif;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            height: fit-content;
-            overflow: auto;
-            margin: 0;
-            font-family: Arial, sans-serif;
-            text-align: center;
+            padding: 40px 20px;
+            overflow: hidden; /* Mencegah scrollbar dari elemen glow */
+            position: relative;
+        }
+
+        /* --- Animasi Latar Belakang Aurora --- */
+        .background-glow {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 800px;
+            height: 800px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--primary-glow), transparent 60%),
+                        radial-gradient(circle, var(--secondary-glow), transparent 60%);
+            filter: blur(150px);
+            opacity: 0.15;
+            z-index: -1;
+            animation: moveGlow 25s infinite alternate ease-in-out;
+            transform-origin: center;
+        }
+
+        @keyframes moveGlow {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg) scale(1);
+            }
+            100% {
+                transform: translate(-40%, -60%) rotate(180deg) scale(1.4);
+            }
         }
 
         .container {
-            animation: fadeIn 2s ease-in-out;
+            width: 100%;
+            max-width: 700px;
+            text-align: center;
+            padding: 40px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            z-index: 1;
+        }
+
+        /* --- Staggered Animation untuk Elemen --- */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s ease-out forwards;
         }
 
         h1 {
             font-size: 3rem;
-            margin: 0;
+            font-weight: 700;
+            letter-spacing: -1px;
+            background: linear-gradient(90deg, #fff, #c0c0d0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation-delay: 0.2s;
         }
 
         p {
-            font-size: 1.2rem;
-            margin-top: 10px;
-            opacity: 0.8;
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            animation-delay: 0.4s;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            margin-bottom: 40px;
+            animation-delay: 0.6s;
+        }
+
+        .cta-button:before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, var(--primary-glow) 0%, transparent 80%);
+            border-radius: 50%;
+            opacity: 0;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease, height 0.4s ease, opacity 0.4s ease;
+            z-index: -1;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 20px rgba(0, 255, 200, 0.1);
+            border-color: rgba(0, 255, 200, 0.5);
+        }
+        
+        .cta-button:hover:before {
+            width: 300px;
+            height: 300px;
+            opacity: 0.3;
         }
 
         h2 {
-            margin-top: 30px;
-            font-size: 2rem;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            animation-delay: 0.8s;
         }
 
-        .button-list {
+        #routes-list {
             list-style: none;
-            padding: 0;
-            margin-top: 20px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
+            text-align: left;
         }
-
-        .route-button {
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid transparent;
-            padding: 12px 20px;
+        
+        /* Animasi untuk setiap item list */
+        .route-item {
+            background: rgba(0, 0, 0, 0.2);
             border-radius: 8px;
-            color: #fff;
-            font-size: 1rem;
+            padding: 15px 20px;
+            border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-family: 'Courier New', Courier, monospace;
             transition: all 0.3s ease;
+            opacity: 0;
+            transform: scale(0.95);
+            animation: scaleIn 0.5s ease-out forwards;
         }
 
-        .route-button:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-            border-color: #00ffc8;
-            transform: scale(1.05);
+        .route-item:hover {
+            transform: scale(1.03);
+            background: rgba(0, 0, 0, 0.4);
+            border-color: var(--primary-glow);
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
+        .method {
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--dark-bg);
+        }
+        
+        /* --- Warna spesifik untuk setiap metode HTTP --- */
+        .method-get { background-color: #4ade80; } /* Hijau */
+        .method-post { background-color: #38bdf8; } /* Biru */
+        .method-put { background-color: #facc15; } /* Kuning */
+        .method-patch { background-color: #f97316; } /* Oranye */
+        .method-delete { background-color: #f43f5e; } /* Merah */
+        .method-default { background-color: #94a3b8; } /* Abu-abu */
 
+        .uri {
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+        
+        @keyframes fadeInUp {
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
+
+        @keyframes scaleIn {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
     </style>
-    <link rel="icon" type="image/png" href="https://img.icons8.com/?size=100&id=Oz14KBnT7lnn&format=png&color=000000">
 </head>
 
 <body>
+    <div class="background-glow"></div>
+
     <div class="container">
-        <h1>Welcome To Our API Portal</h1>
-        <p>Published by UBMager</p>
-        <a href="{{config("app.url")}}/api/documentation"
-            class="group relative inline-flex items-center justify-center px-8 py-3 w-full sm:w-auto text-lg font-semibold text-gray-200 bg-gray-800/50 backdrop-blur-sm border border-gray-600 rounded-lg shadow-lg hover:bg-gray-700/70 hover:border-gray-500 transition-all duration-300 ease-in-out transform hover:scale-105">
-            <svg xmlns="http://www.w3.org/2000/svg"
-                class="h-6 w-6 mr-3 transition-transform duration-300 group-hover:rotate-12" fill="none"
-                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
-            </svg>
+        <h1 class="fade-in-up">Welcome To Our API Portal</h1>
+        <p class="fade-in-up">Published by UBMager</p>
+
+        <a href="{{config("app.url")}}/api/documentation" class="cta-button fade-in-up">
             Go to Documentation
         </a>
-        <h2>Available API Routes</h2>
-        <ul id="routes-list" class="button-list"></ul>
+
+        <h2 class="fade-in-up">Available API Routes</h2>
+        <ul id="routes-list">
+            </ul>
     </div>
 
     <script>
-        fetch('/api-routes')
-            .then(response => response.json())
-            .then(data => {
-                const list = document.getElementById('routes-list');
-                data.forEach(route => {
-                    const button = document.createElement('li');
-                    button.className = 'route-button';
-                    button.textContent = `${route.method} - ${route.uri}`;
-                    const li = document.createElement('li');
-                    li.appendChild(button);
-                    list.appendChild(li);
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('/api-routes')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const list = document.getElementById('routes-list');
+                    if (data.length === 0) {
+                        list.innerHTML = '<li class="route-item" style="justify-content: center; color: var(--text-secondary);">No API routes found.</li>';
+                        return;
+                    }
+
+                    // Mapping metode HTTP ke kelas CSS
+                    const methodColors = {
+                        'GET': 'method-get',
+                        'POST': 'method-post',
+                        'PUT': 'method-put',
+                        'PATCH': 'method-patch',
+                        'DELETE': 'method-delete',
+                    };
+
+                    data.forEach((route, index) => {
+                        const li = document.createElement('li');
+                        li.className = 'route-item';
+                        
+                        // Menambahkan delay animasi agar muncul satu per satu
+                        li.style.animationDelay = `${index * 0.1}s`;
+
+                        const methodSpan = document.createElement('span');
+                        const methodClass = methodColors[route.method.toUpperCase()] || 'method-default';
+                        methodSpan.className = `method ${methodClass}`;
+                        methodSpan.textContent = route.method;
+
+                        const uriSpan = document.createElement('span');
+                        uriSpan.className = 'uri';
+                        uriSpan.textContent = route.uri;
+
+                        li.appendChild(methodSpan);
+                        li.appendChild(uriSpan);
+                        list.appendChild(li);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching API routes:', error);
+                    const list = document.getElementById('routes-list');
+                    list.innerHTML = `<li class="route-item" style="justify-content: center; color: #f43f5e;">Failed to load API routes.</li>`;
                 });
-            })
-            .catch(error => {
-                console.error('Error fetching API routes:', error);
-            });
+        });
     </script>
 </body>
-
 </html>
