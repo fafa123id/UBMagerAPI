@@ -23,16 +23,6 @@ COPY composer.json composer.lock ./
 
 RUN composer install --no-scripts --no-dev --prefer-dist --no-interaction
 
-ARG UID=1000
-ARG GID=1000
-RUN groupadd -g $GID -o appgroup
-RUN useradd -m -u $UID -g $GID -o -s /bin/bash appuser
-
-RUN chown -R appuser:appgroup /var/www/UBMagerAPI
-
-USER appuser
-
-
 COPY entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
