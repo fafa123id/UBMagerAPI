@@ -11,12 +11,12 @@
     <link rel="icon" type="image/png" href="https://img.icons8.com/?size=100&id=Oz14KBnT7lnn&format=png&color=000000">
     <style>
         :root {
-            --dark-bg: #11111b; /* Warna latar belakang utama yang lebih soft dari hitam pekat */
+            --dark-bg: #11111b;
             --primary-glow: #00ffc8;
             --secondary-glow: #7a00ff;
             --text-primary: #f0f0f5;
             --text-secondary: #a0a0b0;
-            --glass-bg: rgba(22, 22, 34, 0.4); /* Latar belakang efek kaca */
+            --glass-bg: rgba(22, 22, 34, 0.4);
             --glass-border: rgba(255, 255, 255, 0.1);
         }
 
@@ -32,14 +32,12 @@
             font-family: 'Poppins', Arial, sans-serif;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             min-height: 100vh;
-            padding: 40px 20px;
-            overflow: hidden; /* Mencegah scrollbar dari elemen glow */
+            padding: 80px 20px;
             position: relative;
         }
 
-        /* --- Animasi Latar Belakang Aurora --- */
         .background-glow {
             position: fixed;
             top: 50%;
@@ -79,7 +77,6 @@
             z-index: 1;
         }
 
-        /* --- Staggered Animation untuk Elemen --- */
         .fade-in-up {
             opacity: 0;
             transform: translateY(20px);
@@ -166,7 +163,6 @@
             text-align: left;
         }
         
-        /* Animasi untuk setiap item list */
         .route-item {
             background: rgba(0, 0, 0, 0.2);
             border-radius: 8px;
@@ -194,19 +190,20 @@
             font-size: 0.85rem;
             font-weight: bold;
             color: var(--dark-bg);
+            flex-shrink: 0; 
         }
         
-        /* --- Warna spesifik untuk setiap metode HTTP --- */
-        .method-get { background-color: #4ade80; } /* Hijau */
-        .method-post { background-color: #38bdf8; } /* Biru */
-        .method-put { background-color: #facc15; } /* Kuning */
-        .method-patch { background-color: #f97316; } /* Oranye */
-        .method-delete { background-color: #f43f5e; } /* Merah */
-        .method-default { background-color: #94a3b8; } /* Abu-abu */
+        .method-get { background-color: #4ade80; }
+        .method-post { background-color: #38bdf8; }
+        .method-put { background-color: #facc15; }
+        .method-patch { background-color: #f97316; }
+        .method-delete { background-color: #f43f5e; }
+        .method-default { background-color: #94a3b8; }
 
         .uri {
             color: var(--text-primary);
             font-size: 1rem;
+            word-break: break-all; 
         }
         
         @keyframes fadeInUp {
@@ -223,23 +220,42 @@
             }
         }
 
+        @media (max-width: 640px) {
+            body {
+                padding: 40px 15px; 
+            }
+
+            .container {
+                padding: 25px; 
+            }
+
+            h1 {
+                font-size: 2.2rem; 
+            }
+
+            .route-item {
+                padding: 12px 15px; 
+                align-items: flex-start; 
+            }
+
+            .uri {
+                font-size: 0.9rem; 
+            }
+        }
+
     </style>
 </head>
 
 <body>
     <div class="background-glow"></div>
-
     <div class="container">
         <h1 class="fade-in-up">Welcome To Our API Portal</h1>
         <p class="fade-in-up">Published by UBMager</p>
-
         <a href="{{config("app.url")}}/api/documentation" class="cta-button fade-in-up">
             Go to Documentation
         </a>
-
         <h2 class="fade-in-up">Available API Routes</h2>
-        <ul id="routes-list">
-            </ul>
+        <ul id="routes-list"></ul>
     </div>
 
     <script>
@@ -253,36 +269,25 @@
                 })
                 .then(data => {
                     const list = document.getElementById('routes-list');
-                    if (data.length === 0) {
+                    if (!data || data.length === 0) {
                         list.innerHTML = '<li class="route-item" style="justify-content: center; color: var(--text-secondary);">No API routes found.</li>';
                         return;
                     }
-
-                    // Mapping metode HTTP ke kelas CSS
                     const methodColors = {
-                        'GET': 'method-get',
-                        'POST': 'method-post',
-                        'PUT': 'method-put',
-                        'PATCH': 'method-patch',
-                        'DELETE': 'method-delete',
+                        'GET': 'method-get', 'POST': 'method-post', 'PUT': 'method-put',
+                        'PATCH': 'method-patch', 'DELETE': 'method-delete',
                     };
-
                     data.forEach((route, index) => {
                         const li = document.createElement('li');
                         li.className = 'route-item';
-                        
-                        // Menambahkan delay animasi agar muncul satu per satu
                         li.style.animationDelay = `${index * 0.1}s`;
-
                         const methodSpan = document.createElement('span');
                         const methodClass = methodColors[route.method.toUpperCase()] || 'method-default';
                         methodSpan.className = `method ${methodClass}`;
                         methodSpan.textContent = route.method;
-
                         const uriSpan = document.createElement('span');
                         uriSpan.className = 'uri';
                         uriSpan.textContent = route.uri;
-
                         li.appendChild(methodSpan);
                         li.appendChild(uriSpan);
                         list.appendChild(li);
@@ -296,4 +301,5 @@
         });
     </script>
 </body>
+
 </html>
