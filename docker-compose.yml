@@ -18,8 +18,8 @@ services:
     container_name: ubmager_web
     restart: unless-stopped
     environment:
-      - VIRTUAL_HOST=kontol.self.web.id
-      - LETSENCRYPT_HOST=kontol.self.web.id
+      - VIRTUAL_HOST=api.ubmager.shop
+      - LETSENCRYPT_HOST=api.ubmager.shop
       - LETSENCRYPT_EMAIL=ahmadfauzanroziqin@gmail.com
     volumes:
       - .:/var/www/UBMagerAPI
