@@ -21,6 +21,8 @@ pipeline {
 
         stage('Build and Deploy Application') {
             steps {
+                echo 'Menghapus Image Lama'
+                sh 'docker compose down -v'
                 echo '--- MEMBANGUN IMAGE APLIKASI BARU ---'
                 sh 'docker compose build'
 
