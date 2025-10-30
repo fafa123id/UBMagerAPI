@@ -18,8 +18,8 @@ services:
     container_name: ubmager_web
     restart: unless-stopped
     environment:
-      - VIRTUAL_HOST=ubmager.bornhub.cloud
-      - LETSENCRYPT_HOST=ubmager.bornhub.cloud
+      - VIRTUAL_HOST=api.ubmager.bornhub.cloud
+      - LETSENCRYPT_HOST=api.ubmager.bornhub.cloud
       - LETSENCRYPT_EMAIL=ahmadfauzanroziqin@gmail.com
     volumes:
       - .:/var/www/UBMagerAPI
