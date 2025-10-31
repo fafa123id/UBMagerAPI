@@ -32,17 +32,38 @@ class AuthenticatedSessionController extends Controller
         if (!auth()->attempt($credentials)) {
             return response()->json(['message' => 'Email atau password salah.'], 401);
         }
-        $response = Http::asForm()->post(env('APP_URL') . '/oauth/token', [
-            'grant_type' => 'password',
-            'client_id' => env('PASSPORT_PASSWORD_GRANT_CLIENT_ID', 2),
-            'client_secret' => env('PASSPORT_PASSWORD_GRANT_CLIENT_SECRET', 'aBc123xyz...'),
-            'username' => $request->email,
-            'password' => $request->password,
-            'scope' => '*'
-        ]);
-        // 4. Kirim kembali respons token (berisi access_token dan refresh_token)
-        return $response->json();
+
+        try {
+            // Pakai url() agar tidak tergantung APP_URL di container
+            $tokenResp = Http::asForm()->post(url('/oauth/token'), [
+                'grant_type' => 'password',
+                'client_id' => (int) env('PASSPORT_PASSWORD_GRANT_CLIENT_ID', 2),
+                'client_secret' => env('PASSPORT_PASSWORD_GRANT_CLIENT_SECRET'),
+                'username' => $request->email,
+                'password' => $request->password,
+                'scope' => '', // atau '*' jika memang perlu
+            ]);
+
+            // Jika Passport memberi error (4xx/5xx), teruskan status & body-nya
+            if ($tokenResp->failed()) {
+                // Bisa berisi error_description dari Passport
+                return response()->json(
+                    $tokenResp->json() ?? ['message' => 'Gagal mendapatkan token.'],
+                    $tokenResp->status()
+                );
+            }
+
+            // Sukses: bungkus ke JsonResponse
+            return response()->json($tokenResp->json(), $tokenResp->status());
+        } catch (\Throwable $e) {
+            // Antisipasi network/exception lain
+            return response()->json([
+                'message' => 'Terjadi kesalahan saat meminta token.',
+                'error'   => config('app.debug') ? $e->getMessage() : null,
+            ], 500);
+        }
     }
+
 
 
     /**
