@@ -1,5 +1,6 @@
 <?php
 use App\Http\Controllers\Api\CheckoutController;
+use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->group(function () {
     // Checkout endpoints
     Route::post('/checkout', [CheckoutController::class, 'checkout']);

@@ -2,8 +2,9 @@
 
 
 use App\Http\Controllers\Api\OrderController;
+use Illuminate\Support\Facades\Route;
 
-route::middleware(['auth:api'])->group(function () {
+Route::middleware(['auth:api'])->group(function () {
     // Order endpoints
     Route::get('/orders/{id}/finish', [OrderController::class, 'finishOrder']);
     Route::get('/orders', [OrderController::class, 'index'])->middleware('Seller');
