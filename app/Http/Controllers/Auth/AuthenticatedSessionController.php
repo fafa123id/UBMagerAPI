@@ -11,6 +11,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use Laravel\Passport\Token;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -31,10 +32,16 @@ class AuthenticatedSessionController extends Controller
         if (!auth()->attempt($credentials)) {
             return response()->json(['message' => 'Email atau password salah.'], 401);
         }
-        $user = auth()->user();
-        $token = $user->createToken('UserToken')->accessToken;
+        $response = Http::asForm()->post(env('APP_URL') . '/oauth/token', [
+            'grant_type' => 'password',
+            'client_id' => env('PASSPORT_PASSWORD_GRANT_CLIENT_ID', 2),
+            'client_secret' => env('PASSPORT_PASSWORD_GRANT_CLIENT_SECRET', 'aBc123xyz...'),
+            'username' => $request->email,
+            'password' => $request->password,
+            'scope' => '*'
+        ]);
         // 4. Kirim kembali respons token (berisi access_token dan refresh_token)
-        return response()->json(['access_token' => $token]);
+        return $response->json();
     }
 
 
@@ -59,7 +66,10 @@ class AuthenticatedSessionController extends Controller
     public function destroy(Request $request): JsonResponse
     {
         // Otomatis tahu user dari token yang dipakai
-        $request->user()->token()->revoke();
+        auth()->user()->tokens()->each(function (Token $token) {
+            $token->revoke();
+            $token->refreshToken?->revoke();
+        });
 
         return response()->json(['message' => 'Berhasil logout.']);
     }
