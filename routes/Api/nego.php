@@ -1,6 +1,6 @@
 <?php
 
-route::middleware(['auth:sanctum'])->group(function () {
+route::middleware(['auth:api'])->group(function () {
     // Nego for user
     route::post('nego', [\App\Http\Controllers\Api\NegoController::class, 'requestNego']);
     route::get('nego/cancel/{id}', [\App\Http\Controllers\Api\NegoController::class, 'cancelNego']);

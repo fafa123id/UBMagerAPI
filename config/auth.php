@@ -40,6 +40,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'api' => [
+            'driver' => 'passport', // GANTI DARI 'sanctum' KE 'passport'
+            'provider' => 'users',
+        ],
     ],
 
     /*

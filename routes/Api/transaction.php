@@ -1,6 +1,6 @@
 <?php
 use App\Http\Controllers\Api\CheckoutController;
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:api')->group(function () {
     // Checkout endpoints
     Route::post('/checkout', [CheckoutController::class, 'checkout']);
     Route::get('/transactions', [CheckoutController::class, 'getUserTransactions']);

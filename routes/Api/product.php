@@ -3,7 +3,7 @@
 
 use App\Http\Controllers\Api\ProductController;
 
-Route::middleware(['auth:sanctum'])->group(function(){
+Route::middleware(['auth:api'])->group(function(){
     Route::middleware(['Seller'])->group(function(){
         Route::apiResource('product',ProductController::class)->except(['show','index']);
     });
