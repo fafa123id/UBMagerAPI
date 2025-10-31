@@ -20,9 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->group('api', [
-            EnsureFrontendRequestsAreStateful::class, // detect SPA origins
-        ]);
+        $middleware->statefulApi();
         $middleware->prepend(HandleCors::class);
         $middleware->alias([
             'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
