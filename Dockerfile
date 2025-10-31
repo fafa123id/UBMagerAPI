@@ -19,7 +19,7 @@ WORKDIR /var/www/UBMagerAPI
 
 COPY . .
 
-COPY composer.json composer.lock ./
+COPY composer.json ./
 
 RUN composer install --no-scripts --no-dev --prefer-dist --no-interaction
 
