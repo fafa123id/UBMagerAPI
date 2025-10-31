@@ -22,7 +22,6 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->group('api', [
             EnsureFrontendRequestsAreStateful::class, // detect SPA origins
-            StartSession::class,
         ]);
         $middleware->prepend(HandleCors::class);
         $middleware->alias([
