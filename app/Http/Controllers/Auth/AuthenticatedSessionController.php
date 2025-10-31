@@ -22,7 +22,7 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
-        session()->regenerate();
+        $request->session()->regenerate();
    
         $data =
             [
