@@ -1,6 +1,7 @@
 <?php
-use Illuminate\Support\Facades\Route;
 
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 Route::get('/api-routes', function () {
     $routes = collect(Route::getRoutes())->map(function ($route) {
@@ -13,9 +14,17 @@ Route::get('/api-routes', function () {
     })->values();
 
     return response()->json($routes);
-    
 });
 
-Route::get('/',function(){
+Route::get('/', function () {
     return view('index');
 });
+
+
+Route::post('/api/login', [AuthenticatedSessionController::class, 'store'])
+    ->middleware('guest')
+    ->name('login');
+
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
+    ->middleware('auth:sanctum')
+    ->name('logout');
