@@ -37,7 +37,7 @@ class AuthenticatedSessionController extends Controller
             // Pakai url() agar tidak tergantung APP_URL di container
             $tokenResp = Http::asForm()->post(url('/oauth/token'), [
                 'grant_type' => 'password',
-                'client_id' => (int) env('PASSPORT_PASSWORD_GRANT_CLIENT_ID', 2),
+                'client_id' => env('PASSPORT_PASSWORD_GRANT_CLIENT_ID'),
                 'client_secret' => env('PASSPORT_PASSWORD_GRANT_CLIENT_SECRET'),
                 'username' => $request->email,
                 'password' => $request->password,
