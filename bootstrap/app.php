@@ -22,12 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->group('api', [
             EnsureFrontendRequestsAreStateful::class, // detect SPA origins
-            EncryptCookies::class,
-            AddQueuedCookiesToResponse::class,
             StartSession::class,
-            ShareErrorsFromSession::class,
-            VerifyCsrfToken::class,                  // CSRF untuk cookie-based
-            SubstituteBindings::class,
         ]);
         $middleware->prepend(HandleCors::class);
         $middleware->alias([
