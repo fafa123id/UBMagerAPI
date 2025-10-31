@@ -18,4 +18,12 @@ Route::post('/register', [RegisteredUserController::class, 'store'])
     ->middleware('guest')
     ->name('register');
 
+Route::post('/api/login', [AuthenticatedSessionController::class, 'store'])
+    ->middleware('guest')
+    ->name('login');
+
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
+    ->middleware('auth:sanctum')
+    ->name('logout');
+    
 Route::get('/be-mitra',[userController::class,'changeRole'])->middleware(['auth:sanctum']);

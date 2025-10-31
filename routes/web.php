@@ -19,12 +19,3 @@ Route::get('/api-routes', function () {
 Route::get('/', function () {
     return view('index');
 });
-
-
-Route::post('/api/login', [AuthenticatedSessionController::class, 'store'])
-    ->middleware('guest')
-    ->name('login');
-
-Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
-    ->middleware('auth:sanctum')
-    ->name('logout');
