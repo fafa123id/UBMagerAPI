@@ -32,7 +32,6 @@ class AuthenticatedSessionController extends Controller
                 ];
             return response()->json($data, 401);
         }
-        $request->session()->regenerate();
 
         $data =
             [
