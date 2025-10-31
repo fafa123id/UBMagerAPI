@@ -18,12 +18,21 @@ class AuthenticatedSessionController extends Controller
      * Login a user and return a token.
      * This method authenticates the user and generates a token for API access.
      */
-    public function store(LoginRequest $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
-        $request->authenticate();
+        $credentials = $request->validate([
+            'email' => ['required', 'string', 'email'],
+            'password' => ['required', 'string'],
+        ]);
 
-        $request->session()->regenerate();
-   
+        if (!Auth::guard('web')->attempt($credentials)) {
+            $data =
+                [
+                    'message' => 'Login Gagal'
+                ];
+            return response()->json($data, 401);
+        }
+
         $data =
             [
                 'message' => 'Login Berhasil'
