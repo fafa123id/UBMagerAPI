@@ -8,8 +8,10 @@ use App\Observers\TransactionObserver;
 use App\Services\UserRoleId;
 use App\Models\Product;
 use App\Services\OtpMailer;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Passport\Passport;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -47,6 +49,9 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
         Product::observe(ProductObserver::class);
-        Transaction::observe(TransactionObserver::class);
+        Transaction::observe(TransactionObserver::class);;
+        // 4. Atur masa berlaku token sesuai permintaan
+        Passport::tokensExpireIn(Carbon::now()->addMinutes(15)); // Access Token: 15 Menit
+        Passport::refreshTokensExpireIn(Carbon::now()->addDays(7));
     }
 }
