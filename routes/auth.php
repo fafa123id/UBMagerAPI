@@ -15,11 +15,9 @@ Route::post('/forgot-password', [OtpSenderController::class, 'otpResetSend'])->m
 Route::post('/forgot-password/verify', [ResetPasswordController::class, 'verifyOtp'])->middleware(['verified']);
 Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword'])->middleware(['verified']);
 Route::post('/register', [RegisteredUserController::class, 'store'])
-    ->middleware('web')
     ->name('register');
 
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
-    ->middleware('web')
     ->name('login');
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
