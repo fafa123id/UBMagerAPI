@@ -22,7 +22,7 @@ pipeline {
         stage('Build and Deploy Application') {
             steps {
                 echo 'Menghapus Image Lama'
-                sh 'docker compose down -v'
+                sh 'docker compose down --remove-orphans'
                 echo '--- MEMBANGUN IMAGE APLIKASI BARU ---'
                 sh 'docker compose build'
 
