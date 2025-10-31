@@ -8064,18 +8064,6 @@
                 "spatie/phpunit-snapshot-assertions": "^1.3|^4.2|^5.1"
             },
             "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "BeyondCode\\ErdGenerator\\ErdGeneratorServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "BeyondCode\\ErdGenerator\\": "src"
-                }
-            },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
