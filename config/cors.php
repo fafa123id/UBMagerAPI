@@ -24,9 +24,7 @@ return [
         'https://api.ubmager.bornhub.cloud'
     ],
 
-    'allowed_origins_patterns' => [
-        'https://*.ubmager.bornhub.cloud',
-    ],
+    'allowed_origins_patterns' => [],
 
     'allowed_headers' => ['*'],
 
