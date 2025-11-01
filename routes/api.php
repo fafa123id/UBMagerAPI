@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('payment/finish', [CheckoutController::class, 'finish']);
 Route::get('/download/{files}', [downloadController::class,'download']);
+Route::get('/check-auth', function () {
+    return response()->json(['message' => 'Authenticated'], 200);
+})->middleware('auth:api');
 require __DIR__ . '/Api/product.php';
 require __DIR__ . '/Api/user.php';
 require __DIR__ . '/auth.php';
