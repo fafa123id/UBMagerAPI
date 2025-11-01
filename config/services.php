@@ -13,7 +13,7 @@ return [
     | a conventional file to locate the various service credentials.
     |
     */
-    'callmebot'=> [
+    'callmebot' => [
         'api_key' => env('CALLMEBOT_API_KEY'),
     ],
 
@@ -36,6 +36,10 @@ return [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
+    ],
+    'passport' => [
+        'password_client_id' => env('PASSPORT_PASSWORD_GRANT_CLIENT_ID'),
+        'password_client_secret' => env('PASSPORT_PASSWORD_GRANT_CLIENT_SECRET'),
     ],
 
 ];
