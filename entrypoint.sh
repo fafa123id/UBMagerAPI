@@ -16,6 +16,7 @@ php artisan l5-swagger:generate
 chown -R www-data:www-data storage bootstrap/cache
 chmod -R 775 storage bootstrap/cache
 chmod -R 660 storage/oauth-private.key
+chmod -R 660 storage/oauth-public.key
 
 composer dump-autoload -o
 
