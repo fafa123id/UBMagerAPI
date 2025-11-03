@@ -21,7 +21,8 @@ return [
 
     'allowed_origins' => [
         'https://ubmager.bornhub.cloud',
-        'https://api.ubmager.bornhub.cloud'
+        'https://api.ubmager.bornhub.cloud',
+        'http://localhost:3000',
     ],
 
     'allowed_origins_patterns' => [],
