@@ -24,8 +24,7 @@ class UserRepository implements UserRepositoryInterface
             $data['status'] = 'unverified';
             $data['email_verified_at'] = null;
         }
-        $user->fill($data);
-        $user->save();
+        $user->update($data);
         return new userResource($user);
     }
     
