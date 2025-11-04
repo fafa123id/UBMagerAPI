@@ -52,7 +52,7 @@ class userController extends Controller
         if ((int) $id !== (int) $users->id) {
             abort(403, 'Forbidden');
         }
-        $request->validate([
+        $validated=$request->validate([
             'name' => 'sometimes|string|max:255',
             'email' => 'sometimes|string|email|max:255',
             'phone' => 'sometimes|string|max:255',
@@ -65,9 +65,9 @@ class userController extends Controller
                 Storage::disk('s3')->delete($users->image);
             }
             $imagePath = config('filesystems.disks.s3.url') . $request->file('image')->store('images', 's3');
-            $request->merge(['image' => $imagePath]);
+            $validated['image'] = $imagePath;
         }
-        return $this->users->update($id, $request->all());
+        return $this->users->update($id, $validated);
     }
     /**
      * GET: /api/be-mitra
