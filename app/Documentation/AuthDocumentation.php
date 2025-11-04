@@ -30,7 +30,6 @@ namespace App\Documentation;
  *                 @OA\Property(property="phone", type="string", description="User phone number"),
  *                 @OA\Property(property="address", type="string", description="User address"),
  *                 @OA\Property(property="image", type="string", format="binary", description="User profile image")
- *           )      
  *             )
  *         )
  *     ),
