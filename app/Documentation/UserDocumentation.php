@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Documentation;
 
 /**
@@ -13,6 +14,8 @@ namespace App\Documentation;
  *     description="User resource representation",
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="name", type="string", example="John Doe"),
+ *     @OA\Property(property="username", type="string", example="johndoe123"),
+ *     @OA\Property(property="bio", type="string", example="Hello, I am John Doe"),
  *     @OA\Property(property="email", type="string", format="email", example="john@example.com"),
  *     @OA\Property(property="phone", type="string", example="1234567890"),
  *     @OA\Property(property="address", type="string", nullable=true, example="123 Main St"),
