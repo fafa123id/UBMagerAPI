@@ -22,12 +22,15 @@ namespace App\Documentation;
  *                 required={"name", "email", "password", "password_confirmation", "phone", "address"},
  *                 @OA\Property(property="name", type="string", description="User name"),
  *                 @OA\Property(property="email", type="string", format="email", description="User email"),
+ *                 @OA\Property(property="username", type="string", description="User username"),
+ *                 @OA\Property(property="bio", type="string", description="User bio"),
  *                 @OA\Property(property="password", type="string", format="password", description="User password"),
  *                 @OA\Property(property="password_confirmation", type="string", format="password", description="Password confirmation"),
  *                 @OA\Property(property="role_id", type="integer", description="User role (0=buyer, 1=seller)", default=0),
  *                 @OA\Property(property="phone", type="string", description="User phone number"),
  *                 @OA\Property(property="address", type="string", description="User address"),
  *                 @OA\Property(property="image", type="string", format="binary", description="User profile image")
+ *           )      
  *             )
  *         )
  *     ),
