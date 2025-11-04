@@ -48,6 +48,10 @@ class userController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $users = auth()->user();
+        if ((int) $id !== (int) $users->id) {
+            abort(403, 'Forbidden');
+        }
         $request->validate([
             'name' => 'sometimes|string|max:255',
             'email' => 'sometimes|string|email|max:255',
@@ -55,7 +59,6 @@ class userController extends Controller
             'address' => 'sometimes|string|max:255',
             'image' => 'sometimes|image|mimes:jpeg,png,jpg|max:2048',
         ]);
-        $users = auth()->user();
         if ($request->hasFile('image')) {
             // Delete the old image from S3 if it exists
             if ($users->image && Storage::disk('s3')->exists($users->image)) {

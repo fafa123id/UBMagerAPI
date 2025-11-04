@@ -19,12 +19,16 @@ class UserRepository implements UserRepositoryInterface
 
     public function update($id, array $data)
     {
+        $user = User::findOrFail($id); 
         if (isset($data['email'])) {
             $data['status'] = 'unverified';
             $data['email_verified_at'] = null;
         }
-        return new userResource(auth()->user()->update($id, $data));
+        $user->fill($data);
+        $user->save();
+        return new userResource($user);
     }
+    
 
     public function delete($id)
     {
