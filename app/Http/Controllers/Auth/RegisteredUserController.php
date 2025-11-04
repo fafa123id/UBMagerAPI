@@ -35,6 +35,7 @@ class RegisteredUserController extends Controller
             'phone' => ['required', 'string', 'unique:users,phone', 'regex:/^(\+62|62|0)8[1-9][0-9]{6,9}$/', 'max:15'],
             'address' => ['required', 'string', 'max:255'],
             'image' => ['nullable','image','mimes:jpeg,png,jpg','max:2048'],
+            'username' => ['nullable', 'string', 'max:255', 'unique:users,username'],
         ]);
         $imagePath = null;
         if ($request->hasFile('image')) {
@@ -42,6 +43,8 @@ class RegisteredUserController extends Controller
         }
         User::create([
             'name' => $request->name,
+            'username' => preg_replace('/\s+/', '', strtolower($request->name)) . rand(1000, 9999),
+            'bio' => 'Hello, I am ' . $request->name,
             'email' => $request->email,
             'role_id' => $request->role_id?? 0,
             'phone' => $request->phone,
