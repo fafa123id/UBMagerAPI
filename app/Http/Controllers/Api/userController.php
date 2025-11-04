@@ -58,6 +58,8 @@ class userController extends Controller
             'phone' => 'sometimes|string|max:255',
             'address' => 'sometimes|string|max:255',
             'image' => 'sometimes|image|mimes:jpeg,png,jpg|max:2048',
+            'username' => 'sometimes|string|max:255|unique:users,username,' . $id,
+            'bio' => 'sometimes|string|max:255',
         ]);
         if ($request->hasFile('image')) {
             // Delete the old image from S3 if it exists
