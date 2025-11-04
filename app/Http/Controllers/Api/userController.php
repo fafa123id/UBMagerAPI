@@ -64,7 +64,7 @@ class userController extends Controller
             if ($users->image && Storage::disk('s3')->exists($users->image)) {
                 Storage::disk('s3')->delete($users->image);
             }
-            $imagePath = config('filesystems.disks.s3.url') . $request->file('image')->store('images', 's3');
+            $imagePath =$request->file('image')->store('images', 's3');
             $validated['image'] = $imagePath;
         }
         return $this->users->update($id, $validated);
