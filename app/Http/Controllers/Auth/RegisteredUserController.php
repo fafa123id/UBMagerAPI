@@ -38,7 +38,7 @@ class RegisteredUserController extends Controller
         ]);
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = config('filesystems.disks.s3.url').$request->file('image')->store('images', 's3');
+            $imagePath = $request->file('image')->store('images', 's3');
         }
         User::create([
             'name' => $request->name,
@@ -46,8 +46,8 @@ class RegisteredUserController extends Controller
             'role_id' => $request->role_id?? 0,
             'phone' => $request->phone,
             'password' => Hash::make($request->string('password')),
-            'address' => $request->address,
-            'image' => $imagePath ?? 'https://static.vecteezy.com/system/resources/thumbnails/020/765/399/small/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg',
+            'address' => $request->address, 
+            'image' => $imagePath ?? null,
         ]);
 
         return response()->json([
