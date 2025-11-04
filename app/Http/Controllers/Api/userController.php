@@ -52,6 +52,7 @@ class userController extends Controller
         if ((int) $id !== (int) $users->id) {
             abort(403, 'Forbidden');
         }
+        $oldEmail = $users->email;
         $validated=$request->validate([
             'name' => 'sometimes|string|max:255',
             'email' => 'sometimes|string|email|max:255',
@@ -69,7 +70,7 @@ class userController extends Controller
             $imagePath =$request->file('image')->store('images', 's3');
             $validated['image'] = $imagePath;
         }
-        return $this->users->update($id, $validated);
+        return $this->users->update($id, $validated, $oldEmail);
     }
     /**
      * GET: /api/be-mitra
