@@ -67,7 +67,6 @@ class userController extends Controller
             $imagePath = config('filesystems.disks.s3.url') . $request->file('image')->store('images', 's3');
             $request->merge(['image' => $imagePath]);
         }
-        dd( $request->all());
         return $this->users->update($id, $request->all());
     }
     /**
