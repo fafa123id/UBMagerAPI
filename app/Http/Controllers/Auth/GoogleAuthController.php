@@ -14,11 +14,11 @@ class GoogleAuthController extends Controller
 {
     public function redirect()
     {
-        return Socialite::driver('google')->redirect();
+        return Socialite::driver('google')->stateless()->redirect();
     }
     public function callback()
     {
-        $googleUser = Socialite::driver('google')->user();
+        $googleUser = Socialite::driver('google')->stateless()->user();
         $password = Hash::make(Str::random(24));
         $user = User::updateOrCreate(
             [
