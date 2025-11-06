@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Laravel\Passport\Token;
@@ -56,9 +57,26 @@ class AuthenticatedSessionController extends Controller
                     $tokenResp->status()
                 );
             }
-
+            $response_token = $tokenResp->json();
+            $refreshToken = $response_token->refresh_token;
+            $token = $response_token->access_token;
+            $refreshTokenCookie = cookie(
+                'refresh_token',
+                $refreshToken,
+                60 * 24 * 30,
+                '/',
+                null,
+                config('session.secure'),
+                true,
+                false,
+                'lax'
+            );
             // Sukses: bungkus ke JsonResponse
-            return response()->json($tokenResp->json(), $tokenResp->status());
+            return response()->json([
+                'access_token' => $token,
+                'token_type' => $response_token->token_type,
+                'expires_in' => $response_token->expires_in,
+            ], $tokenResp->status())->withCookie($refreshTokenCookie);
         } catch (\Throwable $e) {
             // Antisipasi network/exception lain
             return response()->json([
@@ -88,24 +106,26 @@ class AuthenticatedSessionController extends Controller
      * This method revokes the user's token, effectively logging them out.
      * @authenticated
      */
-    public function destroy(Request $request): JsonResponse
+    public function destroy(): JsonResponse
     {
         // Otomatis tahu user dari token yang dipakai
         auth()->user()->tokens()->each(function (Token $token) {
             $token->revoke();
             $token->refreshToken?->revoke();
         });
+        $cookie = Cookie::forget('refresh_token');
 
-        return response()->json(['message' => 'Berhasil logout.']);
+        return response()->json(['message' => 'Berhasil logout.'])->withCookie($cookie);
     }
     public function refresh(Request $request): JsonResponse
     {
         try {
+            $refreshToken = $request->cookie('refresh_token');
             $tokenResp = Http::asForm()->post(url('/oauth/token'), [
                 'grant_type' => 'refresh_token',
                 'client_id' => config('services.passport.password_client_id'),
                 'client_secret' => config('services.passport.password_client_secret'),
-                'refresh_token' => $request->refresh_token,
+                'refresh_token' => $refreshToken,
                 'scope' => '', // atau '*' jika memang perlu
             ]);
 
@@ -115,7 +135,25 @@ class AuthenticatedSessionController extends Controller
                     $tokenResp->status()
                 );
             }
-            return response()->json($tokenResp->json(), $tokenResp->status());
+            $response_token = $tokenResp->json();
+            $refreshToken = $response_token->refresh_token;
+            $token = $response_token->access_token;
+            $refreshTokenCookie = cookie(
+                'refresh_token',
+                $refreshToken,
+                60 * 24 * 30,
+                '/',
+                null,
+                config('session.secure'),
+                true,
+                false,
+                'lax'
+            );
+            return response()->json([
+                'access_token' => $token,
+                'token_type' => $response_token->token_type,
+                'expires_in' => $response_token->expires_in,
+            ], $tokenResp->status())->withCookie($refreshTokenCookie);
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'Terjadi kesalahan saat meminta token.',
