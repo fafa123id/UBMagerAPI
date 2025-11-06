@@ -52,7 +52,7 @@ class userController extends Controller
         if ((int) $id !== (int) $users->id) {
             abort(403, 'Forbidden');
         }
-        $oldEmail = $users->email??null;
+        $oldEmail = $users->email??"null";
         $validated=$request->validate([
             'name' => 'sometimes|string|max:255',
             'email' => 'sometimes|string|email|max:255|unique:users,email,' . $id,
