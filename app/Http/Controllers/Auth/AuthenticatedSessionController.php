@@ -24,11 +24,14 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        $credentials = $request->validate([
-            'email' => 'required|string|email',
+        $request->validate([
+            'emailor_username' => 'required|string',
             'password' => 'required|string',
         ]);
-
+        $credentials = [
+            filter_var($request->emailor_username, FILTER_VALIDATE_EMAIL) ? 'email' : 'username' => $request->emailor_username,
+            'password' => $request->password,
+        ];
         if (!auth()->attempt($credentials)) {
             return response()->json(['message' => 'Email atau password salah.'], 401);
         }
