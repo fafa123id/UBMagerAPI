@@ -29,3 +29,6 @@ Route::get('/be-mitra',[userController::class,'changeRole'])->middleware(['auth:
 
 Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect']);
 Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback']);
+
+Route::get('/auth/google/link/callback', [GoogleAuthController::class, 'linkCallback']);
+Route::get('/auth/google/link/redirect', [GoogleAuthController::class, 'linkRedirect']);
