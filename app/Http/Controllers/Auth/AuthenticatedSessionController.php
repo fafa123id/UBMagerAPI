@@ -43,7 +43,7 @@ class AuthenticatedSessionController extends Controller
                 'grant_type' => 'password',
                 'client_id' => config('services.passport.password_client_id'),
                 'client_secret' => config('services.passport.password_client_secret'),
-                'username' => $request->email,
+                'username' => $email,
                 'password' => $request->password,
                 'scope' => '', // atau '*' jika memang perlu
             ]);
