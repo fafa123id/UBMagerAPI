@@ -163,11 +163,11 @@ class AuthenticatedSessionController extends Controller
             $authTokenCookie = cookie(
                 'auth_token',
                 $token,
-                60 * 24 * 30,
+                60,
                 '/',
                 null,
                 config('session.secure'),
-                true,
+                false,
                 false,
                 'lax'
             );
