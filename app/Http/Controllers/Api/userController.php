@@ -55,8 +55,8 @@ class userController extends Controller
         $oldEmail = $users->email??"null";
         $validated=$request->validate([
             'name' => 'sometimes|string|max:255',
-            'email' => 'sometimes|string|email|max:255|unique:users,email,' . $id,
-            'phone' => 'sometimes|string|max:255|unique:users,phone,' . $id,
+            'email' => 'sometimes|nullable|string|email|max:255|unique:users,email,' . $id,
+            'phone' => 'sometimes|nullable|string|max:255|unique:users,phone,' . $id,
             'address' => 'sometimes|string|max:255',
             'image' => 'sometimes|image|mimes:jpeg,png,jpg|max:2048',
             'username' => 'sometimes|string|max:255|unique:users,username,' . $id,
