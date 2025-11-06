@@ -84,10 +84,9 @@ class AuthenticatedSessionController extends Controller
             );
             // Sukses: bungkus ke JsonResponse
             return response()->json([
-                'access_token' => $token,
                 'token_type' => $response_token['token_type'],
                 'expires_in' => $response_token['expires_in'],
-            ], $tokenResp->status())->withCookie($refreshTokenCookie, $authTokenCookie);
+            ], $tokenResp->status())->withCookie($refreshTokenCookie)->withCookie($authTokenCookie);
         } catch (\Throwable $e) {
             // Antisipasi network/exception lain
             return response()->json([
@@ -176,7 +175,7 @@ class AuthenticatedSessionController extends Controller
                 'access_token' => $token,
                 'token_type' => $response_token['token_type'],
                 'expires_in' => $response_token['expires_in'],
-            ], $tokenResp->status())->withCookie($refreshTokenCookie);
+            ], $tokenResp->status())->withCookie($refreshTokenCookie)->withCookie($authTokenCookie);
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'Terjadi kesalahan saat meminta token.',
