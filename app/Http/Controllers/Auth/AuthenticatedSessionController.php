@@ -120,7 +120,7 @@ class AuthenticatedSessionController extends Controller
     public function refresh(Request $request): JsonResponse
     {
         try {
-            $refreshToken = $request->cookie('auth_refresh_token');
+            $refreshToken = $request->cookie('refresh_token');
             $tokenResp = Http::asForm()->post(url('/oauth/token'), [
                 'grant_type' => 'refresh_token',
                 'client_id' => config('services.passport.password_client_id'),
