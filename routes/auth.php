@@ -20,7 +20,9 @@ Route::post('/register', [RegisteredUserController::class, 'store'])
 
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
     ->name('login');
-
+Route::post('/set-password', [userController::class, 'addPassword'])
+    ->middleware('auth:api')
+    ->name('set-password');
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth:api')
     ->name('logout');

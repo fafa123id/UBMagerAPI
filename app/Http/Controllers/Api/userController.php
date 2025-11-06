@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Repositories\Abstract\UserRepositoryInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class userController extends Controller
@@ -85,6 +86,32 @@ class userController extends Controller
             [
                 'success' => true,
                 'message' => 'Role changed successfully'
+            ],
+            200
+        );
+    }
+    public function addPassword(Request $request)
+    {
+        $validated = $request->validate([
+            'password' => 'required|string|min:8|confirmed',
+            'password_confirmation' => 'required|string|min:8',
+        ]);
+        $user = auth()->user();
+        if ($user->password) {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Password already set'
+                ],
+                400
+            );
+        }
+        $user->password = Hash::make($validated['password']);
+        $user->save();
+        return response()->json(
+            [
+                'success' => true,
+                'message' => 'Password added successfully'
             ],
             200
         );
