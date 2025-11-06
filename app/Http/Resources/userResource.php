@@ -22,7 +22,7 @@ class userResource extends JsonResource
             'email' => $this->email,
             'phone' => $this->phone,
             'address' => $this->address ?? null,
-            'image' => config('filesystems.disks.s3.url') . $this->image ?? 'https://static.vecteezy.com/system/resources/thumbnails/020/765/399/small/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg',
+            'image' => $this->image ? config('filesystems.disks.s3.url') . $this->image : 'https://static.vecteezy.com/system/resources/thumbnails/020/765/399/small/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg',
             'role_id' => $this->role_id,
             'is_verified' => $this->email_verified_at ? true : false,
             'created_at' => $this->created_at->toDateTimeString(),
