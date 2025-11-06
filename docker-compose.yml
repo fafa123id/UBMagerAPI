@@ -28,6 +28,25 @@ services:
       - app-ubmager
     networks:
       - shared-network
+  worker-ubmager: 
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: app
+      args:
+        - GIT_HASH=${GIT_HASH:-unknown}
+    container_name: ubmager_queue
+    restart: unless-stopped
+    command: /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
+    env_file: ./.env
+    working_dir: /var/www/UBMagerAPI
+    volumes:
+      - laravel_storage:/var/www/UBMagerAPI/storage
+      - laravel_cache:/var/www/UBMagerAPI/bootstrap/cache
+    networks:
+      - shared-network 
+    depends_on:
+      - app-ubmager
 
 networks:
   shared-network:

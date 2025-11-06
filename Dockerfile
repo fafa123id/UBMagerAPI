@@ -19,6 +19,8 @@ WORKDIR /var/www/UBMagerAPI
 
 COPY . .
 
+COPY supervisord.conf /etc/supervisor/supervisord.conf
+
 COPY composer.json ./
 
 RUN composer install --no-scripts --no-dev --prefer-dist --no-interaction
