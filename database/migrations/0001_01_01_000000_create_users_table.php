@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('bio')->nullable();
             $table->string('phone')->nullable()->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->tinyInteger('role_id')->default(0);
             $table->enum('status', ['verified', 'unverified'])->default('unverified');
             $table->text('address')->nullable();
