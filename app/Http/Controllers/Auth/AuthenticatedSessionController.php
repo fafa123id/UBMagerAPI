@@ -58,8 +58,8 @@ class AuthenticatedSessionController extends Controller
                 );
             }
             $response_token = $tokenResp->json();
-            $refreshToken = $response_token->refresh_token;
-            $token = $response_token->access_token;
+            $refreshToken = $response_token['refresh_token'];
+            $token = $response_token['access_token'];
             $refreshTokenCookie = cookie(
                 'refresh_token',
                 $refreshToken,
@@ -74,8 +74,8 @@ class AuthenticatedSessionController extends Controller
             // Sukses: bungkus ke JsonResponse
             return response()->json([
                 'access_token' => $token,
-                'token_type' => $response_token->token_type,
-                'expires_in' => $response_token->expires_in,
+                'token_type' => $response_token['token_type'],
+                'expires_in' => $response_token['expires_in'],
             ], $tokenResp->status())->withCookie($refreshTokenCookie);
         } catch (\Throwable $e) {
             // Antisipasi network/exception lain
@@ -136,8 +136,8 @@ class AuthenticatedSessionController extends Controller
                 );
             }
             $response_token = $tokenResp->json();
-            $refreshToken = $response_token->refresh_token;
-            $token = $response_token->access_token;
+            $refreshToken = $response_token['refresh_token'];
+            $token = $response_token['access_token'];
             $refreshTokenCookie = cookie(
                 'refresh_token',
                 $refreshToken,
@@ -151,8 +151,8 @@ class AuthenticatedSessionController extends Controller
             );
             return response()->json([
                 'access_token' => $token,
-                'token_type' => $response_token->token_type,
-                'expires_in' => $response_token->expires_in,
+                'token_type' => $response_token['token_type'],
+                'expires_in' => $response_token['expires_in'],
             ], $tokenResp->status())->withCookie($refreshTokenCookie);
         } catch (\Throwable $e) {
             return response()->json([
