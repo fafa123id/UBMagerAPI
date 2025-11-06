@@ -24,7 +24,8 @@ Route::post('/login', [AuthenticatedSessionController::class, 'store'])
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth:api')
     ->name('logout');
-
+Route::post('/refresh ', [AuthenticatedSessionController::class, 'refresh'])
+    ->name('refresh');
 Route::get('/be-mitra',[userController::class,'changeRole'])->middleware(['auth:api']);
 
 Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect']);

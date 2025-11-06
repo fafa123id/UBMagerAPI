@@ -98,4 +98,29 @@ class AuthenticatedSessionController extends Controller
 
         return response()->json(['message' => 'Berhasil logout.']);
     }
+    public function refresh(Request $request): JsonResponse
+    {
+        try {
+            $tokenResp = Http::asForm()->post(url('/oauth/token'), [
+                'grant_type' => 'refresh_token',
+                'client_id' => config('services.passport.password_client_id'),
+                'client_secret' => config('services.passport.password_client_secret'),
+                'refresh_token' => $request->refresh_token,
+                'scope' => '', // atau '*' jika memang perlu
+            ]);
+
+            if ($tokenResp->failed()) {
+                return response()->json(
+                    $tokenResp->json() ?? ['message' => 'Gagal mendapatkan token.'],
+                    $tokenResp->status()
+                );
+            }
+            return response()->json($tokenResp->json(), $tokenResp->status());
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Terjadi kesalahan saat meminta token.',
+                'error'   => config('app.debug') ? $e->getMessage() : null,
+            ], 500);
+        }
+    }
 }
