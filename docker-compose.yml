@@ -32,9 +32,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: app
-      args:
-        - GIT_HASH=${GIT_HASH:-unknown}
     container_name: ubmager_queue
     restart: unless-stopped
     command: /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
