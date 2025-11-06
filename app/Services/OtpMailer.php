@@ -11,6 +11,6 @@ class OtpMailer
 
     public function sendOtp($email, $otp, $for, $subject)
     {
-        return Mail::to($email)->send(new OtpMail($otp, $for, $subject));
+        return Mail::to($email)->queue(new OtpMail($otp, $for, $subject));
     }
 }
