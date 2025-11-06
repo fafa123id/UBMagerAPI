@@ -52,7 +52,7 @@ class AppServiceProvider extends ServiceProvider
         Transaction::observe(TransactionObserver::class);;
         // 4. Atur masa berlaku token sesuai permintaa
         Passport::enablePasswordGrant();
-        Passport::tokensExpireIn(Carbon::now()->addMinutes(15)); // Access Token: 15 Menit
+        Passport::tokensExpireIn(Carbon::now()->addMinutes(1)); // Access Token: 15 Menit
         Passport::refreshTokensExpireIn(Carbon::now()->addDays(7));
         Passport::personalAccessTokensExpireIn(now()->addMonth());
     }
