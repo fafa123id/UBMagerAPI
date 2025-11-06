@@ -71,12 +71,23 @@ class AuthenticatedSessionController extends Controller
                 false,
                 'lax'
             );
+            $authTokenCookie = cookie(
+                'auth_token',
+                $token,
+                60 * 24 * 30,
+                '/',
+                null,
+                config('session.secure'),
+                true,
+                false,
+                'lax'
+            );
             // Sukses: bungkus ke JsonResponse
             return response()->json([
                 'access_token' => $token,
                 'token_type' => $response_token['token_type'],
                 'expires_in' => $response_token['expires_in'],
-            ], $tokenResp->status())->withCookie($refreshTokenCookie);
+            ], $tokenResp->status())->withCookie($refreshTokenCookie, $authTokenCookie);
         } catch (\Throwable $e) {
             // Antisipasi network/exception lain
             return response()->json([
@@ -114,8 +125,9 @@ class AuthenticatedSessionController extends Controller
             $token->refreshToken?->revoke();
         });
         $cookie = Cookie::forget('refresh_token');
+        $authCookie = Cookie::forget('auth_token');
 
-        return response()->json(['message' => 'Berhasil logout.'])->withCookie($cookie);
+        return response()->json(['message' => 'Berhasil logout.'])->withCookie($cookie, $authCookie);
     }
     public function refresh(Request $request): JsonResponse
     {
@@ -141,6 +153,17 @@ class AuthenticatedSessionController extends Controller
             $refreshTokenCookie = cookie(
                 'refresh_token',
                 $refreshToken,
+                60 * 24 * 30,
+                '/',
+                null,
+                config('session.secure'),
+                true,
+                false,
+                'lax'
+            );
+            $authTokenCookie = cookie(
+                'auth_token',
+                $token,
                 60 * 24 * 30,
                 '/',
                 null,
