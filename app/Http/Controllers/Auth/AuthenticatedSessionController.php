@@ -126,7 +126,7 @@ class AuthenticatedSessionController extends Controller
         $cookie = Cookie::forget('refresh_token');
         $authCookie = Cookie::forget('auth_token');
 
-        return response()->json(['message' => 'Berhasil logout.'])->withCookie($cookie, $authCookie);
+        return response()->json(['message' => 'Berhasil logout.'])->withCookie($cookie)->withCookie($authCookie);
     }
     public function refresh(Request $request): JsonResponse
     {
