@@ -41,8 +41,18 @@ class GoogleAuthController extends Controller
         try {
             $tokenResp = $user->createToken('google-auth-token');
             $token = $tokenResp->accessToken;
-
-            return redirect(env('FRONTEND_URL') . '/auth/callback#token=' . $token);
+            $cookie = cookie(
+                'auth_token',
+                $token,
+                60 * 60 * 24 * 7,
+                '/',                   // path
+                '.bornhub.cloud',      // domain untuk subdomain sharing
+                true,                  // secure
+                true,                  // httpOnly
+                false,                 // raw
+                'lax'                 // SameSite ('None' jika FE & API beda origin)
+            );
+            return redirect(env('FRONTEND_URL') . '/auth/callback')->withCookie($cookie);
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'Terjadi kesalahan saat meminta token.',
@@ -59,9 +69,9 @@ class GoogleAuthController extends Controller
 
         $redirectUrl = Socialite::driver('google')->stateless()
             ->redirectUrl(env('GOOGLE_REDIRECT_URI_LINK'))
-            ->with(['state' => $state]) 
+            ->with(['state' => $state])
             ->redirect()
-            ->getTargetUrl(); 
+            ->getTargetUrl();
 
 
         return response()->json([
@@ -71,7 +81,7 @@ class GoogleAuthController extends Controller
     public function linkCallback(Request $request)
     {
 
-        $settingsUrl = env('FRONTEND_URL').'/profile';
+        $settingsUrl = env('FRONTEND_URL') . '/profile';
 
         if ($request->has('error')) {
             return redirect($settingsUrl . '?error=link_denied');
@@ -96,8 +106,8 @@ class GoogleAuthController extends Controller
 
             // 3. LOGIKA UTAMA: Cek Google ID ini udah dipake orang lain belom
             $existingLink = User::where('google_id', $googleUser->id)
-                                ->where('id', '!=', $user->id) // <- Punya user lain
-                                ->exists();
+                ->where('id', '!=', $user->id) // <- Punya user lain
+                ->exists();
 
             if ($existingLink) {
                 return redirect($settingsUrl . '?error=google_already_linked');
@@ -109,7 +119,6 @@ class GoogleAuthController extends Controller
             ]);
 
             return redirect($settingsUrl . '?success=link_complete');
-
         } catch (\Exception $e) {
             // Tangkap error (misal: state invalid, decrypt gagal)
             report($e);

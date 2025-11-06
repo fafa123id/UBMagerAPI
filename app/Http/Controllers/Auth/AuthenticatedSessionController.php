@@ -65,18 +65,28 @@ class AuthenticatedSessionController extends Controller
                 $refreshToken,
                 60 * 24 * 30,
                 '/',
-                null,
+                '.bornhub.cloud',
                 config('session.secure'),
                 true,
                 false,
                 'lax'
             );
-            // Sukses: bungkus ke JsonResponse
+            $accessTokenCookie = cookie(
+                'auth_token',
+                $token,
+                60,
+                '/',
+                '.bornhub.cloud',
+                config('session.secure'),
+                true,
+                false,
+                'lax'
+            );
             return response()->json([
                 'access_token' => $token,
                 'token_type' => $response_token['token_type'],
                 'expires_in' => $response_token['expires_in'],
-            ], $tokenResp->status())->withCookie($refreshTokenCookie);
+            ], $tokenResp->status())->withCookie($refreshTokenCookie)->withCookie($accessTokenCookie);
         } catch (\Throwable $e) {
             // Antisipasi network/exception lain
             return response()->json([
@@ -114,8 +124,9 @@ class AuthenticatedSessionController extends Controller
             $token->refreshToken?->revoke();
         });
         $cookie = Cookie::forget('refresh_token');
+        $accessTokenCookie = Cookie::forget('auth_token');
 
-        return response()->json(['message' => 'Berhasil logout.'])->withCookie($cookie);
+        return response()->json(['message' => 'Berhasil logout.'])->withCookie($cookie)->withCookie($accessTokenCookie);
     }
     public function refresh(Request $request): JsonResponse
     {
@@ -143,7 +154,18 @@ class AuthenticatedSessionController extends Controller
                 $refreshToken,
                 60 * 24 * 30,
                 '/',
-                null,
+                '.bornhub.cloud',
+                config('session.secure'),
+                true,
+                false,
+                'lax'
+            );
+            $accessTokenCookie = cookie(
+                'auth_token',
+                $token,
+                60,
+                '/',
+                '.bornhub.cloud',
                 config('session.secure'),
                 true,
                 false,
@@ -153,7 +175,7 @@ class AuthenticatedSessionController extends Controller
                 'access_token' => $token,
                 'token_type' => $response_token['token_type'],
                 'expires_in' => $response_token['expires_in'],
-            ], $tokenResp->status())->withCookie($refreshTokenCookie);
+            ], $tokenResp->status())->withCookie($refreshTokenCookie)->withCookie($accessTokenCookie);
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'Terjadi kesalahan saat meminta token.',
