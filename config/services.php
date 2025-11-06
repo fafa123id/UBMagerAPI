@@ -41,5 +41,10 @@ return [
         'password_client_id' => env('PASSPORT_PASSWORD_GRANT_CLIENT_ID'),
         'password_client_secret' => env('PASSPORT_PASSWORD_GRANT_CLIENT_SECRET'),
     ],
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT_URI'),
+    ],
 
 ];
