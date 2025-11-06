@@ -21,7 +21,6 @@ class GoogleAuthController extends Controller
         $googleUser = Socialite::driver('google')->stateless()->user();
 
         $user = User::where('gmail', $googleUser->email)->first();
-        $password = Hash::make(Str::random(24));
         if (!$user) {
             $user = User::create(
 
@@ -29,37 +28,20 @@ class GoogleAuthController extends Controller
                     'name' => $googleUser->name,
                     'username' => preg_replace('/\s+/', '', strtolower($googleUser->name)) . rand(1000, 9999),
                     'gmail' => $googleUser->email,
-                    'password' => $password,
                     'google_id' => $googleUser->id,
                 ]
             );
         } else {
             $user->update([
-                'password' => $password,
                 'google_id' => $googleUser->id,
             ]);
         }
 
         try {
-            $tokenResp = Http::asForm()->post(url('/oauth/token'), [
-                'grant_type' => 'password',
-                'client_id' => config('services.passport.password_client_id'),
-                'client_secret' => config('services.passport.password_client_secret'),
-                'username' => $user->gmail,
-                'password' => $password,
-                'scope' => '',
-            ]);
+            $tokenResp = $user->createToken('google-auth-token');
+            $token = $tokenResp->accessToken;
 
-            if ($tokenResp->failed()) {
-                return response()->json(
-                    $tokenResp->json() ?? ['message' => 'Gagal mendapatkan token.'],
-                    $tokenResp->status()
-                );
-            }
-
-            $accessToken = $tokenResp->json()['access_token'];
-            $refreshToken = $tokenResp->json()['refresh_token'];
-            return redirect(env('FRONTEND_URL') . '/auth/callback?token=' . $accessToken . '&refresh=' . $refreshToken);
+            return redirect(env('FRONTEND_URL') . '/auth/callback?token=' . $token);
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'Terjadi kesalahan saat meminta token.',
