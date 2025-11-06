@@ -28,8 +28,9 @@ class AuthenticatedSessionController extends Controller
             'emailor_username' => 'required|string',
             'password' => 'required|string',
         ]);
+        $email = User::where('email', $request->emailor_username)->orWhere('username', $request->emailor_username)->firstOrFail()->email;
         $credentials = [
-            filter_var($request->emailor_username, FILTER_VALIDATE_EMAIL) ? 'email' : 'username' => $request->emailor_username,
+            'email' => $email,
             'password' => $request->password,
         ];
         if (!auth()->attempt($credentials)) {
