@@ -28,7 +28,7 @@ class AuthenticatedSessionController extends Controller
             'emailor_username' => 'required|string',
             'password' => 'required|string',
         ]);
-        $email = User::where('email', $request->emailor_username)->orWhere('username', $request->emailor_username)->orWhere('google_id', null)->firstOrFail()->email;
+        $email = User::where('email', $request->emailor_username)->orWhere('username', $request->emailor_username)->firstOrFail()->email;
         $credentials = [
             'email' => $email,
             'password' => $request->password,
