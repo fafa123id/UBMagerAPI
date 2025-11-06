@@ -42,7 +42,7 @@ class GoogleAuthController extends Controller
             $tokenResp = $user->createToken('google-auth-token');
             $token = $tokenResp->accessToken;
 
-            return redirect(env('FRONTEND_URL') . '/auth/callback?token=' . $token);
+            return redirect(env('FRONTEND_URL') . '/auth/callback#token=' . $token);
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'Terjadi kesalahan saat meminta token.',
