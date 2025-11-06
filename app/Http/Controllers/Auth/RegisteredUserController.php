@@ -43,7 +43,7 @@ class RegisteredUserController extends Controller
         }
         User::create([
             'name' => $request->name,
-            'username' => preg_replace('/\s+/', '', strtolower($request->name)) . rand(1000, 9999),
+            'username' => $request->username ?? preg_replace('/\s+/', '', strtolower($request->name)) . rand(1000, 9999),
             'bio' => 'Hello, I am ' . $request->name,
             'email' => $request->email,
             'role_id' => $request->role_id?? 0,
