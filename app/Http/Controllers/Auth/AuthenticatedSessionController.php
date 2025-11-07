@@ -40,14 +40,7 @@ class AuthenticatedSessionController extends Controller
 
         try {
             // Pakai url() agar tidak tergantung APP_URL di container
-            $tokenResp = Http::asForm()->post(url('/oauth/token'), [
-                'grant_type' => 'password',
-                'client_id' => config('services.passport.password_client_id'),
-                'client_secret' => config('services.passport.password_client_secret'),
-                'username' => $email,
-                'password' => $request->password,
-                'scope' => '', // atau '*' jika memang perlu
-            ]);
+            $tokenResp = $this->getToken($email, $request->password);
 
             // Jika Passport memberi error (4xx/5xx), teruskan status & body-nya
             if ($tokenResp->failed()) {
@@ -60,22 +53,12 @@ class AuthenticatedSessionController extends Controller
             $response_token = $tokenResp->json();
             $refreshToken = $response_token['refresh_token'];
             $token = $response_token['access_token'];
-            $refreshTokenCookie = cookie(
-                'refresh_token',
-                $refreshToken,
-                60 * 60 * 24 * 7,
-                '/',
-                '.bornhub.cloud',
-                config('session.secure'),
-                true,
-                false,
-                'lax'
-            );
+            [$refreshTokenCookie, $accessTokenCookie] = $this->setCookiesForTokens($token, $refreshToken);
             return response()->json([
                 'access_token' => $token,
                 'token_type' => $response_token['token_type'],
                 'expires_in' => $response_token['expires_in'],
-            ], $tokenResp->status())->withCookie($refreshTokenCookie);
+            ], $tokenResp->status())->withCookie($refreshTokenCookie)->withCookie($accessTokenCookie);
         } catch (\Throwable $e) {
             // Antisipasi network/exception lain
             return response()->json([
@@ -113,21 +96,15 @@ class AuthenticatedSessionController extends Controller
             $token->refreshToken?->revoke();
         });
         $cookie = Cookie::forget('refresh_token');
+        $accessTokenCookie = Cookie::forget('auth_token');
 
-        return response()->json(['message' => 'Berhasil logout.'])->withCookie($cookie);
+        return response()->json(['message' => 'Berhasil logout.'])->withCookie($cookie)->withCookie($accessTokenCookie);
     }
     public function refresh(Request $request): JsonResponse
     {
         try {
             $refreshToken = $request->cookie('refresh_token');
-            $tokenResp = Http::asForm()->post(url('/oauth/token'), [
-                'grant_type' => 'refresh_token',
-                'client_id' => config('services.passport.password_client_id'),
-                'client_secret' => config('services.passport.password_client_secret'),
-                'refresh_token' => $refreshToken,
-                'scope' => '', // atau '*' jika memang perlu
-            ]);
-
+            $tokenResp = $this->refreshToken($refreshToken);
             if ($tokenResp->failed()) {
                 return response()->json(
                     $tokenResp->json() ?? ['message' => 'Gagal mendapatkan token.'],
@@ -137,28 +114,66 @@ class AuthenticatedSessionController extends Controller
             $response_token = $tokenResp->json();
             $refreshToken = $response_token['refresh_token'];
             $token = $response_token['access_token'];
-            $refreshTokenCookie = cookie(
-                'refresh_token',
-                $refreshToken,
-                60 * 60 * 24 * 7,
-                '/',
-                '.bornhub.cloud',
-                config('session.secure'),
-                true,
-                false,
-                'lax'
-            );
-            
+
+            [$refreshTokenCookie, $accessTokenCookie] = $this->setCookiesForTokens($token, $refreshToken);
+
             return response()->json([
                 'access_token' => $token,
                 'token_type' => $response_token['token_type'],
                 'expires_in' => $response_token['expires_in'],
-            ], $tokenResp->status())->withCookie($refreshTokenCookie);
+            ], $tokenResp->status())->withCookie($refreshTokenCookie)->withCookie($accessTokenCookie);
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'Terjadi kesalahan saat meminta token.',
                 'error'   => config('app.debug') ? $e->getMessage() : null,
             ], 500);
         }
+    }
+    private function setCookiesForTokens(string $accessToken, string $refreshToken): array
+    {
+        $refreshTokenCookie = cookie(
+            'refresh_token',
+            $refreshToken,
+            60 * 24 * 7,
+            '/',
+            '.bornhub.cloud',
+            config('session.secure'),
+            true,
+            false,
+            'lax'
+        );
+        $accessTokenCookie = cookie(
+            'auth_token',
+            $accessToken,
+            1,
+            '/',
+            '.bornhub.cloud',
+            config('session.secure'),
+            true,
+            false,
+            'lax'
+        );
+        return [$refreshTokenCookie, $accessTokenCookie];
+    }
+    private function refreshToken(string $refreshToken)
+    {
+        return Http::asForm()->post(url('/oauth/token'), [
+            'grant_type' => 'refresh_token',
+            'client_id' => config('services.passport.password_client_id'),
+            'client_secret' => config('services.passport.password_client_secret'),
+            'refresh_token' => $refreshToken,
+            'scope' => '', // atau '*' jika memang perlu
+        ]);
+    }
+    private function getToken(string $email, string $password)
+    {
+        return Http::asForm()->post(url('/oauth/token'), [
+            'grant_type' => 'password',
+            'client_id' => config('services.passport.password_client_id'),
+            'client_secret' => config('services.passport.password_client_secret'),
+            'username' => $email,
+            'password' => $password,
+            'scope' => '', // atau '*' jika memang perlu
+        ]);
     }
 }

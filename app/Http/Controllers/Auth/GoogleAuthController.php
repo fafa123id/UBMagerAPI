@@ -48,7 +48,7 @@ class GoogleAuthController extends Controller
             $cookie = cookie(
                 'auth_token',
                 $token,
-                60 * 60 * 24 * 30,
+                60 * 24 * 30,
                 '/',                   // path
                 '.bornhub.cloud',      // domain untuk subdomain sharing
                 true,                  // secure

@@ -27,7 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'unverified' => \App\Http\Middleware\EnsureUnverifiedUser::class,
             'Seller' => \App\Http\Middleware\Seller::class
         ]);
-        // $middleware->append(\App\Http\Middleware\CookieTokenAuth::class);
+        $middleware->prepend(\App\Http\Middleware\CookieTokenAuth::class);
         $middleware->validateCsrfTokens(except: [
             '*',
         ]);
