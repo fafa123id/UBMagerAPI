@@ -100,7 +100,9 @@ class AuthenticatedSessionController extends Controller
             ->where('access_token_id', $token->id)
             ->first();
         if ($refreshTokenDB) {
-            $refreshTokenDB->update(['revoked' => 1]);
+            DB::table('oauth_refresh_tokens')
+            ->where('access_token_id', $token->id)
+            ->update(['revoked' => 1]);
         }
         $cookie = Cookie::forget('refresh_token');
         $accessTokenCookie = Cookie::forget('auth_token');
