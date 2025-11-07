@@ -52,7 +52,7 @@ class GoogleAuthController extends Controller
                 '/',                   // path
                 '.bornhub.cloud',      // domain untuk subdomain sharing
                 true,                  // secure
-                false,                  // httpOnly
+                true,                  // httpOnly
                 false,                 // raw
                 'lax'                 // SameSite ('None' jika FE & API beda origin)
             );
