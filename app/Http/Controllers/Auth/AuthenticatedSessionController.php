@@ -90,10 +90,11 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(): JsonResponse
     {
+
         // Otomatis tahu user dari token yang dipakai
         auth()->user()->tokens()->each(function (Token $token) {
-            $token->revoke();
-            $token->refreshToken?->revoke();
+            $token->where('id', auth()->user()->currentAccessToken()->id)->revoke();
+            $token->refreshToken?->where('access_token_id', auth()->user()->currentAccessToken()->id)->revoke();
         });
         $cookie = Cookie::forget('refresh_token');
         $accessTokenCookie = Cookie::forget('auth_token');
