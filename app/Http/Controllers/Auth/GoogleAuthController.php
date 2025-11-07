@@ -19,7 +19,11 @@ class GoogleAuthController extends Controller
     }
     public function callback()
     {
-        $googleUser = Socialite::driver('google')->stateless()->user();
+        try {
+            $googleUser = Socialite::driver('google')->stateless()->user();
+        } catch (\Exception $e) {
+            return redirect(env('FRONTEND_URL') . '/auth/login');
+        }
 
         $user = User::where('gmail', $googleUser->email)->first();
         if (!$user) {
