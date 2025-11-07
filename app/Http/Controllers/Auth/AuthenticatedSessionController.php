@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Laravel\Passport\Token;
@@ -91,11 +92,13 @@ class AuthenticatedSessionController extends Controller
     public function destroy(): JsonResponse
     {
 
-        // Otomatis tahu user dari token yang dipakai
-        auth()->user()->tokens()->each(function (Token $token) {
-            $token->where('id', auth()->user()->currentAccessToken()->id)->revoke();
-            $token->refreshToken?->where('access_token_id', auth()->user()->currentAccessToken()->id)->revoke();
-        });
+        $token = auth()->user()->currentAccessToken();
+
+        $token->revoke();
+
+        DB::table('oauth_refresh_tokens')
+            ->where('access_token_id', $token->id)
+            ->update(['revoked' => 1]);
         $cookie = Cookie::forget('refresh_token');
         $accessTokenCookie = Cookie::forget('auth_token');
 
