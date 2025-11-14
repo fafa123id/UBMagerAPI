@@ -19,9 +19,9 @@ class OtpHandlerRepository implements OtpHandlerRepositoryInterface
     }
     private function createCache(){
         $ip = request()->ip();
-
+        $headerAuth = request()->header('Authorization');
         // Buat cache key unik untuk throttle
-        $key = 'otp_throttle:' . sha1($ip); 
+        $key = 'otp_throttle:' . sha1($ip . '|' . $headerAuth); 
 
         // Cek apakah throttle masih aktif
         if (Cache::has($key)) {
