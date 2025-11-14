@@ -17,11 +17,11 @@ class OtpHandlerRepository implements OtpHandlerRepositoryInterface
     {
         $this->mail = $mail;
     }
-    private function createCache($email){
+    private function createCache(){
         $ip = request()->ip();
 
         // Buat cache key unik untuk throttle
-        $key = 'otp_throttle:' . sha1($email . '|' . $ip); 
+        $key = 'otp_throttle:' . sha1($ip); 
 
         // Cek apakah throttle masih aktif
         if (Cache::has($key)) {
@@ -35,7 +35,7 @@ class OtpHandlerRepository implements OtpHandlerRepositoryInterface
     }
     public function sendOtp($email, $otp, $for, $subject)
     {
-        $cache = $this->createCache($email);
+        $cache = $this->createCache();
         if ($cache) {
             return $cache;
         }
