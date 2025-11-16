@@ -37,6 +37,46 @@ class ResetPasswordController extends Controller
         $subject = 'Password Reset';
         return $this->resetPwMailer->sendResetPw($email, $resetLink, 'Reset Password', $subject);
     }
+    public function checkToken(Request $request)
+    {
+        $request->validate([
+            'token' => 'required|string',
+            'email' => 'required|string|email',
+        ]);
+        $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return new failReturn([
+                'status' => 404,
+                'message' => 'User not found'
+            ]);
+        }
+        $resetToken = ResetToken::where('user_id', $user->id)->firstOrFail();
+
+        if (!$resetToken) {
+            return new failReturn([
+                'status' => 404,
+                'message' => 'Token not found'
+            ]);
+        }
+
+        if (Hash::check($request->token, $resetToken->token) === false) {
+            return new failReturn([
+                'status' => 400,
+                'message' => 'Invalid token'
+            ]);
+        }
+        if ($resetToken->expires_at < now()) {
+            $resetToken->delete();
+            return new failReturn([
+                'status' => 400,
+                'message' => 'Token expired'
+            ]);
+        }
+        return new successReturn([
+            'status' => 200,
+            'message' => 'Token is valid'
+        ]);
+    }
     private function createCache($email)
     {
         $ip = request()->ip();
