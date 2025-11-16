@@ -33,7 +33,8 @@ class ResetPasswordController extends Controller
             return $cacheResult;
         }
         $email = $request->email;
-        $resetLink = env('FRONTEND_URL') . '/auth/reset-password#token=' . $this->requestToken(User::where('email', $email)->first() . '&email=' . $email);
+        $token = $this->requestToken(User::where('email', $email)->first());
+        $resetLink = env('FRONTEND_URL') . '/auth/reset-password#token=' . $token . '&email=' . $email ;
         $subject = 'Password Reset';
         return $this->resetPwMailer->sendResetPw($email, $resetLink, 'Reset Password', $subject);
     }
