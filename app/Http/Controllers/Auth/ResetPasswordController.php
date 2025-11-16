@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Repositories\Abstract\OtpHandlerRepositoryInterface;
 use App\Services\ResetPwMailer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 
 class ResetPasswordController extends Controller
@@ -26,13 +27,31 @@ class ResetPasswordController extends Controller
         $request->validate([
             'email' => 'required|string|email',
         ]);
-
-        $email = $request->input('email');
+        $cacheResult = $this->createCache($request->email);
+        if ($cacheResult) {
+            return $cacheResult;
+        }
+        $email = $request->email;
         $resetLink = env('FRONTEND_URL') . '/auth/reset-password#token=' . $this->requestToken(User::where('email', $email)->first());
         $subject = 'Password Reset';
         return $this->resetPwMailer->sendResetPw($email, $resetLink, 'Reset Password', $subject);
     }
-    
+    private function createCache($email){
+        $ip = request()->ip();
+        $session = request()->session()->getId();
+        // Buat cache key unik untuk throttle
+        $key = 'otp_throttle:' . sha1($ip . '|' . $session); 
+
+        // Cek apakah throttle masih aktif
+        if (Cache::has($key)) {
+            return new failReturn([
+                'status' => 429,
+                'message' => 'Please wait before requesting another mail'
+            ]);
+        }
+        Cache::put($key, true, now()->addSeconds(60));
+        return false;
+    }
     /**
      * POST: /api/reset-password
      * 
