@@ -13,7 +13,7 @@ Route::post('/verify-email/send', [OtpSenderController::class, 'otpVerifySend'])
 Route::post('/verify-email', [VerifyEmailController::class, 'verifyEmail'])->middleware(['unverified','auth:api']);
 Route::post('/new-password', [ResetPasswordController::class, 'newPassword'])->middleware(['auth:api']);
 Route::post('/forgot-password', [ResetPasswordController::class, 'sendMailResetPw'])->middleware(['verified','web']);
-Route::get('/forgot-password/token', [ResetPasswordController::class, 'checkToken'])->middleware(['verified','web']);
+Route::post('/forgot-password/token', [ResetPasswordController::class, 'checkToken'])->middleware(['verified']);
 Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword'])->middleware(['verified']);
 Route::post('/register', [RegisteredUserController::class, 'store'])
     ->name('register');
