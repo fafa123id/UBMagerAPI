@@ -31,20 +31,6 @@ class OtpSenderController extends Controller
         return $this->sendOtp($request->email, 'verify your account', 'Email Verification');
     }
 
-    /**
-     * POST: /api/forgot-password
-     * 
-     * Send OTP to the user's email for password reset.
-     * This method generates a random OTP code and sends it to the user's email for resetting their password.
-     */
-    public function otpResetSend(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-        ]);
-        return $this->sendOtp($request->email, 'reset your password', 'Password Reset');
-    }
-
     private function sendOtp($email, $for, $subject)
     {
         $otpCode = rand(100000, 999999);

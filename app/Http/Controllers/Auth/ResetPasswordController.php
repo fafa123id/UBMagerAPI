@@ -7,54 +7,32 @@ use App\Http\Resources\successReturn;
 use App\Models\ResetToken;
 use App\Models\User;
 use App\Repositories\Abstract\OtpHandlerRepositoryInterface;
+use App\Services\ResetPwMailer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class ResetPasswordController extends Controller
 {
     private $otpHandler;
+    private $resetPwMailer;
 
-    public function __construct(OtpHandlerRepositoryInterface $otpHandler)
+    public function __construct(OtpHandlerRepositoryInterface $otpHandler, ResetPwMailer $resetPwMailer)
     {
         $this->otpHandler = $otpHandler;
+        $this->resetPwMailer = $resetPwMailer;
     }
-    /**
-     * POST: /api/forgot-password/verify
-     * 
-     * Send token to the user's for reset forgotten password.
-     * This method generates a random token in response that used to reset password.
-     */
-    public function verifyOtp(Request $request)
+    public function sendMailResetPw(Request $request)
     {
         $request->validate([
             'email' => 'required|string|email',
-            'otp' => 'required|string'
         ]);
 
-        $otphandling = $this->otpHandler->verifyOtp($request->email, $request->otp);
-        if ($otphandling === false) {
-            return new failReturn([
-                'status' => 400,
-                'message' => 'Invalid or OTP Expired'
-            ]);
-        }
-        $user = User::where('email', $request->email)->first();
-        $token = $this->requestToken($user);
-        if ($token === false) {
-            return new failReturn([
-                'status' => 500,
-                'message' => 'failed to create token'
-            ]);
-        }
-        return new successReturn([
-            'status' => 200,
-            'message' => 'OTP verified',
-            'data' => [
-                'token' => $token,
-            ]
-        ]);
+        $email = $request->input('email');
+        $resetLink = env('FRONTEND_URL') . '/auth/reset-password#token=' . $this->requestToken(User::where('email', $email)->first());
+        $subject = 'Password Reset';
+        return $this->resetPwMailer->sendResetPw($email, $resetLink, 'Reset Password', $subject);
     }
-
+    
     /**
      * POST: /api/reset-password
      * 
@@ -64,21 +42,12 @@ class ResetPasswordController extends Controller
     public function resetPassword(Request $request)
     {
         $request->validate([
-            'email' => 'required|string|email',
             'password' => 'required|string|min:8',
             'password_confirmation' => 'required|string|same:password',
-            'token' => 'required|string'
+            'token' => 'required|string',
         ]);
 
-        $user = User::where('email', $request->email)->first();
-        if (!$user) {
-            return new failReturn([
-                'status' => 404,
-                'message' => 'User not found'
-            ]);
-        }
-
-        $resetToken = ResetToken::where('user_id', $user->id)->first();
+        $resetToken = ResetToken::where('token', $request->token)->first();
         if (!$resetToken) {
             return new failReturn([
                 'status' => 404,
@@ -96,6 +65,13 @@ class ResetPasswordController extends Controller
             return new failReturn([
                 'status' => 400,
                 'message' => 'Invalid token'
+            ]);
+        }
+        $user = User::find($resetToken->user_id);
+        if (!$user) {
+            return new failReturn([
+                'status' => 404,
+                'message' => 'User not found'
             ]);
         }
 
