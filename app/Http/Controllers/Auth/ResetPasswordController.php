@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -32,15 +33,16 @@ class ResetPasswordController extends Controller
             return $cacheResult;
         }
         $email = $request->email;
-        $resetLink = env('FRONTEND_URL') . '/auth/reset-password#token=' . $this->requestToken(User::where('email', $email)->first());
+        $resetLink = env('FRONTEND_URL') . '/auth/reset-password#token=' . $this->requestToken(User::where('email', $email)->first() . '&email=' . $email);
         $subject = 'Password Reset';
         return $this->resetPwMailer->sendResetPw($email, $resetLink, 'Reset Password', $subject);
     }
-    private function createCache($email){
+    private function createCache($email)
+    {
         $ip = request()->ip();
         $session = request()->session()->getId();
         // Buat cache key unik untuk throttle
-        $key = 'otp_throttle:' . sha1($ip . '|' . $session); 
+        $key = 'otp_throttle:' . sha1($ip . '|' . $session);
 
         // Cek apakah throttle masih aktif
         if (Cache::has($key)) {
@@ -64,13 +66,28 @@ class ResetPasswordController extends Controller
             'password' => 'required|string|min:8',
             'password_confirmation' => 'required|string|same:password',
             'token' => 'required|string',
+            'email' => 'required|string|email',
         ]);
+        $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return new failReturn([
+                'status' => 404,
+                'message' => 'User not found'
+            ]);
+        }
+        $resetToken = ResetToken::where('user_id', $user->id)->firstOrFail();
 
-        $resetToken = ResetToken::where('token', $request->token)->first();
         if (!$resetToken) {
             return new failReturn([
                 'status' => 404,
                 'message' => 'Token not found'
+            ]);
+        }
+
+        if (Hash::check($request->token, $resetToken->token) === false) {
+            return new failReturn([
+                'status' => 400,
+                'message' => 'Invalid token'
             ]);
         }
         if ($resetToken->expires_at < now()) {
@@ -84,13 +101,6 @@ class ResetPasswordController extends Controller
             return new failReturn([
                 'status' => 400,
                 'message' => 'Invalid token'
-            ]);
-        }
-        $user = User::find($resetToken->user_id);
-        if (!$user) {
-            return new failReturn([
-                'status' => 404,
-                'message' => 'User not found'
             ]);
         }
 
