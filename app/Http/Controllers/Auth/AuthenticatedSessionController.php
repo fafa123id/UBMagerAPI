@@ -33,7 +33,7 @@ class AuthenticatedSessionController extends Controller
         $email = User::where('email', $request->emailor_username)->orWhere('username', $request->emailor_username)->first();
         
         if (!$email || !Hash::check($request->password, $email->password)) {
-            return response()->json(['message' => 'Email atau password salah.'], 401);
+            return response()->json(['message' => 'Username/Email atau password salah.'], 401);
         }
         
 
