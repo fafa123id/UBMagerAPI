@@ -30,14 +30,12 @@ class AuthenticatedSessionController extends Controller
             'emailor_username' => 'required|string',
             'password' => 'required|string',
         ]);
-        $email = User::where('email', $request->emailor_username)->orWhere('username', $request->emailor_username)->firstOrFail()->email;
-        $credentials = [
-            'email' => $email,
-            'password' => $request->password,
-        ];
-        if (!auth()->attempt($credentials)) {
+        $email = User::where('email', $request->emailor_username)->orWhere('username', $request->emailor_username)->first();
+        
+        if (!$email || !Hash::check($request->password, $email->password)) {
             return response()->json(['message' => 'Email atau password salah.'], 401);
         }
+        
 
         try {
             // Pakai url() agar tidak tergantung APP_URL di container
