@@ -15,6 +15,7 @@ Route::post('/new-password', [ResetPasswordController::class, 'newPassword'])->m
 Route::post('/forgot-password', [ResetPasswordController::class, 'sendMailResetPw'])->middleware(['verified','web']);
 Route::post('/forgot-password/token', [ResetPasswordController::class, 'checkToken'])->middleware(['verified']);
 Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword'])->middleware(['verified']);
+Route::get('/reset-password', [ResetPasswordController::class, 'handleRedirect'])->middleware(['verified']);
 Route::post('/register', [RegisteredUserController::class, 'store'])
     ->name('register');
 
