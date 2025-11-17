@@ -87,10 +87,10 @@ class GoogleAuthController extends Controller
                 'message' => 'No Google account linked'
             ]);
         }
-        if (!$user->password && !$user->email) {
+        if (!$user->password && (!$user->email || !$user->username)) {
             return new failReturn([
                 'status' => 400,
-                'message' => 'Set an email and password before unlinking Google account'
+                'message' => 'Set an email/username and password before unlinking Google account'
             ]);
         }
         $user->update([
