@@ -23,6 +23,7 @@ return [
         'https://ubmager.bornhub.cloud',
         'https://api.ubmager.bornhub.cloud',
         'http://localhost:3000',
+        'https://test-ubmager.bornhub.cloud'
     ],
 
     'allowed_origins_patterns' => [],
