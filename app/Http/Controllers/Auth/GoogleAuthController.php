@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\successReturn;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -80,6 +81,20 @@ class GoogleAuthController extends Controller
 
         return response()->json([
             'redirect_url' => $redirectUrl,
+        ]);
+    }
+    public function unlink(Request $request)
+    {
+        $user = $request->user();
+
+        $user->update([
+            'google_id' => null,
+            'gmail' => null,
+        ]);
+
+        return new successReturn([
+            'status' => 200,
+            'message' => 'Google account unlinked successfully'
         ]);
     }
     public function linkCallback(Request $request)

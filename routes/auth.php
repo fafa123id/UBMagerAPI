@@ -38,3 +38,4 @@ Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback']);
 
 Route::get('/auth/google/link/callback', [GoogleAuthController::class, 'linkCallback']);
 Route::get('/auth/google/link/redirect', [GoogleAuthController::class, 'linkRedirect']);
+Route::post('/auth/google/unlink', [GoogleAuthController::class, 'unlink'])->middleware('auth:api');
