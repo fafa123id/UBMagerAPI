@@ -72,14 +72,10 @@ class GoogleAuthController extends Controller
         $user = $request->user();
         $state = Crypt::encryptString($user->id);
 
-        $redirectUrl = Socialite::driver('google')->stateless()
+        return Socialite::driver('google')->stateless()
             ->redirectUrl(env('GOOGLE_REDIRECT_URI_LINK'))
             ->with(['state' => $state])
-            ->redirect()
-            ->getTargetUrl();
-
-
-        return redirect($redirectUrl);
+            ->redirect();
     }
     public function unlink(Request $request)
     {
