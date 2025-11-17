@@ -23,6 +23,23 @@ class ResetPasswordController extends Controller
         $this->otpHandler = $otpHandler;
         $this->resetPwMailer = $resetPwMailer;
     }
+    public function handleRedirect(Request $request)
+    {
+        $token = $request->query('token');
+        $email = $request->query('email');
+        $tokenCookie = cookie(
+            'reset_password_token',
+            $token,
+            5, // menit
+            '/',                   // path
+            '.bornhub.cloud',      // domain untuk subdomain sharing
+            true,                  // secure
+            false,                  // httpOnly
+            false,                 // raw
+            'lax'                 // SameSite ('None' jika FE & API beda origin)
+        );
+        return redirect(env('FRONTEND_URL') . '/auth/reset-password?email=' . $email)->withCookie($tokenCookie);
+    }
     public function sendMailResetPw(Request $request)
     {
         $request->validate([
@@ -41,7 +58,7 @@ class ResetPasswordController extends Controller
             ]);
         }
         $token = $this->requestToken($user);
-        $resetLink = env('FRONTEND_URL') . '/auth/reset-password#token=' . $token . '&email=' . $email;
+        $resetLink = env('APP_URL') . '/api/reset-password?token=' . $token . '&email=' . $email;
         $subject = 'Password Reset';
         return $this->resetPwMailer->sendResetPw($email, $resetLink, 'Reset Password', $subject);
     }
