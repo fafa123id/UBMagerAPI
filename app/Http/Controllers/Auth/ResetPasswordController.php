@@ -34,7 +34,7 @@ class ResetPasswordController extends Controller
         }
         $email = $request->email;
         $token = $this->requestToken(User::where('email', $email)->first());
-        $resetLink = env('FRONTEND_URL') . '/auth/reset-password#token=' . $token . '&email=' . $email ;
+        $resetLink = env('FRONTEND_URL') . '/auth/reset-password#token=' . $token . '&email=' . $email;
         $subject = 'Password Reset';
         return $this->resetPwMailer->sendResetPw($email, $resetLink, 'Reset Password', $subject);
     }
@@ -183,11 +183,10 @@ class ResetPasswordController extends Controller
             return new failReturn([
                 'status' => 400,
                 'message' => 'Invalid old password',
-                'data'=> [
-                    'errors' => [
-                        'old_password' => ['The provided old password is incorrect.']
-                    ]
+                'errors' => [
+                    'old_password' => ['The provided old password is incorrect.']
                 ]
+
             ]);
         }
 
