@@ -79,9 +79,7 @@ class GoogleAuthController extends Controller
             ->getTargetUrl();
 
 
-        return response()->json([
-            'redirect_url' => $redirectUrl,
-        ]);
+        return redirect($redirectUrl);
     }
     public function unlink(Request $request)
     {
