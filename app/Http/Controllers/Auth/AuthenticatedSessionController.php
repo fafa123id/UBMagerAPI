@@ -39,7 +39,7 @@ class AuthenticatedSessionController extends Controller
 
         try {
             // Pakai url() agar tidak tergantung APP_URL di container
-            $tokenResp = $this->getToken($email, $request->password);
+            $tokenResp = $this->getToken($request->emailor_username, $request->password);
 
             // Jika Passport memberi error (4xx/5xx), teruskan status & body-nya
             if ($tokenResp->failed()) {

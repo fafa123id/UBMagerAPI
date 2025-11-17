@@ -95,6 +95,12 @@ class User extends Authenticatable implements MustVerifyEmail
             ->filter(fn($rating) => $rating > 0)
             ->avg() ?? 0;
     }
+    public function findForPassport(string $username)
+    {
+        return $this->where('email', $username)
+            ->orWhere('username', $username)
+            ->first();
+    }
 
 
 
