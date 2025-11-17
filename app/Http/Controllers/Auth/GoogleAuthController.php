@@ -72,10 +72,11 @@ class GoogleAuthController extends Controller
         $user = $request->user();
         $state = Crypt::encryptString($user->id);
 
-        return Socialite::driver('google')->stateless()
+        $url = Socialite::driver('google')->stateless()
             ->redirectUrl(env('GOOGLE_REDIRECT_URI_LINK'))
             ->with(['state' => $state])
-            ->redirect();
+            ->redirect()->getTargetUrl();
+        return response()->json(['url' => $url]);
     }
     public function unlink(Request $request)
     {
@@ -108,7 +109,7 @@ class GoogleAuthController extends Controller
         $settingsUrl = env('FRONTEND_URL') . '/profile';
 
         if ($request->has('error')) {
-            return redirect($settingsUrl . '?error=Access%20denied');
+            return redirect($settingsUrl);
         }
 
         if (!$request->has('state')) {
