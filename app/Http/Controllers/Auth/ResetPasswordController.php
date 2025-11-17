@@ -33,7 +33,14 @@ class ResetPasswordController extends Controller
             return $cacheResult;
         }
         $email = $request->email;
-        $token = $this->requestToken(User::where('email', $email)->first());
+        $user = User::where('email', $email)->firstOrFail();
+        if (!$user->email_verified_at) {
+            return new failReturn([
+                'status' => 404,
+                'message' => 'This email is not verified'
+            ]);
+        }
+        $token = $this->requestToken($user);
         $resetLink = env('FRONTEND_URL') . '/auth/reset-password#token=' . $token . '&email=' . $email;
         $subject = 'Password Reset';
         return $this->resetPwMailer->sendResetPw($email, $resetLink, 'Reset Password', $subject);
