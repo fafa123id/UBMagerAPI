@@ -142,7 +142,7 @@ class GoogleAuthController extends Controller
                 'gmail' => $googleUser->email,
             ]);
 
-            return redirect($settingsUrl . '?success=Google%20account%20link%20complete');
+            return redirect($settingsUrl . '?success=Google%20account%20link%20complete&&need_refresh=true');
         } catch (\Exception $e) {
             // Tangkap error (misal: state invalid, decrypt gagal)
             report($e);
