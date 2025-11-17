@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\failReturn;
 use App\Http\Resources\successReturn;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -69,7 +70,6 @@ class GoogleAuthController extends Controller
     {
 
         $user = $request->user();
-
         $state = Crypt::encryptString($user->id);
 
         $redirectUrl = Socialite::driver('google')->stateless()
@@ -86,7 +86,18 @@ class GoogleAuthController extends Controller
     public function unlink(Request $request)
     {
         $user = $request->user();
-
+        if (!$user->google_id) {
+            return new failReturn([
+                'status' => 400,
+                'message' => 'No Google account linked'
+            ]);
+        }
+        if (!$user->password && !$user->email) {
+            return new failReturn([
+                'status' => 400,
+                'message' => 'Set an email and password before unlinking Google account'
+            ]);
+        }
         $user->update([
             'google_id' => null,
             'gmail' => null,
@@ -103,11 +114,11 @@ class GoogleAuthController extends Controller
         $settingsUrl = env('FRONTEND_URL') . '/profile';
 
         if ($request->has('error')) {
-            return redirect($settingsUrl . '?error=link_denied');
+            return redirect($settingsUrl . '?error=Access%20denied');
         }
 
         if (!$request->has('state')) {
-            return redirect($settingsUrl . '?error=link_invalid_state');
+            return redirect($settingsUrl . '?error=Invalid%20request');
         }
 
         try {
@@ -115,7 +126,7 @@ class GoogleAuthController extends Controller
             $user = User::find($userId);
 
             if (!$user) {
-                return redirect($settingsUrl . '?error=link_user_not_found');
+                return redirect($settingsUrl . '?error=User%20not%20found');
             }
 
             // 2. Dapetin data user dari Google
@@ -129,7 +140,7 @@ class GoogleAuthController extends Controller
                 ->exists();
 
             if ($existingLink) {
-                return redirect($settingsUrl . '?error=google_already_linked');
+                return redirect($settingsUrl . '?error=Google%20account%20already%20linked');
             }
 
             $user->update([
@@ -137,11 +148,11 @@ class GoogleAuthController extends Controller
                 'gmail' => $googleUser->email,
             ]);
 
-            return redirect($settingsUrl . '?success=link_complete');
+            return redirect($settingsUrl . '?success=Google%20account%20link%20complete');
         } catch (\Exception $e) {
             // Tangkap error (misal: state invalid, decrypt gagal)
             report($e);
-            return redirect($settingsUrl . '?error=link_failed');
+            return redirect($settingsUrl . '?error=Google%20linking%20failed');
         }
     }
 }
