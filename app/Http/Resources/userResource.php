@@ -26,6 +26,7 @@ class userResource extends JsonResource
             'role_id' => $this->role_id,
             'is_verified' => $this->email_verified_at ? true : false,
             'password_is_set' => $this->password ? true : false,
+            'phone_is_set' => $this->phone ? true : false,  
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
             'rating' => $this->role_id == 1 ? (float) $this->getRatingFromAllProduct() : null,
