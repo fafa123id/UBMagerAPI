@@ -11,7 +11,9 @@ use App\Repositories\Abstract\OtpHandlerRepositoryInterface;
 use App\Services\ResetPwMailer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Cookie as FacadesCookie;
 use Illuminate\Support\Facades\Hash;
+use Symfony\Component\HttpFoundation\Cookie;
 
 class ResetPasswordController extends Controller
 {
@@ -69,33 +71,29 @@ class ResetPasswordController extends Controller
             'email' => 'required|string|email',
         ]);
         $user = User::where('email', $request->email)->first();
+        $success = true;
         if (!$user) {
-            return new failReturn([
-                'status' => 404,
-                'message' => 'User not found'
-            ]);
+            $success = false;
         }
         $resetToken = ResetToken::where('user_id', $user->id)->firstOrFail();
 
         if (!$resetToken) {
-            return new failReturn([
-                'status' => 404,
-                'message' => 'Token not found'
-            ]);
+            $success = false;
         }
 
         if (Hash::check($request->token, $resetToken->token) === false) {
-            return new failReturn([
-                'status' => 400,
-                'message' => 'Invalid token'
-            ]);
+            $success = false;
         }
         if ($resetToken->expires_at < now()) {
             $resetToken->delete();
-            return new failReturn([
-                'status' => 400,
-                'message' => 'Token expired'
-            ]);
+            $success = false;
+        }
+        if (!$success) {
+            $cookie = FacadesCookie::forget('reset_password_token');
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid or expired token'
+            ], 400)->withCookie($cookie);
         }
         return new successReturn([
             'status' => 200,
@@ -174,10 +172,11 @@ class ResetPasswordController extends Controller
 
         $resetToken->delete();
         $user->tokens()->delete();
-        return new successReturn([
-            'status' => 200,
+        $cookie = FacadesCookie::forget('reset_password_token');
+        return response()->json([
+            'success' => true,
             'message' => 'Password reset successfully'
-        ]);
+        ], 200)->withCookie($cookie);
     }
 
     /**
