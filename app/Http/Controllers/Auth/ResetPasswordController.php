@@ -167,7 +167,7 @@ class ResetPasswordController extends Controller
     {
         $request->validate([
             'old_password' => 'required|string',
-            'password' => 'required|string|min:6',
+            'password' => 'required|string|min:8',
             'password_confirmation' => 'required|string|same:password',
         ]);
 
@@ -182,7 +182,12 @@ class ResetPasswordController extends Controller
         if (Hash::check($request->old_password, $user->password) === false) {
             return new failReturn([
                 'status' => 400,
-                'message' => 'Invalid old password'
+                'message' => 'Invalid old password',
+                'data'=> [
+                    'errors' => [
+                        'old_password' => ['The provided old password is incorrect.']
+                    ]
+                ]
             ]);
         }
 
