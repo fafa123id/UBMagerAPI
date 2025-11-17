@@ -181,7 +181,7 @@ class ResetPasswordController extends Controller
 
         if (Hash::check($request->old_password, $user->password) === false) {
             return new failReturn([
-                'status' => 400,
+                'status' => 422,
                 'message' => 'Invalid old password',
                 'errors' => [
                     'old_password' => ['The provided old password is incorrect.']
