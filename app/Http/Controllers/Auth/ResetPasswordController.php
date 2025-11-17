@@ -83,7 +83,7 @@ class ResetPasswordController extends Controller
         $ip = request()->ip();
         $session = request()->session()->getId();
         // Buat cache key unik untuk throttle
-        $key = 'otp_throttle:' . sha1($ip . '|' . $session);
+        $key = 'otp_throttle:' . sha1($ip . '|' . $session . 'resetpw');
 
         // Cek apakah throttle masih aktif
         if (Cache::has($key)) {
