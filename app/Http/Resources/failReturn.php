@@ -18,6 +18,7 @@ class failReturn extends JsonResource
             'status' => false,
             'message' => $this->resource['message']??'',
             'data' => $this->resource['data']??null,
+            'errors' => $this->resource['errors']??null,
         ];
     }
     public function withResponse($request, $response)
