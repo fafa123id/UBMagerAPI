@@ -40,4 +40,4 @@ Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback']);
 Route::get('/auth/google/link/callback', [GoogleAuthController::class, 'linkCallback']);
 Route::get('/auth/google/link/redirect', [GoogleAuthController::class, 'linkRedirect'])->middleware('auth:api');
 Route::post('/auth/google/unlink', [GoogleAuthController::class, 'unlink'])->middleware('auth:api');
-Route::post('/auth/google/send-unlink-email', [GoogleAuthController::class, 'sendEmailForUnlinkGoogle'])->middleware('auth:api');
+Route::post('/auth/google/send-unlink-email', [GoogleAuthController::class, 'sendEmailForUnlinkGoogle'])->middleware(['auth:api', 'web']);
