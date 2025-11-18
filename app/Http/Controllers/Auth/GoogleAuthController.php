@@ -96,6 +96,12 @@ class GoogleAuthController extends Controller
                 400
             );
         }
+        if (!$user->password) {
+            return new failReturn([
+                'status' => 400,
+                'message' => 'Set a password before unlinking Google account'
+            ]);
+        }
         if (!$user->google_id) {
             return response()->json(
                 [
