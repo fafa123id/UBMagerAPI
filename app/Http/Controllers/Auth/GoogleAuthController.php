@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\failReturn;
 use App\Http\Resources\successReturn;
 use App\Models\User;
+use App\Repositories\Abstract\OtpHandlerRepositoryInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
@@ -15,6 +16,11 @@ use Laravel\Socialite\Socialite;
 
 class GoogleAuthController extends Controller
 {
+    protected $otp;
+    public function __construct(OtpHandlerRepositoryInterface $otpHandlerRepositoryInterface)
+    {
+        $this->otp = $otpHandlerRepositoryInterface;
+    }
     public function redirect()
     {
         return Socialite::driver('google')->stateless()->redirect();
@@ -78,21 +84,62 @@ class GoogleAuthController extends Controller
             ->redirect()->getTargetUrl();
         return response()->json(['url' => $url]);
     }
+    public function sendEmailForUnlinkGoogle(Request $request)
+    {
+        $user = auth()->user();
+        if (!$user->email) {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Set an email before unlinking Google account'
+                ],
+                400
+            );
+        }
+        if (!$user->google_id) {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Google account not linked'
+                ],
+                400
+            );
+        }
+        $this->otp->sendOtp($user->email, rand(100000, 999999), 'Unlink Google', 'Unlink Google Account');
+        return response()->json(
+            [
+                'success' => true,
+                'message' => 'OTP sent to your email'
+            ],
+            200
+        );
+    }
     public function unlink(Request $request)
     {
         $user = $request->user();
-        if (!$user->google_id) {
-            return new failReturn([
-                'status' => 400,
-                'message' => 'No Google account linked'
-            ]);
-        }
+        $request->validate([
+            'otp' => 'required|string',
+        ]);
         if (!$user->password && (!$user->email || !$user->username)) {
             return new failReturn([
                 'status' => 400,
                 'message' => 'Set an email/username and password before unlinking Google account'
             ]);
         }
+        if (!$user->google_id) {
+            return new failReturn([
+                'status' => 400,
+                'message' => 'No Google account linked'
+            ]);
+        }
+        $otpValid = $this->otp->verifyOtp($user->email, $request->otp);
+        if (!$otpValid) {
+            return new failReturn([
+                'status' => 400,
+                'message' => 'Invalid OTP'
+            ]);
+        }
+
         $user->update([
             'google_id' => null,
             'gmail' => null,
