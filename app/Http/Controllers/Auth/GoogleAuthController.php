@@ -105,14 +105,7 @@ class GoogleAuthController extends Controller
                 400
             );
         }
-        $this->otp->sendOtp($user->email, rand(100000, 999999), 'Unlink Google', 'Unlink Google Account');
-        return response()->json(
-            [
-                'success' => true,
-                'message' => 'OTP sent to your email'
-            ],
-            200
-        );
+        return $this->otp->sendOtp($user->email, rand(100000, 999999), 'Unlink Google', 'Unlink Google Account');
     }
     public function unlink(Request $request)
     {
