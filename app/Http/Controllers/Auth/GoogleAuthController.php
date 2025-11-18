@@ -96,6 +96,15 @@ class GoogleAuthController extends Controller
                 400
             );
         }
+        if (!$user->email_verified_at) {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Verify your email before unlinking Google account'
+                ],
+                400
+            );
+        }
         if (!$user->password) {
             return new failReturn([
                 'status' => 400,
@@ -124,6 +133,15 @@ class GoogleAuthController extends Controller
                 'status' => 400,
                 'message' => 'Set an email/username and password before unlinking Google account'
             ]);
+        }
+        if (!$user->email_verified_at) {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Verify your email before unlinking Google account'
+                ],
+                400
+            );
         }
         if (!$user->google_id) {
             return new failReturn([
