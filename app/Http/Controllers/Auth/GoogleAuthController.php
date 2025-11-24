@@ -58,7 +58,7 @@ class GoogleAuthController extends Controller
                 $token,
                 60 * 24 * 30,
                 '/',                   // path
-                env('SESSION_DOMAIN'),      // domain untuk subdomain sharing
+                config('session.domain'),      // domain untuk subdomain sharing
                 true,                  // secure
                 true,                  // httpOnly
                 false,                 // raw
