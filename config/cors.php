@@ -20,7 +20,7 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
-        'https://ubmager.shop',
+        'https://app.ubmager.shop',
         'https://api.ubmager.shop',
         'http://localhost:3000',
         'https://test-ubmager.bornhub.cloud'
