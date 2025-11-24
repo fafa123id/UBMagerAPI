@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Laravel\Passport\Token;
 
 class AuthenticatedSessionController extends Controller
@@ -30,39 +31,64 @@ class AuthenticatedSessionController extends Controller
             'emailor_username' => 'required|string',
             'password' => 'required|string',
         ]);
-        $email = User::where('email', $request->emailor_username)->orWhere('username', $request->emailor_username)->first();
+
+        $email = User::where('email', $request->emailor_username)
+            ->orWhere('username', $request->emailor_username)
+            ->first();
 
         if (!$email || !Hash::check($request->password, $email->password)) {
             return response()->json(['message' => 'Username/Email atau password salah.'], 401);
         }
 
-
         try {
-            // // Pakai url() agar tidak tergantung APP_URL di container
-            // $tokenResp = $this->getToken($request->emailor_username, $request->password);
+            $tokenResp = $this->getToken($request->emailor_username, $request->password);
 
-            // // Jika Passport memberi error (4xx/5xx), teruskan status & body-nya
-            // if ($tokenResp->failed()) {
-            //     // Bisa berisi error_description dari Passport
-            //     return response()->json(
-            //         $tokenResp->json() ?? ['message' => 'Gagal mendapatkan token.'],
-            //         $tokenResp->status()
-            //     );
-            // }
-            // $response_token = $tokenResp->json();
-            // $refreshToken = $response_token['refresh_token'];
-            // $token = $response_token['access_token'];
-            // [$refreshTokenCookie, $accessTokenCookie] = $this->setCookiesForTokens($token, $refreshToken);
-            // return response()->json([
-            //     'access_token' => $token,
-            //     'token_type' => $response_token['token_type'],
-            //     'expires_in' => $response_token['expires_in'],
-            // ], $tokenResp->status())->withCookie($refreshTokenCookie)->withCookie($accessTokenCookie);
+            if ($tokenResp->failed()) {
+                // Log biar kelihatan kalau Passport balikin error
+                Log::warning('PASSPORT FAILED', [
+                    'status' => $tokenResp->status(),
+                    'body'   => $tokenResp->body(),
+                ]);
+
+                return response()->json(
+                    $tokenResp->json() ?? ['message' => 'Gagal mendapatkan token dari Passport.'],
+                    $tokenResp->status()
+                );
+            }
+
+            $response_token = $tokenResp->json();
+
+            // GUARD: pastikan key-nya ada
+            if (
+                !is_array($response_token) ||
+                !isset($response_token['access_token'], $response_token['refresh_token'])
+            ) {
+                Log::error('INVALID TOKEN RESPONSE', ['response' => $response_token]);
+
+                return response()->json([
+                    'message' => 'Response token tidak valid.',
+                    'raw'     => $response_token,
+                ], 500);
+            }
+
+            $refreshToken = $response_token['refresh_token'];
+            $token        = $response_token['access_token'];
+
+            [$refreshTokenCookie, $accessTokenCookie] = $this->setCookiesForTokens($token, $refreshToken);
+
             return response()->json([
-                'message' => 'LOGIN OK (dummy, tanpa getToken())',
-            ], 200);
+                'access_token' => $token,
+                'token_type'   => $response_token['token_type'] ?? 'Bearer',
+                'expires_in'   => $response_token['expires_in'] ?? null,
+            ], 200)
+                ->withCookie($refreshTokenCookie)
+                ->withCookie($accessTokenCookie);
         } catch (\Throwable $e) {
-            // Antisipasi network/exception lain
+            Log::error('LOGIN EXCEPTION', [
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
+            ]);
+
             return response()->json([
                 'message' => 'Terjadi kesalahan saat meminta token.',
                 'error'   => config('app.debug') ? $e->getMessage() : null,
@@ -177,13 +203,20 @@ class AuthenticatedSessionController extends Controller
     }
     private function getToken(string $email, string $password)
     {
-        return Http::asForm()->post(url('/oauth/token'), [
+        $resp = Http::asForm()->post(url('/oauth/token'), [
             'grant_type' => 'password',
             'client_id' => config('services.passport.password_client_id'),
             'client_secret' => config('services.passport.password_client_secret'),
             'username' => $email,
             'password' => $password,
-            'scope' => '', // atau '*' jika memang perlu
+            'scope' => '',
         ]);
+
+        Log::info('PASSPORT TOKEN RESP', [
+            'status' => $resp->status(),
+            'body'   => $resp->body(),
+        ]);
+
+        return $resp;
     }
 }
