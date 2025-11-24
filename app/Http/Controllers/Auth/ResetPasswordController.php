@@ -34,7 +34,7 @@ class ResetPasswordController extends Controller
             $token,
             5, // menit
             '/',                   // path
-            '.bornhub.cloud',      // domain untuk subdomain sharing
+            env('SESSION_DOMAIN'),      // domain untuk subdomain sharing
             true,                  // secure
             false,                  // httpOnly
             false,                 // raw
