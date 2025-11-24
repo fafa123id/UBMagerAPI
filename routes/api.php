@@ -9,6 +9,17 @@ Route::get('/download/{files}', [downloadController::class,'download']);
 Route::get('/check-auth', function () {
     return response()->json(['message' => 'Authenticated'], 200);
 })->middleware('auth:api');
+Route::middleware('web')->get('/debug-session', function (Request $request) {
+    $count = session('debug_count', 0);
+    $count++;
+    session(['debug_count' => $count]);
+
+    return response()->json([
+        'session_id'  => session()->getId(),
+        'debug_count' => $count,
+    ]);
+});
+
 require __DIR__ . '/Api/product.php';
 require __DIR__ . '/Api/user.php';
 require __DIR__ . '/auth.php';
