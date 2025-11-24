@@ -81,9 +81,9 @@ class AuthenticatedSessionController extends Controller
                 'token_type'   => $response_token['token_type'] ?? 'Bearer',
                 'refresh_token' => $refreshToken,
                 'expires_in'   => $response_token['expires_in'] ?? null,
-            ], 200);
-                // ->withCookie($refreshTokenCookie)
-                // ->withCookie($accessTokenCookie);
+            ], 200)
+                ->withCookie($refreshTokenCookie)
+                ->withCookie($accessTokenCookie);
         } catch (\Throwable $e) {
             Log::error('LOGIN EXCEPTION', [
                 'message' => $e->getMessage(),
