@@ -31,33 +31,36 @@ class AuthenticatedSessionController extends Controller
             'password' => 'required|string',
         ]);
         $email = User::where('email', $request->emailor_username)->orWhere('username', $request->emailor_username)->first();
-        
+
         if (!$email || !Hash::check($request->password, $email->password)) {
             return response()->json(['message' => 'Username/Email atau password salah.'], 401);
         }
-        
+
 
         try {
-            // Pakai url() agar tidak tergantung APP_URL di container
-            $tokenResp = $this->getToken($request->emailor_username, $request->password);
+            // // Pakai url() agar tidak tergantung APP_URL di container
+            // $tokenResp = $this->getToken($request->emailor_username, $request->password);
 
-            // Jika Passport memberi error (4xx/5xx), teruskan status & body-nya
-            if ($tokenResp->failed()) {
-                // Bisa berisi error_description dari Passport
-                return response()->json(
-                    $tokenResp->json() ?? ['message' => 'Gagal mendapatkan token.'],
-                    $tokenResp->status()
-                );
-            }
-            $response_token = $tokenResp->json();
-            $refreshToken = $response_token['refresh_token'];
-            $token = $response_token['access_token'];
-            [$refreshTokenCookie, $accessTokenCookie] = $this->setCookiesForTokens($token, $refreshToken);
+            // // Jika Passport memberi error (4xx/5xx), teruskan status & body-nya
+            // if ($tokenResp->failed()) {
+            //     // Bisa berisi error_description dari Passport
+            //     return response()->json(
+            //         $tokenResp->json() ?? ['message' => 'Gagal mendapatkan token.'],
+            //         $tokenResp->status()
+            //     );
+            // }
+            // $response_token = $tokenResp->json();
+            // $refreshToken = $response_token['refresh_token'];
+            // $token = $response_token['access_token'];
+            // [$refreshTokenCookie, $accessTokenCookie] = $this->setCookiesForTokens($token, $refreshToken);
+            // return response()->json([
+            //     'access_token' => $token,
+            //     'token_type' => $response_token['token_type'],
+            //     'expires_in' => $response_token['expires_in'],
+            // ], $tokenResp->status())->withCookie($refreshTokenCookie)->withCookie($accessTokenCookie);
             return response()->json([
-                'access_token' => $token,
-                'token_type' => $response_token['token_type'],
-                'expires_in' => $response_token['expires_in'],
-            ], $tokenResp->status())->withCookie($refreshTokenCookie)->withCookie($accessTokenCookie);
+                'message' => 'LOGIN OK (dummy, tanpa getToken())',
+            ], 200);
         } catch (\Throwable $e) {
             // Antisipasi network/exception lain
             return response()->json([
@@ -99,8 +102,8 @@ class AuthenticatedSessionController extends Controller
             ->first();
         if ($refreshTokenDB) {
             DB::table('oauth_refresh_tokens')
-            ->where('access_token_id', $token->id)
-            ->update(['revoked' => 1]);
+                ->where('access_token_id', $token->id)
+                ->update(['revoked' => 1]);
         }
         $cookie = Cookie::forget('refresh_token');
         $accessTokenCookie = Cookie::forget('auth_token');
