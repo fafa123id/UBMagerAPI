@@ -79,7 +79,7 @@ class userController extends Controller
                 400
             );
         }
-        return $this->otpHandler->sendOtp($user->email,rand(100000, 999999), 'Change Email', 'Change Email Request');
+        return $this->otpHandler->sendOtp($user->email,rand(100000, 999999), 'Change Email', 'Change Email Request', 'change_email');
     }
     public function changeEmail(Request $request)
     {

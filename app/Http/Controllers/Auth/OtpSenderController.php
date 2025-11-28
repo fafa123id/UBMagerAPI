@@ -34,7 +34,7 @@ class OtpSenderController extends Controller
     private function sendOtp($email, $for, $subject)
     {
         $otpCode = rand(100000, 999999);
-        $otphandling = $this->otpHandler->sendOtp($email, $otpCode, $for, $subject);
+        $otphandling = $this->otpHandler->sendOtp($email, $otpCode, $for, $subject, 'verify_email');
         return $otphandling;
     }
 }
