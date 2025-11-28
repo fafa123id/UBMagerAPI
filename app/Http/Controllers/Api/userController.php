@@ -56,7 +56,7 @@ class userController extends Controller
         $validated = $request->validate([
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
         ]);
-        return $this->users->update($user->id, $validated, $user->email);
+        return $user->update(['email' => $validated['email'], 'email_verified_at' => null, 'status' => 'unverified']);
     }
     public function sendChangeEmailOtp(Request $request)
     {
