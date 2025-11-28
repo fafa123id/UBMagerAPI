@@ -61,6 +61,24 @@ class userController extends Controller
     public function sendChangeEmailOtp(Request $request)
     {
         $user = auth()->user();
+        if (!$user->email) {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'No email associated with this account'
+                ],
+                400
+            );
+        }
+        if (!$user->email_verified_at) {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Please verify your email before changing it'
+                ],
+                400
+            );
+        }
         return $this->otpHandler->sendOtp($user->email,rand(100000, 999999), 'Change Email', 'Change Email Request');
     }
     public function changeEmail(Request $request)
