@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Repositories\Abstract\OtpHandlerRepositoryInterface;
 use App\Repositories\Abstract\UserRepositoryInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -12,9 +13,11 @@ class userController extends Controller
 {
 
     protected $users;
-    public function __construct(UserRepositoryInterface $userRepository)
+    protected $otpHandler;
+    public function __construct(UserRepositoryInterface $userRepository, OtpHandlerRepositoryInterface $otpHandlerRepository)
     {
         $this->users = $userRepository;
+        $this->otpHandler = $otpHandlerRepository;
     }
 
     /**
@@ -47,6 +50,39 @@ class userController extends Controller
      * This method allows the authenticated user to update their profile information.
      * @authenticated
      */
+    public function newEmail(Request $request)
+    {
+        $user = auth()->user();
+        $validated = $request->validate([
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+        ]);
+        return $this->users->update($user->id, $validated, $user->email);
+    }
+    public function sendChangeEmailOtp(Request $request)
+    {
+        $user = auth()->user();
+        return $this->otpHandler->sendOtp($user->email,rand(100000, 999999), 'Change Email', 'Change Email Request');
+    }
+    public function changeEmail(Request $request)
+    {
+        $user = auth()->user();
+        $validated = $request->validate([
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'otp' => 'required|string|max:6',
+        ]);
+        $otpValid = $this->otpHandler->verifyOtp($user->email, $validated['otp']);
+        if (!$otpValid) {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Invalid OTP code'
+                ],
+                400
+            );
+        }
+        unset($validated['otp_code']);
+        return $this->users->update($user->id, $validated, $user->email);
+    }
     public function update(Request $request, $id)
     {
         $users = auth()->user();
