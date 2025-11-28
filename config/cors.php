@@ -24,7 +24,7 @@ return [
         'https://app.ubmager.shop',
         'https://api.ubmager.shop',
         'http://localhost:3000',
-        'https://test-ubmager.bornhub.cloud'
+        'https://test.ubmager.shop',
     ],
 
     'allowed_origins_patterns' => [],
