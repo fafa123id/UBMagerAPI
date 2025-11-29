@@ -64,7 +64,7 @@ class GoogleAuthController extends Controller
                 false,                 // raw
                 'lax'                 // SameSite ('None' jika FE & API beda origin)
             );
-            return redirect(env('FRONTEND_URL') . '/auth/callback')->withCookie($cookie);
+            return redirect(env('FRONTEND_URL'))->withCookie($cookie);
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'Terjadi kesalahan saat meminta token.',
