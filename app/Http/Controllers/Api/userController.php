@@ -148,7 +148,7 @@ class userController extends Controller
     {
         $validated = $request->validate([
             'password' => 'required|string|min:8|confirmed',
-            'password_confirmation' => 'required|string|min:8',
+            'password_confirmation' => 'required|string|min:8|same:password',
         ]);
         $user = auth()->user();
         if ($user->password) {
