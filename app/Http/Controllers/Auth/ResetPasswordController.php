@@ -40,6 +40,10 @@ class ResetPasswordController extends Controller
             false,                 // raw
             'lax'                 // SameSite ('None' jika FE & API beda origin)
         );
+        if (auth()->check()) {
+            $cookie = FacadesCookie::forget('reset_password_token');
+            return redirect(env('FRONTEND_URL') . '?info=Please Logout To Proceed')->withCookie($cookie);
+        }
         return redirect(env('FRONTEND_URL') . '/auth/reset-password?email=' . $email)->withCookie($tokenCookie);
     }
     public function sendMailResetPw(Request $request)
@@ -75,7 +79,7 @@ class ResetPasswordController extends Controller
         if (!$user) {
             $success = false;
         }
-        $resetToken = ResetToken::where('user_id', $user->id)->firstOrFail();
+        $resetToken = ResetToken::where('user_id', $user->id)->first();
 
         if (!$resetToken) {
             $success = false;
