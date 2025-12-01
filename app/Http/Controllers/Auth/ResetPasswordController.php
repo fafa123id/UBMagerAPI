@@ -85,10 +85,10 @@ class ResetPasswordController extends Controller
             $success = false;
         }
 
-        if (Hash::check($request->token, $resetToken->token) === false) {
+        if ($resetToken && Hash::check($request->token, $resetToken->token) === false) {
             $success = false;
         }
-        if ($resetToken->expires_at < now()) {
+        if ($resetToken && $resetToken->expires_at < now()) {
             $resetToken->delete();
             $success = false;
         }
