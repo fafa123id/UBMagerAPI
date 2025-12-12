@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductRepository implements ProductRepositoryInterface
 {
-    public function all($type, $category , $query, $limit = null, $page = null, $perpage = null)
+    private function buildQuery($type, $category, $query)
     {
         $products = Product::with(['user', 'ratings']);
         if ($type) {
@@ -27,6 +27,16 @@ class ProductRepository implements ProductRepositoryInterface
                   });
             });
         }
+        return $products;
+    }
+    public function getPageCount($type, $category, $query, $perpage)
+    {
+        $products = $this->buildQuery($type, $category, $query);
+        return ceil($products->count() / $perpage);
+    }
+    public function all($type, $category , $query, $limit = null, $page = null, $perpage = null)
+    {
+        $products = $this->buildQuery($type, $category, $query);
         if ($page && $perpage) {
             $products->skip(($page - 1) * $perpage)->take($perpage);
         } elseif ($limit) {
