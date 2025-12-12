@@ -117,7 +117,7 @@ class RatingController extends Controller
         $page = $request->query('page', 1);
         $ratings = $this->buildQuery($rating, $id);
         if ($page && $perpage) {
-            $ratings->skip(($page - 1) * $perpage)->take($perpage);
+            $ratings->skip(($page - 1) * $perpage)->take($perpage)->get();
         }else{
             $ratings->get();
         }
