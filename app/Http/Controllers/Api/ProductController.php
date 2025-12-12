@@ -19,6 +19,26 @@ class ProductController extends Controller
     {
         $this->products = $products;
     }
+    public function getPageCount(Request $request)
+    {
+        $type = $request->query("type");
+        $category = $request->query("category");
+        $query = $request->query("query");
+        $perpage = $request->query("perpage", 10);
+        $queries = $query ? $query : null;
+        $typeList = $type && $type !== 'all' ? array_map('trim', explode(',', $type)) : null;
+        $categoryList = $category && $category !== 'all' ? array_map('trim', explode(',', $category)) : null;
+        $pageCount = $this->products->getPageCount($typeList, $categoryList, $queries, $perpage);
+        return new successReturn(
+            [
+                'status' => 200,
+                'message' => 'Page count retrieved successfully',
+                'data' => [
+                    'page_count' => $pageCount,
+                ],
+            ]
+        );
+    }
     /**
      * GET: /api/product
      * 
