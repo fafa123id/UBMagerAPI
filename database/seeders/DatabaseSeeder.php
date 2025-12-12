@@ -17,6 +17,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $type = ["Barang", "Jasa"];
+        $categoryBarang = ["Elektronik", "Pakaian", "Buku", "Perabot", "Mainan", "Alat Tulis", "Olahraga", "Kesehatan", "Makanan & Minuman", "Kecantikan", "Otomotif", "Hobi", "Perlengkapan Rumah", "Alat Musik"];
+        $categoryJasa = ["Jasa Pengiriman", "Jasa Kebersihan", "Jasa Perbaikan", "Jasa Desain", "Jasa Konsultasi", "Jasa Fotografi", "Jasa Transportasi", "Jasa Hiburan"];
         $faker = \Faker\Factory::create();
         // User::factory(10)->create();
         User::create([
@@ -107,16 +110,23 @@ class DatabaseSeeder extends Seeder
             'user_id' => $user3->id,
             'total_price' => 1000000,
         ]);
-        for ($i = 0; $i < 15; $i++) {
+        for ($i = 0; $i < 10000; $i++) {
+            $typeChoice = $faker->randomElement($type);
+            if ($typeChoice === 'Barang') {
+                $categoryChoice = $faker->randomElement($categoryBarang);
+            } else {
+                $categoryChoice = $faker->randomElement($categoryJasa);
+            }
+            $quantity = $typeChoice === 'Barang' ? $faker->numberBetween(1, 100) : 1;
             Product::create([
-                'user_id' => $user3->id,
+                'user_id' => $faker->randomElement([$user1->id, $user3->id,$user2->id]),
                 'name' => $faker->word(),
-                'type' => $faker->randomElement(['Electronics', 'Clothing', 'Books', 'Home', 'Toys']),
-                'category' => $faker->randomElement(['Gadget', 'Fashion', 'Literature', 'Furniture', 'Kids']),
-                'quantity' => $faker->numberBetween(1, 100),
+                'type' => $typeChoice,
+                'category' => $categoryChoice,
+                'quantity' => $quantity,
                 'price' => $faker->numberBetween(10000, 1000000),
                 'description' => $faker->sentence(),
-                'status' => $faker->randomElement(['available', 'unavailable']),
+                'status' => 'available',
                 'image1' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Product_sample_icon_picture.png/640px-Product_sample_icon_picture.png',
             ]);
         }
@@ -176,5 +186,13 @@ class DatabaseSeeder extends Seeder
             'rating' => 3,
             'comment' => 'bad quality!',
         ]);
+        for ($i = 0; $i < 5000; $i++) {
+            Rating::create([
+                'user_id' => $faker->randomElement([$user1->id, $user2->id, $user3->id]),
+                'product_id' => $faker->numberBetween(1, 10000),
+                'rating' => $faker->numberBetween(1, 5),
+                'comment' => $faker->sentence(),
+            ]);
+        }
     }
 }
