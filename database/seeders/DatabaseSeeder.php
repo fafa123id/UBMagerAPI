@@ -7,6 +7,7 @@ use App\Models\Rating;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Support\Facades\Hash;
+
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -16,8 +17,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $faker = \Faker\Factory::create();
         // User::factory(10)->create();
-
         User::create([
             'name' => 'Admin 1',
             'email' => 'seller@admin.test',
@@ -102,6 +103,19 @@ class DatabaseSeeder extends Seeder
             'user_id' => $user3->id,
             'total_price' => 1000000,
         ]);
+        for ($i = 0; $i < 15; $i++) {
+            Product::create([
+                'user_id' => $user3->id,
+                'name' => $faker->word(),
+                'type' => $faker->randomElement(['Electronics', 'Clothing', 'Books', 'Home', 'Toys']),
+                'category' => $faker->randomElement(['Gadget', 'Fashion', 'Literature', 'Furniture', 'Kids']),
+                'quantity' => $faker->numberBetween(1, 100),
+                'price' => $faker->numberBetween(10000, 1000000),
+                'description' => $faker->sentence(),
+                'status' => $faker->randomElement(['available', 'unavailable']),
+                'image1' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Product_sample_icon_picture.png/640px-Product_sample_icon_picture.png',
+            ]);
+        }
         $user3->order()->create([
             'user_id' => $user3->id,
             'product_id' => 3,

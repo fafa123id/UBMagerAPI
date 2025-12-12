@@ -30,7 +30,9 @@ class ProductController extends Controller
         $type = $request->query("type");
         $category = $request->query("category");
         $query = $request->query("query");
-
+        $limit = $request->query("limit");
+        $page = $request->query("page");
+        $perpage = $request->query("perpage");
         $queries = $query ? $query : null;
         $typeList = $type && $type !== 'all' ? array_map('trim', explode(',', $type)) : null;
         $categoryList = $category && $category !== 'all' ? array_map('trim', explode(',', $category)) : null;
@@ -38,7 +40,7 @@ class ProductController extends Controller
             [
                 'status' => 200,
                 'message' => 'Product retrieved successfully',
-                'data' => ProductResource::collection($this->products->all($typeList, $categoryList, $queries)),
+                'data' => ProductResource::collection($this->products->all($typeList, $categoryList, $queries, $limit, $page, $perpage)),
             ]
         );
     }
