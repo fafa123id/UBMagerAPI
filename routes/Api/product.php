@@ -10,5 +10,6 @@ Route::middleware(['auth:api'])->group(function(){
 });
 Route::get('/product/{id}', [ProductController::class, 'show']);
 Route::get('/product', [ProductController::class, 'index']);
+Route::get('/product-page', [ProductController::class, 'getPageCount']);
 Route::get('/product-type', [ProductController::class, 'getType']);
 Route::get('/product-category/{type}', [ProductController::class, 'getCategoryByType']);
