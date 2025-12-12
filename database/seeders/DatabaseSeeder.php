@@ -74,8 +74,8 @@ class DatabaseSeeder extends Seeder
         $user1 = User::where('email', 'seller@admin.test')->first();
         $user1->product()->create([
             'name' => 'Product 1',
-            'type' => 'Electronics',
-            'category' => 'Gadget',
+            'type' => 'Barang',
+            'category' => $faker->randomElement($categoryBarang),
             'quantity' => 10,
             'price' => 1000000,
             'description' => 'This is a description for Product 1.',
@@ -84,8 +84,8 @@ class DatabaseSeeder extends Seeder
         ]);
         $user1->product()->create([
             'name' => 'Product 2',
-            'type' => 'Clothing',
-            'category' => 'Fashion',
+            'type' => 'Barang',
+            'category' => $faker->randomElement($categoryBarang),
             'quantity' => 5,
             'price' => 200000,
             'description' => 'This is a description for Product 2.',
@@ -98,13 +98,13 @@ class DatabaseSeeder extends Seeder
         $user3 = User::where('email', 'scribe@test')->first();
         $user3->product()->create([
             'name' => 'Product 3',
-            'type' => 'Clothing',
-            'category' => 'Fashion',
+            'type' => 'Jasa',
+            'category' => $faker->randomElement($categoryJasa),
             'quantity' => 5,
             'price' => 200000,
             'description' => 'This is a description for Product 3.',
             'status' => 'available',
-            'image1' => 'URL_ADDRESS.wikimedia.org/wikipedia/commons/thumb/1/14/Product_sample_icon_picture.png/640px-Product_sample_icon_picture.png',
+            'image1' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Product_sample_icon_picture.png/640px-Product_sample_icon_picture.png',
         ]);
         $user3->transaction()->create([
             'user_id' => $user3->id,
@@ -117,7 +117,7 @@ class DatabaseSeeder extends Seeder
             } else {
                 $categoryChoice = $faker->randomElement($categoryJasa);
             }
-            $quantity = $typeChoice === 'Barang' ? $faker->numberBetween(1, 100) : 1;
+            $quantity = $faker->numberBetween(1, 100);
             Product::create([
                 'user_id' => $faker->randomElement([$user1->id, $user3->id,$user2->id]),
                 'name' => $faker->word(),
@@ -186,7 +186,7 @@ class DatabaseSeeder extends Seeder
             'rating' => 3,
             'comment' => 'bad quality!',
         ]);
-        for ($i = 0; $i < 5000; $i++) {
+        for ($i = 0; $i < 10000; $i++) {
             Rating::create([
                 'user_id' => $faker->randomElement([$user1->id, $user2->id, $user3->id]),
                 'product_id' => $faker->numberBetween(1, 10000),
