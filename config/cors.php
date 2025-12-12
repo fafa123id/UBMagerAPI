@@ -21,7 +21,7 @@ return [
 
     'allowed_origins' => [
         'https://ubmager.shop',
-        'https://app.ubmager.shop',
+        'https://dev.ubmager.shop',
         'https://api.ubmager.shop',
         'https://dev-api.ubmager.shop',
         'http://localhost:3000',
