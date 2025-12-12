@@ -27,6 +27,7 @@ class ProductRepository implements ProductRepositoryInterface
                   });
             });
         }
+        $products->orderBy('quantity', 'desc');
         return $products;
     }
     public function getPageCount($type, $category, $query, $perpage)
@@ -51,6 +52,9 @@ class ProductRepository implements ProductRepositoryInterface
     }
     public function getCategoryByType($type)
     {
+        if ($type === '__all__') {
+            return Product::distinct('category')->pluck('category');
+        }
         return Product::where('type', $type)->distinct('category')->pluck('category');
     }
     public function find($id)
