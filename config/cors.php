@@ -23,6 +23,7 @@ return [
         'https://ubmager.shop',
         'https://app.ubmager.shop',
         'https://api.ubmager.shop',
+        'https://dev-api.ubmager.shop',
         'http://localhost:3000',
         'https://test.ubmager.shop',
     ],
