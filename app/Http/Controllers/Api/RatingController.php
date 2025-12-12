@@ -91,7 +91,8 @@ class RatingController extends Controller
      * This method allows users to get the total number of pages of ratings for a product, filtered by a maximum rating value, based on a specified number of ratings per page.
      * @authenticated
      */
-    public function pageCount(Request $request, $id){
+    public function pageCount(Request $request, $id)
+    {
         $rating = $request->query('rating', 5);
         $perpage = $request->query('perpage', 5);
         $ratings = $this->buildQuery($rating, $id);
@@ -103,7 +104,7 @@ class RatingController extends Controller
             ],
         ], 200);
     }
-     /**
+    /**
      * GET: /api/rating/{id}
      * 
      * Retrieve ratings for a specific product with optional filtering by rating value.
@@ -115,12 +116,8 @@ class RatingController extends Controller
         $rating = $request->query('rating', 5);
         $perpage = $request->query('perpage', 5);
         $page = $request->query('page', 1);
-        $ratings = $this->buildQuery($rating, $id);
-        if ($page && $perpage) {
-            $ratings->skip(($page - 1) * $perpage)->take($perpage)->get();
-        }else{
-            $ratings->get();
-        }
+        $ratings = $this->buildQuery($rating, $id)->skip(($page - 1) * $perpage)->take($perpage)->get();
+  
         return response()->json([
             'success' => true,
             'data' => $ratings,
