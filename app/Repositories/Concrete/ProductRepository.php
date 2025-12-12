@@ -27,11 +27,10 @@ class ProductRepository implements ProductRepositoryInterface
                   });
             });
         }
-        if ($limit) {
-            if ($page && $perpage) {
-                return $products->limit($limit)->forPage($page, $perpage)->get();
-            }
-            return $products->limit($limit)->forPage(1,10)->get();
+        if ($page && $perpage) {
+            $products->skip(($page - 1) * $perpage)->take($perpage);
+        } elseif ($limit) {
+            $products->limit($limit);
         }
         
         return $products->get();
