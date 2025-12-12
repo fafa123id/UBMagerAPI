@@ -12,7 +12,7 @@ pipeline {
 
         stage('Create .env from Credentials') {
             steps {
-                withCredentials([file(credentialsId: 'ubmager-env-prod', variable: 'DOTENV_FILE')]) {
+                withCredentials([file(credentialsId: 'ubmager-env-dev', variable: 'DOTENV_FILE')]) {
                     sh "cp \$DOTENV_FILE .env"
                 }
                 
