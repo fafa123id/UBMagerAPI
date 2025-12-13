@@ -135,6 +135,6 @@ class RatingController extends Controller
             ->select(DB::raw('AVG(rating * 1.0) as avg_rating'))
             ->value('avg_rating');
 
-        return round($avg ?? 0, 1);
+        return $avg ?? 0.0;
     }
 }
