@@ -62,10 +62,15 @@ class RatingController extends Controller
     }
     private function buildQuery($rating, $id)
     {
-        $ratings = Rating::with(['user:id,name,image'])->where('product_id', $id)
-            ->where('rating', '=', $rating)
-            ->orderBy('created_at', 'desc')->orderBy('rating', 'asc');
-        return $ratings;
+
+        $ratings = Rating::with(['user:id,name,image'])->where('product_id', $id);
+
+        if ($rating !== "all") {
+            $ratings->where('rating', '=', $rating);
+        }
+
+
+        return $ratings->orderBy('created_at', 'desc')->orderBy('rating', 'asc');
     }
     /**
      * GET: /api/rating/count/{id}
@@ -93,7 +98,7 @@ class RatingController extends Controller
      */
     public function pageCount(Request $request, $id)
     {
-        $rating = $request->query('rating', 5);
+        $rating = $request->query('rating', "all");
         $perpage = $request->query('perpage', 5);
         $ratings = $this->buildQuery($rating, $id);
         $pageCount = ceil($ratings->count() / $perpage);
@@ -113,11 +118,11 @@ class RatingController extends Controller
      */
     public function get(Request $request, $id)
     {
-        $rating = $request->query('rating', 5);
+        $rating = $request->query('rating', "all");
         $perpage = $request->query('perpage', 5);
         $page = $request->query('page', 1);
         $ratings = $this->buildQuery($rating, $id)->skip(($page - 1) * $perpage)->take($perpage)->get();
-  
+
         return response()->json([
             'success' => true,
             'data' => $ratings,
