@@ -79,9 +79,9 @@ class FavoriteController extends Controller
     {
         $user = auth()->user();
         $request->validate([
-            'per_page' => 'required|integer|min:1|max:100',
+            'perpage' => 'required|integer|min:1|max:100',
         ]);
-        $perPage = $request->input('per_page');
+        $perPage = $request->input('perpage');
         $totalFavorites = $user->favorites()->count();
         $pageCount = ceil($totalFavorites / $perPage);
 
