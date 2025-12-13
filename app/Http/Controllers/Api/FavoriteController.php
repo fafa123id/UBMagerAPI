@@ -31,10 +31,16 @@ class FavoriteController extends Controller
             'message' => 'Product added to favorites.',
         ], 201);
     }
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
-        $favorites = $user->favorites()->with('product')->get();
+        $request->validate([
+            'page' => 'sometimes|integer|min:1',
+            'per_page' => 'sometimes|integer|min:1|max:100',
+        ]);
+        $page = $request->input('page', 1);
+        $perPage = $request->input('per_page', 5);
+        $favorites = $user->favorites()->with('product')->skip(($page - 1) * $perPage)->take($perPage)->get();
 
         return response()->json([
             'success' => true,
@@ -62,14 +68,19 @@ class FavoriteController extends Controller
             'message' => 'Product removed from favorites.',
         ], 200);
     }
-    public function countFavorites()
+    public function countPage(Request $request)
     {
         $user = auth()->user();
-        $count = $user->favorites()->count();
+        $request->validate([
+            'per_page' => 'required|integer|min:1|max:100',
+        ]);
+        $perPage = $request->input('per_page');
+        $totalFavorites = $user->favorites()->count();
+        $pageCount = ceil($totalFavorites / $perPage);
 
         return response()->json([
             'success' => true,
-            'data' => ['count' => $count],
+            'data' => ['page_count' => $pageCount],
         ], 200);
     }
 }
