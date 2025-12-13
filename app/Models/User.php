@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable implements MustVerifyEmail
@@ -90,10 +91,11 @@ class User extends Authenticatable implements MustVerifyEmail
     }
     public function getRatingFromAllProduct()
     {
-        return $this->product
-            ->map(fn($product) => $product->ratting)
-            ->filter(fn($rating) => $rating > 0)
-            ->avg() ?? 0;
+        return DB::table('ratings')
+            ->join('products', 'products.id', '=', 'ratings.product_id')
+            ->where('products.user_id', $this->id)
+            ->where('ratings.rating', '>', 0)
+            ->avg('ratings.rating') ?? 0;
     }
     public function findForPassport(string $username)
     {
@@ -101,7 +103,4 @@ class User extends Authenticatable implements MustVerifyEmail
             ->orWhere('username', $username)
             ->first();
     }
-
-
-
 }
