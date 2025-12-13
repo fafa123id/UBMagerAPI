@@ -36,11 +36,11 @@ class FavoriteController extends Controller
         $user = auth()->user();
         $request->validate([
             'page' => 'sometimes|integer|min:1',
-            'per_page' => 'sometimes|integer|min:1|max:100',
+            'perpage' => 'sometimes|integer|min:1|max:100',
             'query' => 'sometimes|string',
         ]);
         $page = $request->input('page', 1);
-        $perPage = $request->input('per_page', 5);
+        $perPage = $request->input('perpage', 5);
         $query = $request->input('query', null);
         $favorites = $user->favorites()->with('product')->skip(($page - 1) * $perPage)->take($perPage)->get();
 
