@@ -20,7 +20,7 @@ class ProductResource extends JsonResource
             'owner' => $this->user ? [
                 'name' => $this->user->name,
                 'image' => $this->user->image,
-                'rating' => $this->user->rating ? (float) $this->user->rating : 0.0,
+                'rating' => $this->user->getRatingFromAllProduct() ? (float) $this->user->getRatingFromAllProduct() : 0.0,
             ] : null,
             'image1' => $this->image1,
             'image2' => $this->image2,
