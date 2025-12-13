@@ -63,8 +63,8 @@ class RatingController extends Controller
     private function buildQuery($rating, $id)
     {
         $ratings = Rating::with(['user:id,name,image'])->where('product_id', $id)
-            ->where('rating', '<=', $rating)
-            ->orderBy('created_at', 'desc')->orderBy('rating', 'desc');
+            ->where('rating', '=', $rating)
+            ->orderBy('created_at', 'desc')->orderBy('rating', 'asc');
         return $ratings;
     }
     /**

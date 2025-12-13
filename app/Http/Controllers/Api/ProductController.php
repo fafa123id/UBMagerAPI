@@ -51,8 +51,8 @@ class ProductController extends Controller
         $category = $request->query("category");
         $query = $request->query("query");
         $limit = $request->query("limit");
-        $page = $request->query("page");
-        $perpage = $request->query("perpage");
+        $page = $request->query("page", 1);
+        $perpage = $request->query("perpage", 10);
         $queries = $query ? $query : null;
         $typeList = $type && $type !== 'all' ? array_map('trim', explode(',', $type)) : null;
         $categoryList = $category && $category !== 'all' ? array_map('trim', explode(',', $category)) : null;
