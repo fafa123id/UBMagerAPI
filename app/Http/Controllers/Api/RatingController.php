@@ -82,7 +82,7 @@ class RatingController extends Controller
      */
     public function count(Request $request, $id)
     {
-        $ratings = $this->buildQuery(5, $id);
+        $ratings = $this->buildQuery("all", $id);
         return response()->json([
             'success' => true,
             'data' => [
