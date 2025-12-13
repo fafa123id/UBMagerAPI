@@ -189,7 +189,7 @@ class ProductController extends Controller
     }
     public function isFavorited($id)
     {
-        $product = $this->products->find($id);
+        $product = Product::findOrFail($id);
         $isFavorited = $product->isFavoritedByAuthUser();
 
         return new successReturn(
