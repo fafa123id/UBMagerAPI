@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Rating;
+use Illuminate\Support\Facades\DB;
 
 class RatingController extends Controller
 {
@@ -130,10 +131,10 @@ class RatingController extends Controller
     }
     public function getSellerRating(int $sellerId): float
     {
-        $averageRating = Rating::where('rating', '>', 0)
-            ->whereHas('product', fn($q) => $q->where('user_id', $sellerId))
-            ->avg('rating');
+        $avg = Rating::whereHas('product', fn($q) => $q->where('user_id', $sellerId))
+            ->select(DB::raw('AVG(rating * 1.0) as avg_rating'))
+            ->value('avg_rating');
 
-        return round($averageRating ?? 0, 2);
+        return round($avg ?? 0, 1);
     }
 }
