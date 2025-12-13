@@ -70,7 +70,7 @@ class RatingController extends Controller
         }
 
 
-        return $ratings->orderBy('created_at', 'desc')->orderBy('rating', 'asc');
+        return $ratings->orderBy('created_at', 'desc')->orderBy('rating', 'desc');
     }
     /**
      * GET: /api/rating/count/{id}
