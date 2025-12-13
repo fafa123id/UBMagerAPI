@@ -25,7 +25,6 @@ class ProductResource extends JsonResource
             'image1' => $this->image1,
             'image2' => $this->image2,
             'image3' => $this->image3,
-            'is_favorited' => $this->isFavoritedByAuthUser(),
             'created_at' => $this->created_at ? $this->created_at->toDateTimeString() : null,
             'updated_at' => $this->updated_at ? $this->updated_at->toDateTimeString() : null,
         ];

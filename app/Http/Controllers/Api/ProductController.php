@@ -187,4 +187,19 @@ class ProductController extends Controller
     {
         return $this->products->delete($id);
     }
+    public function isFavorited($id)
+    {
+        $product = $this->products->find($id);
+        $isFavorited = $product->isFavoritedByAuthUser();
+
+        return new successReturn(
+            [
+                'status' => 200,
+                'message' => 'Favorite status retrieved successfully',
+                'data' => [
+                    'is_favorited' => $isFavorited,
+                ],
+            ]
+        );
+    }
 }

@@ -9,6 +9,7 @@ Route::middleware(['auth:api'])->group(function(){
     });
 });
 Route::get('/product/{id}', [ProductController::class, 'show']);
+Route::get('/product/is-favorited/{id}', [ProductController::class, 'isFavorited'])->middleware('auth:api');
 Route::get('/product', [ProductController::class, 'index']);
 Route::get('/product-page', [ProductController::class, 'getPageCount']);
 Route::get('/product-type', [ProductController::class, 'getType']);
