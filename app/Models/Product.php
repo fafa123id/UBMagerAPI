@@ -37,6 +37,10 @@ class Product extends Model
         }
         return 0.0;
     }
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
+    }
 
 }
 

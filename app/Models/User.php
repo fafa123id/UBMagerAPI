@@ -103,4 +103,8 @@ class User extends Authenticatable implements MustVerifyEmail
             ->orWhere('username', $username)
             ->first();
     }
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
+    }
 }
