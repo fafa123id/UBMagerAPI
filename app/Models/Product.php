@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    protected $fillable = ['name', 'type', 'category', 'quantity', 'price', 'description', 'status', 'user_id','image1', 'image2', 'image3'];
+    protected $fillable = ['name', 'type', 'category', 'quantity', 'price', 'description', 'status', 'user_id', 'image1', 'image2', 'image3'];
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -21,7 +21,7 @@ class Product extends Model
     }
     public function isNegotiable()
     {
-        return $this->quantity > 0 ;
+        return $this->quantity > 0;
     }
     public function ratings()
     {
@@ -41,11 +41,14 @@ class Product extends Model
     {
         return $this->hasMany(Favorite::class);
     }
-    public function isFavoritedByUser($userId)
+    public function isFavoritedByAuthUser(): bool
     {
-        return $this->favorites()->where('user_id', $userId)->exists();
+        if (!auth()->check()) {
+            return false;
+        }
+
+        return $this->favorites()
+            ->where('user_id', auth()->id())
+            ->exists();
     }
-
 }
-
-
