@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password123'),
             'role_id' => 1,
             'address' => 'Jl. Seller No. 1, Malang',
-            'image' => 'https://ui-avatars.com/api/?name=Admin+1&background=random&color=fff',
+            'image' => 'https://i.pravatar.cc/300?img=' . rand(1, 70),
             'email_verified_at' => now(),
             'status' => 'verified',
         ]);
@@ -42,7 +42,7 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password123'),
             'role_id' => 1,
             'address' => 'Jl. Seller No. 2, Malang',
-            'image' => 'https://ui-avatars.com/api/?name=Admin+2&background=random&color=fff',
+            'image' => 'https://i.pravatar.cc/300?img=' . rand(1, 70),
             'email_verified_at' => now(),
             'status' => 'verified',
         ]);
@@ -54,7 +54,7 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password123'),
             'role_id' => 0,
             'address' => 'Jl. User No. 1, Malang',
-            'image' => 'https://ui-avatars.com/api/?name=User+1&background=random&color=fff',
+            'image' => 'https://i.pravatar.cc/300?img=' . rand(1, 70),
             'email_verified_at' => now(),
             'status' => 'verified',
         ]);
@@ -66,7 +66,7 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password123'),
             'role_id' => 1,
             'address' => 'Jl. Scribe No. 1, Malang',
-            'image' => 'https://ui-avatars.com/api/?name=Scribe+Test&background=random&color=fff',
+            'image' => 'https://i.pravatar.cc/300?img=' . rand(1, 70),
             'email_verified_at' => now(),
             'status' => 'verified',
         ]);
@@ -80,7 +80,9 @@ class DatabaseSeeder extends Seeder
             'price' => 1000000,
             'description' => 'This is a description for Product 1.',
             'status' => 'available',
-            'image1' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Product_sample_icon_picture.png/640px-Product_sample_icon_picture.png',
+            'image1' => "https://picsum.photos/640/480?random=" . $faker->numberBetween(1, 50000),
+            'image2' => "https://picsum.photos/640/480?random=" . $faker->numberBetween(1, 50000),
+            'image3' => "https://picsum.photos/640/480?random=" . $faker->numberBetween(1, 50000),
         ]);
         $user1->product()->create([
             'name' => 'Product 2',
@@ -90,7 +92,9 @@ class DatabaseSeeder extends Seeder
             'price' => 200000,
             'description' => 'This is a description for Product 2.',
             'status' => 'available',
-            'image1' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Product_sample_icon_picture.png/640px-Product_sample_icon_picture.png',
+            'image1' => "https://picsum.photos/640/480?random=" . $faker->numberBetween(1, 50000),
+            'image2' => "https://picsum.photos/640/480?random=" . $faker->numberBetween(1, 50000),
+            'image3' => "https://picsum.photos/640/480?random=" . $faker->numberBetween(1, 50000),
         ]);
 
 
@@ -104,7 +108,9 @@ class DatabaseSeeder extends Seeder
             'price' => 200000,
             'description' => 'This is a description for Product 3.',
             'status' => 'available',
-            'image1' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Product_sample_icon_picture.png/640px-Product_sample_icon_picture.png',
+            'image1' => "https://picsum.photos/640/480?random=" . $faker->numberBetween(1, 50000),
+            'image2' => "https://picsum.photos/640/480?random=" . $faker->numberBetween(1, 50000),
+            'image3' => "https://picsum.photos/640/480?random=" . $faker->numberBetween(1, 50000),
         ]);
         $user3->transaction()->create([
             'user_id' => $user3->id,
@@ -127,7 +133,9 @@ class DatabaseSeeder extends Seeder
                 'price' => $faker->numberBetween(10000, 1000000),
                 'description' => $faker->sentence(),
                 'status' => 'available',
-                'image1' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Product_sample_icon_picture.png/640px-Product_sample_icon_picture.png',
+                'image1' => "https://picsum.photos/640/480?random=" . $faker->numberBetween(1, 50000),
+                'image2' => "https://picsum.photos/640/480?random=" . $faker->numberBetween(1, 50000),
+                'image3' => "https://picsum.photos/640/480?random=" . $faker->numberBetween(1, 50000),
             ]);
         }
         $user3->order()->create([
@@ -193,6 +201,7 @@ class DatabaseSeeder extends Seeder
                     'product_id' => $i + 1,
                     'rating' => $faker->numberBetween(1, 5),
                     'comment' => $faker->sentence(),
+                    'image' => "https://picsum.photos/640/480?random=" . $faker->numberBetween(1, 50000),
                 ]);
             }
         }
