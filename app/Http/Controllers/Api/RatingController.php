@@ -128,4 +128,12 @@ class RatingController extends Controller
             'data' => $ratings,
         ], 200);
     }
+    public function getSellerRating(int $sellerId): float
+    {
+        $averageRating = Rating::where('rating', '>', 0)
+            ->whereHas('product', fn($q) => $q->where('user_id', $sellerId))
+            ->avg('rating');
+
+        return round($averageRating ?? 0, 2);
+    }
 }
