@@ -37,11 +37,18 @@ class FavoriteController extends Controller
         $request->validate([
             'page' => 'sometimes|integer|min:1',
             'per_page' => 'sometimes|integer|min:1|max:100',
+            'query' => 'sometimes|string',
         ]);
         $page = $request->input('page', 1);
         $perPage = $request->input('per_page', 5);
+        $query = $request->input('query', null);
         $favorites = $user->favorites()->with('product')->skip(($page - 1) * $perPage)->take($perPage)->get();
 
+        if ($query) {
+            $favorites = $favorites->filter(function ($favorite) use ($query) {
+                return stripos($favorite->product->name, $query) !== false;
+            })->values();
+        }
         return response()->json([
             'success' => true,
             'data' => $favorites,
