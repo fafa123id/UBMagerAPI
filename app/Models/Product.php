@@ -41,6 +41,10 @@ class Product extends Model
     {
         return $this->hasMany(Favorite::class);
     }
+    public function isFavoritedByUser($userId)
+    {
+        return $this->favorites()->where('user_id', $userId)->exists();
+    }
 
 }
 
