@@ -110,7 +110,7 @@ class DatabaseSeeder extends Seeder
             'user_id' => $user3->id,
             'total_price' => 1000000,
         ]);
-        for ($i = 0; $i < 10000; $i++) {
+        for ($i = 0; $i < 50000; $i++) {
             $typeChoice = $faker->randomElement($type);
             if ($typeChoice === 'Barang') {
                 $categoryChoice = $faker->randomElement($categoryBarang);
@@ -119,7 +119,7 @@ class DatabaseSeeder extends Seeder
             }
             $quantity = $faker->numberBetween(1, 100);
             Product::create([
-                'user_id' => $faker->randomElement([$user1->id, $user3->id,$user2->id]),
+                'user_id' => $faker->randomElement([$user1->id, $user3->id, $user2->id]),
                 'name' => $faker->word(),
                 'type' => $typeChoice,
                 'category' => $categoryChoice,
@@ -186,13 +186,15 @@ class DatabaseSeeder extends Seeder
             'rating' => 3,
             'comment' => 'bad quality!',
         ]);
-        for ($i = 0; $i < 10000; $i++) {
-            Rating::create([
-                'user_id' => $faker->randomElement([$user1->id, $user2->id, $user3->id]),
-                'product_id' => $faker->numberBetween(1, 10000),
-                'rating' => $faker->numberBetween(1, 5),
-                'comment' => $faker->sentence(),
-            ]);
+        for ($i = 0; $i < 50000; $i++) {
+            for ($j = 0; $j < $faker->numberBetween(15, 20); $j++) {
+                Rating::create([
+                    'user_id' => $faker->randomElement([$user1->id, $user2->id, $user3->id]),
+                    'product_id' => $i + 1,
+                    'rating' => $faker->numberBetween(1, 5),
+                    'comment' => $faker->sentence(),
+                ]);
+            }
         }
     }
 }
