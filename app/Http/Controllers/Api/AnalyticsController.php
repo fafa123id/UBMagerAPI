@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\Rating;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -13,11 +14,29 @@ class AnalyticsController extends Controller
     {
         $data = Cache::remember('analytics:home:v1', 300, function () {
             $top6Products = Product::query()
-                ->where('status', 'available')
-                ->orderByDesc('rating_avg')
-                ->orderByDesc('rating_count')
+                ->joinSub(
+                    Rating::query()
+                        ->selectRaw('product_id, AVG(rating) as rating_avg, COUNT(*) as rating_count')
+                        ->groupBy('product_id'),
+                    'r',
+                    fn($join) => $join->on('products.id', '=', 'r.product_id')
+                )
+                ->where('products.status', 'available')
+                ->orderByDesc('r.rating_avg')
+                ->orderByDesc('r.rating_count') // biar yang ratingnya banyak naik
                 ->limit(6)
-                ->get(['id', 'name', 'price', 'category', 'type', 'image1', 'image2', 'image3', 'rating_avg', 'rating_count']);
+                ->get([
+                    'products.id',
+                    'products.name',
+                    'products.price',
+                    'products.category',
+                    'products.type',
+                    'products.image1',
+                    'products.image2',
+                    'products.image3',
+                    'r.rating_avg',
+                    'r.rating_count',
+                ]);
 
             $top8Categories = Product::query()
                 ->where('status', 'available')
