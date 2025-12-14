@@ -44,7 +44,15 @@ class AnalyticsController extends Controller
                 ->orderByDesc('total')
                 ->limit(8)
                 ->get();
+            $top6Products = $top6Products->values()->map(function ($item, $i) {
+                $item->no = $i;      // 1..6
+                return $item;
+            });
 
+            $top8Categories = $top8Categories->values()->map(function ($item, $i) {
+                $item->no = $i;      // 1..8
+                return $item;
+            });
             return [
                 'message' => 'Analytics data',
                 'top_products' => $top6Products,
