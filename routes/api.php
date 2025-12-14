@@ -29,3 +29,4 @@ require __DIR__ . '/Api/history.php';
 require __DIR__ . '/Api/nego.php';
 require __DIR__ . '/Api/rating.php';
 require __DIR__ . '/Api/favorites.php';
+require __DIR__ . '/Api/analytics.php';
