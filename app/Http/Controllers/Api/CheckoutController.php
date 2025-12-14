@@ -425,6 +425,7 @@ class CheckoutController extends Controller
 
         try {
             // Update transaction status
+            $transaction->orders()->update(['status' => 'cancelled']);
             $transaction->update(['status' => 'cancelled', 'link_payment' => null]);
             // Restore product stock
             $this->restoreProductStock($transaction);
