@@ -27,7 +27,7 @@ class CheckoutController extends Controller
         Config::$is3ds = config('midtrans.is_3ds');
     }
 
-  
+
     /**
      * POST: /api/checkout
      * 
@@ -43,6 +43,7 @@ class CheckoutController extends Controller
             'quantity' => 'required|integer|min:1',
             'address' => 'nullable|string|max:255',
             'nego_id' => 'nullable|integer|min:0',
+            'pay_method' => 'nullable|string|in:credit_card,bank_transfer,gopay,shopeepay,qris,alfamart,indomaret',
         ]);
 
         if ($validator->fails()) {
@@ -52,7 +53,10 @@ class CheckoutController extends Controller
                 'errors' => $validator->errors()
             ], 422);
         }
-
+        $enabledPayments = null;
+        if ($request->filled('pay_method')) {
+            $enabledPayments = [$request->pay_method];
+        }
         try {
             DB::beginTransaction();
             $user = Auth::user();
@@ -158,7 +162,9 @@ class CheckoutController extends Controller
                     'finish' => url('/api/payment/finish'),
                 ]
             ];
-
+            if ($enabledPayments) {
+                $transactionData['enabled_payments'] = $enabledPayments;
+            }
             // Get Snap redirect URL
             $snapToken = Snap::getSnapToken($transactionData);
             $paymentUrl = "https://app.sandbox.midtrans.com/snap/v2/vtweb/" . $snapToken;
@@ -189,7 +195,6 @@ class CheckoutController extends Controller
                     ]
                 ]
             ], 201);
-
         } catch (\Exception $e) {
             DB::rollback();
 
@@ -263,7 +268,6 @@ class CheckoutController extends Controller
 
             DB::commit();
             return response()->json(['message' => 'OK'], 200);
-
         } catch (\Exception $e) {
             DB::rollback();
             Log::error('Error processing notification: ' . $e->getMessage());
@@ -315,7 +319,6 @@ class CheckoutController extends Controller
                     })
                 ]
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -367,7 +370,6 @@ class CheckoutController extends Controller
                     ];
                 })
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -450,7 +452,8 @@ class CheckoutController extends Controller
      * This method returns a view for the finish page after a successful transaction.
      * It is handled by the Midtrans callback after payment completion.
      */
-    public function finish(){
+    public function finish()
+    {
         return view('midtrans.finish');
     }
 }
