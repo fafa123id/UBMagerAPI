@@ -5,35 +5,36 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class AnalyticsController extends Controller
 {
     public function index(Request $request)
     {
-        $top6Products = Product::query()
-            ->where('status', 'available')
-            ->withAvg('ratings', 'rating')      // bikin kolom: ratings_avg_rating
-            ->withCount('ratings')              // opsional: untuk filter jumlah rating
-            ->having('ratings_count', '>=', 5)  // opsional biar gak produk 1 rating langsung nangkring
-            ->orderByDesc('ratings_avg_rating')
-            ->orderByDesc('ratings_count')      // tie-breaker (opsional)
-            ->limit(6)
-            ->get();
-        $top8Categories = Product::query()
-            ->where('status', 'available')
-            ->selectRaw('category, COUNT(*) as total')
-            ->groupBy('category')
-            ->orderByDesc('total')
-            ->limit(8)
-            ->pluck('category');
-        return response()->json(
-            [
+        $data = Cache::remember('analytics:home:v1', 300, function () {
+            $top6Products = Product::query()
+                ->where('status', 'available')
+                ->orderByDesc('rating_avg')
+                ->orderByDesc('rating_count')
+                ->limit(6)
+                ->get(['id', 'name', 'price', 'category', 'type', 'image1', 'image2', 'image3', 'rating_avg', 'rating_count']);
+
+            $top8Categories = Product::query()
+                ->where('status', 'available')
+                ->selectRaw('category, COUNT(*) as total')
+                ->groupBy('category')
+                ->orderByDesc('total')
+                ->limit(8)
+                ->get();
+
+            return [
                 'message' => 'Analytics data',
                 'top_products' => $top6Products,
-                'top_categories' => $top8Categories
-            ],
-            200
-        );
+                'top_categories' => $top8Categories,
+            ];
+        });
+
+        return response()->json($data, 200);
     }
     public function indexProfile()
     {
