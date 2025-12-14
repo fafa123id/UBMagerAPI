@@ -158,7 +158,7 @@ class CheckoutController extends Controller
                 'item_details' => $itemDetails,
                 'customer_details' => $customerDetails,
                 'callbacks' => [
-                    'finish' => env('FRONTEND_URL') . `/order/`. $order->id,
+                    'finish' => env('FRONTEND_URL') . "/order/". $order->id,
                 ]
             ];
             if ($enabledPayments) {
