@@ -1,20 +1,27 @@
 FROM php:8.4-fpm
 
-RUN apt-get update && apt-get install -y \
+
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
+    libzip-dev \
     zip \
     unzip \
     netcat-openbsd \
     git \
     curl \
     supervisor \
-    libonig-dev \
     libxml2-dev \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd \
+    ; \
+    docker-php-ext-configure gd --with-freetype --with-jpeg; \
+    docker-php-ext-install -j"$(nproc)" pdo_mysql mbstring exif pcntl bcmath gd zip; \
     pecl install redis; \
-    docker-php-ext-enable redis; 
+    docker-php-ext-enable redis; \
+    apt-get clean; \
+    rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:2.8.10 /usr/bin/composer /usr/bin/composer
 
