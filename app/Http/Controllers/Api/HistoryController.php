@@ -38,6 +38,12 @@ class HistoryController extends Controller
         return response()->json([
             'success' => true,
             'data' => $allOrders,
+            'meta' => [
+                'page' => $page ?? 1,
+                'perpage' => $perpage ?? 5,
+                'total' => $transactions->count(),
+                'last_page' => ceil($transactions->count() / ($perpage ?? 5)),
+            ] 
         ]);
     }
     /**
