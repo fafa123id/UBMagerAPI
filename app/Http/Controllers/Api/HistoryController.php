@@ -17,7 +17,7 @@ class HistoryController extends Controller
      * @authenticated
      */
     public function index(Request $request)
-    {   
+    {
         $status = $request->query('status');
         $page = $request->query('page');
         $perpage = $request->query('perpage');
@@ -28,6 +28,7 @@ class HistoryController extends Controller
                 $query->where('status', $status);
             });
         }
+        $allCount = $transactions->count();
         if ($page && $perpage) {
             $transactions = $transactions->skip(($page - 1) * $perpage)->take($perpage);
         }
@@ -41,9 +42,9 @@ class HistoryController extends Controller
             'meta' => [
                 'page' => $page ?? 1,
                 'perpage' => $perpage ?? 5,
-                'total' => $transactions->count(),
-                'last_page' => ceil($transactions->count() / ($perpage ?? 5)),
-            ] 
+                'total' => $allCount,
+                'last_page' => ceil($allCount / ($perpage ?? 5)),
+            ]
         ]);
     }
     /**
