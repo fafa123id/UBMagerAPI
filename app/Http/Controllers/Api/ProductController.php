@@ -14,7 +14,35 @@ use Illuminate\Http\Request;
 class ProductController extends Controller
 {
     protected $products;
-
+    private $modelType = ["Barang", "Jasa"];
+    private $modelCategory = [
+        "Barang" => [
+            "Elektronik",
+            "Pakaian",
+            "Buku",
+            "Perabot",
+            "Mainan",
+            "Alat Tulis",
+            "Olahraga",
+            "Kesehatan",
+            "Makanan & Minuman",
+            "Kecantikan",
+            "Otomotif",
+            "Hobi",
+            "Perlengkapan Rumah",
+            "Alat Musik",
+        ],
+        "Jasa" => [
+            "Jasa Pengiriman",
+            "Jasa Kebersihan",
+            "Jasa Perbaikan",
+            "Jasa Desain",
+            "Jasa Konsultasi",
+            "Jasa Fotografi",
+            "Jasa Transportasi",
+            "Jasa Hiburan"
+        ]
+    ];
     public function __construct(ProductRepositoryInterface $products)
     {
         $this->products = $products;
@@ -109,8 +137,8 @@ class ProductController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string',
-            'type' => 'required|string',
-            'category' => 'required|string',
+            'type' => 'required|string|in:' . implode(',', $this->modelType),
+            'category' => 'required|string|in:' . implode(',', $this->modelCategory[$request->type] ?? []),
             'description' => 'required|string',
             'quantity' => 'nullable|integer|min:0',
             'price' => 'required|numeric|min:0',
@@ -118,6 +146,10 @@ class ProductController extends Controller
             'image1' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'image2' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'image3' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ],
+        [
+            'type.in' => 'The selected type is invalid. (supported types: Barang, Jasa)',
+            'category.in' => 'The selected category is invalid for the given type.',
         ]);
         if (request()->hasFile('image1')) {
             $validated['image1'] = config('filesystems.disks.s3.url') . $request->file('image1')->store('images', 's3');
