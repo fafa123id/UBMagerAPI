@@ -22,7 +22,6 @@ class AnalyticsController extends Controller
                     fn($join) => $join->on('products.id', '=', 'r.product_id')
                 )
                 ->where('products.status', 'available')
-                ->orderByDesc('r.rating_avg')
                 ->orderByDesc('r.rating_count') // biar yang ratingnya banyak naik
                 ->limit(6)
                 ->get([
