@@ -108,7 +108,7 @@ class CheckoutController extends Controller
             ]);
 
             // Create order
-            Order::create([
+            $order=Order::create([
                 'user_id' => $user->id,
                 'transaction_id' => $transaction->id,
                 'product_id' => $product->id,
@@ -189,6 +189,7 @@ class CheckoutController extends Controller
                     'payment_url' => $paymentUrl,
                     'snap_token' => $snapToken,
                     'order' => [
+                        'id' => $order->id,
                         'product_name' => $product->name,
                         'quantity' => $request->quantity,
                         'price' => $product->price,
