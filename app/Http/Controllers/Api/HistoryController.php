@@ -17,9 +17,21 @@ class HistoryController extends Controller
      * @authenticated
      */
     public function index(Request $request)
-    {
+    {   
+        $status = $request->query('status');
+        $page = $request->query('page');
+        $perpage = $request->query('perpage');
         // Get all transactions for the authenticated user
-        $transactions = auth()->user()->transaction()->with(['orders.product', 'orders.transaction'])->get();
+        $transactions = auth()->user()->transaction()->with(['orders.product', 'orders.transaction']);
+        if ($status) {
+            $transactions->whereHas('orders', function ($query) use ($status) {
+                $query->where('status', $status);
+            });
+        }
+        if ($page && $perpage) {
+            $transactions = $transactions->skip(($page - 1) * $perpage)->take($perpage);
+        }
+        $transactions = $transactions->get();
 
         // Kumpulkan semua orders dari semua transaksi
         $allOrders = $transactions->flatMap->orders;
