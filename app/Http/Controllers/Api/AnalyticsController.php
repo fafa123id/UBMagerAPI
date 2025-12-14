@@ -10,20 +10,22 @@ class AnalyticsController extends Controller
 {
     public function index(Request $request)
     {
-        $top6Products = Product::with('ratings')
+        $top6Products = Product::query()
             ->where('status', 'available')
-            ->get()
-            ->sortByDesc(function ($product) {
-                return $product->ratings->avg('rating');
-            })
-            ->take(6);
-        $top8Categories = Product::select('category')
+            ->withAvg('ratings', 'rating')      // bikin kolom: ratings_avg_rating
+            ->withCount('ratings')              // opsional: untuk filter jumlah rating
+            ->having('ratings_count', '>=', 5)  // opsional biar gak produk 1 rating langsung nangkring
+            ->orderByDesc('ratings_avg_rating')
+            ->orderByDesc('ratings_count')      // tie-breaker (opsional)
+            ->limit(6)
+            ->get();
+        $top8Categories = Product::query()
             ->where('status', 'available')
+            ->selectRaw('category, COUNT(*) as total')
             ->groupBy('category')
-            ->orderByRaw('COUNT(*) DESC')
-            ->take(8)
+            ->orderByDesc('total')
+            ->limit(8)
             ->pluck('category');
-
         return response()->json(
             [
                 'message' => 'Analytics data',
