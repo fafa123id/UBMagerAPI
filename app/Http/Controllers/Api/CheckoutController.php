@@ -97,12 +97,11 @@ class CheckoutController extends Controller
 
             // Generate unique transaction receipt
             $receipt = 'TRX-' . time() . '-' . rand(1000, 9999);
-
             // Create transaction
             $transaction = Transaction::create([
                 'user_id' => $user->id,
                 'total_price' => $totalPrice,
-                'payment_method' => 'midtrans',
+                'payment_method' => $request->pay_method ?? 'midtrans',
                 'status' => 'pending',
                 'receipt' => $receipt,
             ]);
