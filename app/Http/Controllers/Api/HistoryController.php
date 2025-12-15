@@ -63,7 +63,7 @@ class HistoryController extends Controller
         return response()->json([
             'success' => true,
             'data' => $transaction->orders->first(),
-            'owner' => $transaction->orders->first()->product->user->get(['id', 'name']),
+            'owner_product' => $transaction->orders->first()->product->user->get(['id', 'name']),
         ]);
     }
 }
