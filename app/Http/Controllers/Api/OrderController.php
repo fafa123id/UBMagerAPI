@@ -43,8 +43,8 @@ class OrderController extends Controller
                 'message' => 'Order is not in a processing state',
             ], 400);
         }
-        // Update the order status to 'proccess'
-        $order->update(['status' => 'proccessed']);
+        // Update the order status to 'processed'
+        $order->update(['status' => 'processed']);
 
         return response()->json([
             'success' => true,
@@ -64,7 +64,7 @@ class OrderController extends Controller
         // Find the order by ID
         $order = auth()->user()->order()->findOrFail($id);
 
-        if ($order->status !== 'proccessed') {
+        if ($order->status !== 'processed') {
             return response()->json([
                 'success' => false,
                 'message' => 'Order is not in a processed state',
