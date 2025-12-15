@@ -22,7 +22,7 @@ class HistoryController extends Controller
         $page = $request->query('page');
         $perpage = $request->query('perpage');
         // Get all transactions for the authenticated user
-        $transactions = auth()->user()->transaction()->with(['orders.product', 'orders.transaction','product.user']);
+        $transactions = auth()->user()->transaction()->with(['orders.product.user', 'orders.transaction']);
         if ($status) {
             $transactions->whereHas('orders', function ($query) use ($status) {
                 $query->where('status', $status);
@@ -58,7 +58,7 @@ class HistoryController extends Controller
     public function show($id)
     {
         // Get a specific transaction by ID for the authenticated user
-        $transaction = auth()->user()->transaction()->with(['orders.product', 'orders.transaction','product.user'])->findOrFail($id);
+        $transaction = auth()->user()->transaction()->with(['orders.product.user', 'orders.transaction'])->findOrFail($id);
 
         return response()->json([
             'success' => true,
