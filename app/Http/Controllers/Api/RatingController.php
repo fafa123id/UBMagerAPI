@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Rating;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use App\Jobs\UploadRatingImageToS3;
 
 class RatingController extends Controller
 {
@@ -45,16 +47,15 @@ class RatingController extends Controller
             ], 400);
         }
         $validatedData['product_id'] = $order->product_id;
-        if ($request->hasFile('image')) {
-            // Store the image and get its path
-            $imagePath = config('filesystems.disks.s3.url') . $request->file('image')->store('ratings', 's3');
-            $validatedData['image'] = $imagePath;
-        }
-
 
         // Create a new rating for the product
         $order->update(['is_rated' => true]);
         $rating = auth()->user()->ratings()->create($validatedData);
+
+        // Upload image ke S3 secara asynchronous jika ada
+        if ($request->hasFile('image')) {
+            UploadRatingImageToS3::dispatch($rating->id, $request->file('image'));
+        }
 
         return response()->json([
             'success' => true,
