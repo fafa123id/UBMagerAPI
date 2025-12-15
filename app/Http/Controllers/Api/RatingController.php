@@ -54,7 +54,12 @@ class RatingController extends Controller
 
         // Upload image ke S3 secara asynchronous jika ada
         if ($request->hasFile('image')) {
-            UploadRatingImageToS3::dispatch($rating->id, $request->file('image'));
+            // Simpan file ke temporary storage
+            $tempPath = $request->file('image')->store('temp', 'local');
+            $fullTempPath = storage_path('app/' . $tempPath);
+            
+            // Dispatch job dengan path file, bukan object UploadedFile
+            UploadRatingImageToS3::dispatch($rating->id, $fullTempPath);
         }
 
         return response()->json([
