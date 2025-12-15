@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Resources\successReturn;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Order;
 use App\Models\Transaction;
 
 class HistoryController extends Controller
@@ -32,7 +33,10 @@ class HistoryController extends Controller
         if ($page && $perpage) {
             $transactions = $transactions->skip(($page - 1) * $perpage)->take($perpage);
         }
-        $transactions = $transactions->orderByDesc('updated_at')->get();
+        $transactions = $transactions->orderByDesc(Order::select('updated_at')
+            ->whereColumn('orders.transaction_id', 'transactions.id')
+            ->latest()
+            ->limit(1))->get();
 
         // Kumpulkan semua orders dari semua transaksi
         $allOrders = $transactions->flatMap->orders;
