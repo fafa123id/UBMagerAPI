@@ -6,9 +6,9 @@ use App\Models\User;
 
 class UserRoleId
 {
-    public function getRole(User $user): int
+    public function getRole(): int
     {
-        return $user->role_id;
+        return auth()->user()->role_id;
     }
     public function changeRole (User $usr, int $role): bool
     {

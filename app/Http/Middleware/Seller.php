@@ -23,9 +23,8 @@ class Seller
 
     public function handle(Request $request, Closure $next): Response
     {
-        $usr = auth()->user();
     
-        if ($this->userRoleId->getRole($usr)=== 1) {
+        if ($this->userRoleId->getRole()=== 1) {
             return $next($request);
         }
         
