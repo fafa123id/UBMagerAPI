@@ -47,7 +47,7 @@ class RatingController extends Controller
         $validatedData['product_id'] = $order->product_id;
         if ($request->hasFile('image')) {
             // Store the image and get its path
-            $imagePath = config('filesystems.disks.s3.url') . $request->file('image')->store('ratings', 'public');
+            $imagePath = config('filesystems.disks.s3.url') . $request->file('image')->store('ratings', 's3');
             $validatedData['image'] = $imagePath;
         }
 
