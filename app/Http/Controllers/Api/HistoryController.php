@@ -32,7 +32,7 @@ class HistoryController extends Controller
         if ($page && $perpage) {
             $transactions = $transactions->skip(($page - 1) * $perpage)->take($perpage);
         }
-        $transactions = $transactions->get();
+        $transactions = $transactions->orderByDesc('updated_at')->get();
 
         // Kumpulkan semua orders dari semua transaksi
         $allOrders = $transactions->flatMap->orders;
