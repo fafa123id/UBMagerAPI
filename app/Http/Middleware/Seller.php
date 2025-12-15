@@ -23,7 +23,7 @@ class Seller
 
     public function handle(Request $request, Closure $next): Response
     {
-        $usr = Auth::guard('sanctum')->user();
+        $usr = auth()->user();
     
         if ($this->userRoleId->getRole($usr)=== 1) {
             return $next($request);
