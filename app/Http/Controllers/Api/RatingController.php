@@ -48,20 +48,25 @@ class RatingController extends Controller
         }
         $validatedData['product_id'] = $order->product_id;
 
+        // Jangan include image di sini, biarkan null dulu
+        unset($validatedData['image']);
+
         // Create a new rating for the product
         $order->update(['is_rated' => true]);
         $rating = auth()->user()->ratings()->create($validatedData);
 
-        // Upload image ke S3 secara asynchronous jika ada
         if ($request->hasFile('image')) {
-            // Simpan file ke temporary storage
-            $tempPath = $request->file('image')->store('temp', 'local');
-            $fullTempPath = storage_path('app/' . $tempPath);
-            
-            // Dispatch job dengan path file, bukan object UploadedFile
-            UploadRatingImageToS3::dispatch($rating->id, $fullTempPath);
-        }
+            $file = $request->file('image');
 
+            // 1. Baca konten file (binary data)
+            $fileContents = $file->get();
+
+            // 2. Ambil nama file asli dan ekstensi
+            $fileName = $file->getClientOriginalName();
+
+            // 3. Dispatch job dengan konten file dan nama file
+            UploadRatingImageToS3::dispatch($rating->id, $fileContents, $fileName);
+        }
         return response()->json([
             'success' => true,
             'data' => $rating,

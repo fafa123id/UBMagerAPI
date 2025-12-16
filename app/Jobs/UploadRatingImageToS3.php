@@ -8,6 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class UploadRatingImageToS3 implements ShouldQueue
@@ -15,38 +16,43 @@ class UploadRatingImageToS3 implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $ratingId;
-    protected $tempFilePath;
-
-    /**
-     * Create a new job instance.
-     */
-    public function __construct($ratingId, $tempFilePath)
+    protected $fileContents; // Konten binary file
+    protected $fileName;     // Nama file untuk disimpan
+    
+    // Sesuaikan constructor
+    public function __construct($ratingId, $fileContents, $fileName)
     {
         $this->ratingId = $ratingId;
-        $this->tempFilePath = $tempFilePath;
+        $this->fileContents = $fileContents; // Sekarang menyimpan data binary
+        $this->fileName = $fileName;
     }
 
-    /**
-     * Execute the job.
-     */
     public function handle()
     {
         $rating = Rating::find($this->ratingId);
         
-        if ($rating && $this->tempFilePath && file_exists($this->tempFilePath)) {
-            try {
-                // Upload file ke S3
-                $s3Path = Storage::disk('s3')->put('ratings', fopen($this->tempFilePath, 'r'));
-                $imageUrl = config('filesystems.disks.s3.url') . $s3Path;
-                
-                // Update rating dengan image URL
-                $rating->update(['image' => $imageUrl]);
-            } finally {
-                // Hapus temporary file
-                if (file_exists($this->tempFilePath)) {
-                    unlink($this->tempFilePath);
-                }
-            }
+        if (!$rating || empty($this->fileContents)) {
+            return;
+        }
+
+        try {
+            // Tentukan path S3 (gunakan hash/unik nama file untuk menghindari konflik)
+            $s3FileName = 'ratings/' . md5($this->fileContents . time()) . '.' . pathinfo($this->fileName, PATHINFO_EXTENSION);
+
+            // Upload konten file langsung ke S3
+            // Storage::put(path, contents, visibility)
+            $s3Path = Storage::disk('s3')->put($s3FileName, $this->fileContents, 'public'); 
+            
+            // Dapatkan URL
+            $imageUrl = Storage::disk('s3')->url($s3FileName);
+            
+            // Update rating
+            $rating->update(['image' => $imageUrl]);
+            
+        } catch (\Exception $e) {
+            Log::error("S3 Upload Failed for Rating ID: {$this->ratingId}. Error: " . $e->getMessage());
+            // Biarkan job gagal dan di-retry
+            throw $e;
         }
     }
 }
