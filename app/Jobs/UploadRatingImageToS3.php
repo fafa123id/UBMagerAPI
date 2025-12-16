@@ -10,6 +10,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class UploadRatingImageToS3 implements ShouldQueue
 {
@@ -52,7 +53,7 @@ class UploadRatingImageToS3 implements ShouldQueue
             // Update rating
             $rating->update(['image' => $imageUrl]);
         } catch (\Exception $e) {
-            \Log::error("S3 Upload Failed for Rating ID: " . $this->ratingId . " Error: " . $e->getMessage());
+            Log::error("S3 Upload Failed for Rating ID: " . $this->ratingId . " Error: " . $e->getMessage());
             throw $e;
         }
     }
