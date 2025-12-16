@@ -58,14 +58,13 @@ class RatingController extends Controller
         if ($request->hasFile('image')) {
             $file = $request->file('image');
 
-            // 1. Baca konten file (binary data)
             $fileContents = $file->get();
 
-            // 2. Ambil nama file asli dan ekstensi
-            $fileName = $file->getClientOriginalName();
+            $encodedContents = base64_encode($fileContents);
 
-            // 3. Dispatch job dengan konten file dan nama file
-            UploadRatingImageToS3::dispatch($rating->id, $fileContents, $fileName);
+            $fileName = $file->getClientOriginalName();
+            
+            UploadRatingImageToS3::dispatch($rating->id, $encodedContents, $fileName);
         }
         return response()->json([
             'success' => true,

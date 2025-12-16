@@ -18,7 +18,7 @@ class UploadRatingImageToS3 implements ShouldQueue
     protected $ratingId;
     protected $fileContents; // Konten binary file
     protected $fileName;     // Nama file untuk disimpan
-    
+
     // Sesuaikan constructor
     public function __construct($ratingId, $fileContents, $fileName)
     {
@@ -30,28 +30,29 @@ class UploadRatingImageToS3 implements ShouldQueue
     public function handle()
     {
         $rating = Rating::find($this->ratingId);
-        
+
+        // Cek apakah rating ada dan konten file tidak kosong
         if (!$rating || empty($this->fileContents)) {
             return;
         }
 
-        try {
-            // Tentukan path S3 (gunakan hash/unik nama file untuk menghindari konflik)
-            $s3FileName = 'ratings/' . md5($this->fileContents . time()) . '.' . pathinfo($this->fileName, PATHINFO_EXTENSION);
+        $binaryContents = base64_decode($this->fileContents);
 
-            // Upload konten file langsung ke S3
-            // Storage::put(path, contents, visibility)
-            $s3Path = Storage::disk('s3')->put($s3FileName, $this->fileContents, 'public'); 
-            
-            // Dapatkan URL
+        try {
+            // Tentukan path S3 
+            $extension = pathinfo($this->fileName, PATHINFO_EXTENSION);
+            $s3FileName = 'ratings/' . Str::uuid() . '.' . $extension; // Gunakan Str::uuid() untuk nama file unik
+
+            // Upload konten file (binary) langsung ke S3
+            // Gunakan $binaryContents di sini
+            Storage::disk('s3')->put($s3FileName, $binaryContents, 'public');
+
             $imageUrl = Storage::disk('s3')->url($s3FileName);
-            
+
             // Update rating
             $rating->update(['image' => $imageUrl]);
-            
         } catch (\Exception $e) {
-            Log::error("S3 Upload Failed for Rating ID: {$this->ratingId}. Error: " . $e->getMessage());
-            // Biarkan job gagal dan di-retry
+            \Log::error("S3 Upload Failed for Rating ID: " . $this->ratingId . " Error: " . $e->getMessage());
             throw $e;
         }
     }
