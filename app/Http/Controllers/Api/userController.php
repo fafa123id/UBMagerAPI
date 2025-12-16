@@ -123,7 +123,7 @@ class userController extends Controller
                 Storage::disk('s3')->delete($users->image);
             }
             $imagePath =$request->file('image')->store('images', 's3');
-            $validated['image'] = $imagePath;
+            $validated['image'] = config('filesystems.disks.s3.url') . $imagePath;
         }
         return $this->users->update($id, $validated, $oldEmail);
     }

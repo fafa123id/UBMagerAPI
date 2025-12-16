@@ -50,7 +50,7 @@ class RegisteredUserController extends Controller
             'phone' => $request->phone,
             'password' => Hash::make($request->string('password')),
             'address' => $request->address?? null, 
-            'image' => $imagePath ?? null,
+            'image' => $imagePath ? config('filesystems.disks.s3.url') . $imagePath : null,
         ]);
 
         return response()->json([
