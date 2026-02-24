@@ -19,7 +19,7 @@ class CacheDataCommand extends Command
         $data = $this->generateAnalytics();
 
         // simpan cache 5 menit (300 detik)
-        Cache::put('analytics:home:v1', $data, 3600);
+        Cache::put('analytics:home:v1', $data, 300);
 
         $this->info('Analytics cache updated!');
     }

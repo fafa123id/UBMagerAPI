@@ -9,4 +9,4 @@ Artisan::command('inspire', function () {
     /** @var ClosureCommand $this */
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
-Schedule::command('analytics:cache')->hourly();
+Schedule::command('analytics:cache')->everyFiveMinutes();
