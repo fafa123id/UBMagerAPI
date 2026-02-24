@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Cache;
 use App\Models\Product;
 use App\Models\Rating;
 
-class CacheAnalyticsCommand extends Command
+class CacheDataCommand extends Command
 {
     protected $signature = 'analytics:cache';
     protected $description = 'Warm cache analytics homepage';
@@ -24,7 +24,7 @@ class CacheAnalyticsCommand extends Command
         $this->info('Analytics cache updated!');
     }
 
-    private function generateAnalytics()
+        private function generateAnalytics()
     {
         $top6Products = Product::query()
             ->joinSub(
