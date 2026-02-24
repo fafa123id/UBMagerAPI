@@ -44,7 +44,15 @@ services:
       - shared-network 
     depends_on:
       - app-ubmager
-
+  scheduler:
+    build: .
+    container_name: laravel_scheduler
+    working_dir: /var/www/UBMagerAPI
+    command: php artisan schedule:work
+    volumes:
+      - .:/var/www/UBMagerAPI
+    depends_on:
+      - app-ubmager
 networks:
   shared-network:
     external: true
