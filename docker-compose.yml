@@ -45,7 +45,9 @@ services:
     depends_on:
       - app-ubmager
   scheduler:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: laravel_scheduler
     working_dir: /var/www/UBMagerAPI
     command: php artisan schedule:work
