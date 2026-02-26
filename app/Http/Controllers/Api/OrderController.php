@@ -25,7 +25,9 @@ class OrderController extends Controller
                 $q->where('receipt', $receipt);
             })
             ->firstOrFail();
-
+        if ($order->transaction->status !== 'success') {
+            abort(400, 'Transaction is not successful, cannot generate receipt');
+        }
         $pdf = Pdf::loadView('pdf.receipt', compact('order'))
             ->setPaper('a4');
 
