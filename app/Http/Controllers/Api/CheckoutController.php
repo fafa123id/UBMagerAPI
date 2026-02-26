@@ -244,6 +244,10 @@ class CheckoutController extends Controller
         try {
             if ($transactionStatus == 'capture') {
                 if ($fraudStatus == 'accept') {
+                    if ($transaction->status === 'cancelled') {
+                        Log::warning("Received capture notification for cancelled transaction: {$receipt}");
+                        return response()->json(['message' => 'Transaction already cancelled'], 200);
+                    }
                     $transaction->update(['status' => 'success']);
                     $order->update(['status' => 'processing']);
                 } elseif ($fraudStatus == 'challenge') {
@@ -255,6 +259,10 @@ class CheckoutController extends Controller
                     $this->restoreProductStock($transaction);
                 }
             } elseif ($transactionStatus == 'settlement') {
+                if ($transaction->status === 'cancelled') {
+                    Log::warning("Received capture notification for cancelled transaction: {$receipt}");
+                    return response()->json(['message' => 'Transaction already cancelled'], 200);
+                }
                 $transaction->update(['status' => 'success']);
                 $order->update(['status' => 'processing']);
             } elseif (
