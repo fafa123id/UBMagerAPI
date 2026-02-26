@@ -431,7 +431,7 @@ class CheckoutController extends Controller
             $this->restoreProductStock($transaction);
 
             DB::commit();
-
+            MidtransTransaction::cancel($transaction->receipt);
             return response()->json([
                 'success' => true,
                 'message' => 'Transaction cancelled successfully'
