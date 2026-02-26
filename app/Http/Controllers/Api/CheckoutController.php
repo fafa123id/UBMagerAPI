@@ -242,15 +242,21 @@ class CheckoutController extends Controller
         DB::beginTransaction();
 
         try {
-            // Update status transaksi di database
             if ($transactionStatus == 'capture') {
                 if ($fraudStatus == 'accept') {
                     $transaction->update(['status' => 'success']);
-                } else {
+                    $order->update(['status' => 'processing']);
+                } elseif ($fraudStatus == 'challenge') {
                     $transaction->update(['status' => 'challenge']);
+                    $order->update(['status' => 'pending_review']);
+                } elseif ($fraudStatus == 'deny') {
+                    $transaction->update(['status' => 'cancelled']);
+                    $order->update(['status' => 'cancelled']);
+                    $this->restoreProductStock($transaction);
                 }
             } elseif ($transactionStatus == 'settlement') {
                 $transaction->update(['status' => 'success']);
+                $order->update(['status' => 'processing']);
             } elseif (
                 $transactionStatus == 'deny' ||
                 $transactionStatus == 'expire'
@@ -406,6 +412,7 @@ class CheckoutController extends Controller
     public function cancelTransaction($id)
     {
         $transaction = auth()->user()->transaction()->find($id);
+
         if (!$transaction) {
             return response()->json([
                 'success' => false,
@@ -424,11 +431,25 @@ class CheckoutController extends Controller
 
         try {
             $transaction->orders()->update(['status' => 'cancelled']);
-            $transaction->update(['status' => 'cancelled', 'link_payment' => null]);
+            $transaction->update([
+                'status' => 'cancelled',
+                'link_payment' => null
+            ]);
+
             $this->restoreProductStock($transaction);
 
             DB::commit();
-            MidtransTransaction::cancel($transaction->receipt);
+
+            try {
+                $status = MidtransTransaction::status($transaction->receipt);
+
+                if (isset($status->transaction_status)) {
+                    MidtransTransaction::cancel($transaction->receipt);
+                }
+            } catch (\Exception $midtransError) {
+                Log::warning("Midtrans cancel skipped: " . $midtransError->getMessage());
+            }
+
             return response()->json([
                 'success' => true,
                 'message' => 'Transaction cancelled successfully'
