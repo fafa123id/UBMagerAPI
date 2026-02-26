@@ -107,7 +107,7 @@ class CheckoutController extends Controller
             ]);
 
             // Create order
-            $order=Order::create([
+            $order = Order::create([
                 'user_id' => $user->id,
                 'transaction_id' => $transaction->id,
                 'product_id' => $product->id,
@@ -158,7 +158,7 @@ class CheckoutController extends Controller
                 'item_details' => $itemDetails,
                 'customer_details' => $customerDetails,
                 'callbacks' => [
-                    'finish' => env('FRONTEND_URL') . "/order/". $order->id,
+                    'finish' => env('FRONTEND_URL') . "/order/" . $order->id,
                 ]
             ];
             if ($enabledPayments) {
@@ -256,8 +256,8 @@ class CheckoutController extends Controller
                 $transactionStatus == 'deny' ||
                 $transactionStatus == 'expire'
             ) {
-                $transaction->update(['status' => 'cancelled']);
-                // Restore stock jika perlu
+                $transaction->orders()->update(['status' => 'cancelled']);
+                $transaction->update(['status' => 'cancelled', 'link_payment' => null]);
                 $this->restoreProductStock($transaction);
             } elseif ($transactionStatus == 'pending') {
                 $transaction->update(['status' => 'pending']);
@@ -393,7 +393,6 @@ class CheckoutController extends Controller
      */
     private function restoreProductStock($transaction)
     {
-        $transaction->orders()->product()->increment('quantity', $transaction->orders->quantity);
         foreach ($transaction->orders as $order) {
             $order->product->increment('quantity', $order->quantity);
         }
@@ -421,24 +420,13 @@ class CheckoutController extends Controller
                 'message' => 'Only pending transactions can be cancelled'
             ], 400);
         }
-
-        DB::beginTransaction();
-
         try {
-            // Update transaction status
-            $transaction->orders()->update(['status' => 'cancelled']);
-            $transaction->update(['status' => 'cancelled', 'link_payment' => null]);
-            // Restore product stock
-            $this->restoreProductStock($transaction);
-
-            DB::commit();
             MidtransTransaction::cancel($transaction->receipt);
             return response()->json([
                 'success' => true,
                 'message' => 'Transaction cancelled successfully'
             ]);
         } catch (\Exception $e) {
-            DB::rollback();
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to cancel transaction: ' . $e->getMessage()
