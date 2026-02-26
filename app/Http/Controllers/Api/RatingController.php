@@ -54,7 +54,13 @@ class RatingController extends Controller
         // Create a new rating for the product
         $order->update(['is_rated' => true]);
         $rating = auth()->user()->ratings()->create($validatedData);
-
+        $seller = $rating->product->user;
+        $seller->increment('seller_rating_count');
+        $seller->increment('seller_rating_sum', $validatedData['rating']);
+        $seller->update([
+            'seller_rating_avg' => round($seller->seller_rating_sum / $seller->seller_rating_count, 2),
+        ]);
+        $seller->save();
         if ($request->hasFile('image')) {
             $file = $request->file('image');
 
