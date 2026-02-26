@@ -8,6 +8,7 @@ use App\Models\Rating;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Jobs\UploadRatingImageToS3;
+use App\Models\User;
 
 class RatingController extends Controller
 {
@@ -147,9 +148,8 @@ class RatingController extends Controller
     }
     public function getSellerRating(int $sellerId): float
     {
-        $avg = Rating::whereHas('product', fn($q) => $q->where('user_id', $sellerId))
-            ->select(DB::raw('AVG(rating * 1.0) as avg_rating'))
-            ->value('avg_rating');
+        $avg = User::where('id',$sellerId)
+        ->value('seller_rating_avg') ?? 0.0;
 
         return $avg ?? 0.0;
     }
