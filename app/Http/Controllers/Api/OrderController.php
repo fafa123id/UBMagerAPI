@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Order;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -14,6 +16,18 @@ class OrderController extends Controller
      * This method retrieves all orders and their associated products for the authenticated user.
      * @authenticated
      */
+
+
+    public function downloadReceipt($id)
+    {
+        $order = Order::with(['transaction', 'product.user', 'user'])
+            ->findOrFail($id);
+
+        $pdf = Pdf::loadView('pdf.receipt', compact('order'))
+            ->setPaper('a4');
+
+        return $pdf->download('Receipt-' . $order->transaction->receipt . '.pdf');
+    }
     public function index(Request $request)
     {
         // Get all orders for the authenticated user
