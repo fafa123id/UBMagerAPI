@@ -18,10 +18,13 @@ class OrderController extends Controller
      */
 
 
-    public function downloadReceipt($id)
+    public function downloadReceipt($receipt)
     {
         $order = Order::with(['transaction', 'product.user', 'user'])
-            ->findOrFail($id);
+            ->whereHas('transaction', function ($q) use ($receipt) {
+                $q->where('receipt', $receipt);
+            })
+            ->firstOrFail();
 
         $pdf = Pdf::loadView('pdf.receipt', compact('order'))
             ->setPaper('a4');
