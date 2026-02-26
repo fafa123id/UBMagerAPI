@@ -4,7 +4,6 @@ set -e
 php artisan config:clear
 php artisan package:discover
 
-php artisan migrate --force
 
 php artisan key:generate --force
 php artisan optimize:clear

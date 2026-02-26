@@ -29,6 +29,8 @@ COPY --from=composer:2.8.10 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/UBMagerAPI
 
+COPY php.ini /usr/local/etc/php/php.ini
+
 COPY . .
 
 COPY supervisord.conf /etc/supervisor/supervisord.conf

@@ -3,6 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    user: "108:111"
     container_name: ubmager_app
     restart: unless-stopped
     working_dir: /var/www/UBMagerAPI
@@ -11,7 +12,6 @@ services:
     volumes:
       - laravel_storage:/var/www/UBMagerAPI/storage
       - laravel_cache:/var/www/UBMagerAPI/bootstrap/cache
-      - ./php.ini:/usr/local/etc/php/php.ini
     networks:
       - shared-network
   web-ubmager:
@@ -33,6 +33,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    user: "108:111"
     container_name: ubmager_queue
     restart: unless-stopped
     command: /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
@@ -41,7 +42,6 @@ services:
     volumes:
       - laravel_storage:/var/www/UBMagerAPI/storage
       - laravel_cache:/var/www/UBMagerAPI/bootstrap/cache
-      - ./php.ini:/usr/local/etc/php/php.ini
     networks:
       - shared-network 
     depends_on:
@@ -50,6 +50,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    user: "108:111"
     container_name: ubmager_scheduler
     restart: unless-stopped
     command: php artisan schedule:work
@@ -58,7 +59,6 @@ services:
     volumes:    
       - laravel_storage:/var/www/UBMagerAPI/storage
       - laravel_cache:/var/www/UBMagerAPI/bootstrap/cache
-      - ./php.ini:/usr/local/etc/php/php.ini
     networks:
       - shared-network
     depends_on:
