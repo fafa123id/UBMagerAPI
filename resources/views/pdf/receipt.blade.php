@@ -78,7 +78,7 @@ body{
 
     <div>
         <strong>Receipt ID:</strong> {{ $order->transaction->receipt }} <br>
-        <strong>Date:</strong> {{ $order->created_at->format('d M Y H:i') }} <br>
+        <strong>Date:</strong> {{ $order->transaction->updated_at->format('d M Y H:i') }} <br>
         <strong>Payment:</strong> {{ $order->transaction->payment_method }}
     </div>
 
