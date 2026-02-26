@@ -393,7 +393,10 @@ class CheckoutController extends Controller
      */
     private function restoreProductStock($transaction)
     {
-        $transaction->orders->product->increment('quantity', $transaction->orders->quantity);
+        $transaction->orders()->product()->increment('quantity', $transaction->orders->quantity);
+        foreach ($transaction->orders as $order) {
+            $order->product->increment('quantity', $order->quantity);
+        }
     }
     /**
      * GET: /api/transactions/cancel/{id}
