@@ -162,7 +162,7 @@ class CheckoutController extends Controller
                 ]
             ];
             if ($enabledPayments) {
-                $transactionData['enabled_payments'] = $enabledPayments;
+                $transactionData['payment_type'] = $enabledPayments;
                 if (in_array('qris', $enabledPayments)) {
                     $transactionData['qris'] = [
                         "acquirer" => "gopay"
