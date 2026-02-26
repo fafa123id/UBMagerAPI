@@ -3,7 +3,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    user: "108:111"
     container_name: ubmager_app
     restart: unless-stopped
     working_dir: /var/www/UBMagerAPI
@@ -33,7 +32,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    user: "108:111"
     container_name: ubmager_queue
     restart: unless-stopped
     command: /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
@@ -50,7 +48,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    user: "108:111"
     container_name: ubmager_scheduler
     restart: unless-stopped
     command: php artisan schedule:work
