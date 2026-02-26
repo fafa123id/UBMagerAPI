@@ -12,8 +12,9 @@ php artisan optimize
 
 php artisan l5-swagger:generate
 
-chown -R www-data:www-data storage bootstrap/cache
-chmod -R 775 storage bootstrap/cache
+RUN chown -R 108:111 /var/www/UBMagerAPI \
+    && chmod -R 775 /var/www/UBMagerAPI/storage \
+    && chmod -R 775 /var/www/UBMagerAPI/bootstrap/cache
 chmod -R 660 storage/oauth-private.key
 chmod -R 660 storage/oauth-public.key
 
