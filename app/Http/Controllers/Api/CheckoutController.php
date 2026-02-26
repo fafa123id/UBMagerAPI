@@ -162,12 +162,10 @@ class CheckoutController extends Controller
                 ]
             ];
             if ($enabledPayments) {
-                $transactionData['payment_type'] = $enabledPayments;
-                if (in_array('qris', $enabledPayments)) {
-                    $transactionData['qris'] = [
-                        "acquirer" => "gopay"
-                    ];
+                if (!in_array('qris', $enabledPayments)) {
+                    $transactionData['enabled_payments'] = $enabledPayments;
                 }
+                $transactionData['enabled_payments'] = ['echannel'];
             }
             // Get Snap redirect URL
             $snapToken = Snap::getSnapToken($transactionData);
