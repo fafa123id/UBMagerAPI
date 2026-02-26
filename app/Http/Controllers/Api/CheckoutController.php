@@ -252,7 +252,6 @@ class CheckoutController extends Controller
             } elseif ($transactionStatus == 'settlement') {
                 $transaction->update(['status' => 'success']);
             } elseif (
-                $transactionStatus == 'cancel' ||
                 $transactionStatus == 'deny' ||
                 $transactionStatus == 'expire'
             ) {
@@ -420,13 +419,22 @@ class CheckoutController extends Controller
                 'message' => 'Only pending transactions can be cancelled'
             ], 400);
         }
+
+        DB::beginTransaction();
+
         try {
+            $transaction->orders()->update(['status' => 'cancelled']);
+            $transaction->update(['status' => 'cancelled', 'link_payment' => null]);
+            $this->restoreProductStock($transaction);
+
+            DB::commit();
             MidtransTransaction::cancel($transaction->receipt);
             return response()->json([
                 'success' => true,
                 'message' => 'Transaction cancelled successfully'
             ]);
         } catch (\Exception $e) {
+            DB::rollback();
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to cancel transaction: ' . $e->getMessage()
