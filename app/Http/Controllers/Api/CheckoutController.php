@@ -107,7 +107,7 @@ class CheckoutController extends Controller
             ]);
 
             // Create order
-            $order = Order::create([
+            $order=Order::create([
                 'user_id' => $user->id,
                 'transaction_id' => $transaction->id,
                 'product_id' => $product->id,
@@ -158,14 +158,11 @@ class CheckoutController extends Controller
                 'item_details' => $itemDetails,
                 'customer_details' => $customerDetails,
                 'callbacks' => [
-                    'finish' => env('FRONTEND_URL') . "/order/" . $order->id,
+                    'finish' => env('FRONTEND_URL') . "/order/". $order->id,
                 ]
             ];
             if ($enabledPayments) {
-                if (!in_array('qris', $enabledPayments)) {
-                    $transactionData['enabled_payments'] = $enabledPayments;
-                }
-                $transactionData['enabled_payments'] = ['echannel'];
+                $transactionData['enabled_payments'] = $enabledPayments;
             }
             // Get Snap redirect URL
             $snapToken = Snap::getSnapToken($transactionData);
