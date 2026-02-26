@@ -24,7 +24,7 @@ class RatingController extends Controller
         $validatedData = $request->validate([
             'rating' => 'required|integer|min:1|max:5',
             'comment' => 'nullable|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:10024',// Maksimal 10MB
         ]);
 
         $order = auth()->user()->order()->where('id', $id)->first();
