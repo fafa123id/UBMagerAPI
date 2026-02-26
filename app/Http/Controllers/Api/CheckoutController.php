@@ -43,7 +43,7 @@ class CheckoutController extends Controller
             'quantity' => 'required|integer|min:1',
             'address' => 'nullable|string|max:255',
             'nego_id' => 'nullable|integer|min:0',
-            'pay_method' => 'nullable|string|in:credit_card,bank_transfer,gopay,shopeepay,qris,alfamart,indomaret',
+            'pay_method' => 'nullable|string|in:credit_card,bank_transfer,gopay,shopeepay,other_qris,alfamart,indomaret',
         ]);
 
         if ($validator->fails()) {
