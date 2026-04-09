@@ -20,6 +20,7 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
+        'https://ubmager.s1gro.online',
         'https://ubmager.shop',
         'https://dev.ubmager.shop',
         'https://api.ubmager.shop',
