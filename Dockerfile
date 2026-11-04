@@ -17,11 +17,9 @@ RUN set -eux; \
     libxml2-dev \
     libonig-dev \
     pkg-config \
-    pdo_pgsql \
-    pgsql \
     ; \
     docker-php-ext-configure gd --with-freetype --with-jpeg; \
-    docker-php-ext-install -j"$(nproc)" mbstring exif pcntl bcmath gd zip; \
+    docker-php-ext-install -j"$(nproc)" pdo_pgsql pgsql mbstring exif pcntl bcmath gd zip; \
     pecl install redis; \
     docker-php-ext-enable redis; \
     apt-get clean; \
