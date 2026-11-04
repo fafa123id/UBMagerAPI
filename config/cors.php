@@ -20,6 +20,8 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
+        'https://dev-api-ubmager.weboss.cloud',
+        'https://dev-ubmager.weboss.cloud',
         'https://ubmager.s1gro.online',
         'https://ubmager.shop',
         'https://dev.ubmager.shop',
