@@ -1,6 +1,7 @@
 FROM php:8.4-fpm
 
 
+
 RUN set -eux; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
@@ -8,6 +9,7 @@ RUN set -eux; \
     libjpeg-dev \
     libfreetype6-dev \
     libzip-dev \
+    libpq-dev \
     zip \
     unzip \
     netcat-openbsd \
@@ -18,12 +20,26 @@ RUN set -eux; \
     libonig-dev \
     pkg-config \
     ; \
+    \
+    pg_config --version; \
+    \
     docker-php-ext-configure gd --with-freetype --with-jpeg; \
-    docker-php-ext-install -j"$(nproc)" pdo_pgsql pgsql mbstring exif pcntl bcmath gd zip; \
+    docker-php-ext-install -j"$(nproc)" \
+    pdo_pgsql \
+    pgsql \
+    mbstring \
+    exif \
+    pcntl \
+    bcmath \
+    gd \
+    zip; \
+    \
     pecl install redis; \
     docker-php-ext-enable redis; \
+    \
     apt-get clean; \
     rm -rf /var/lib/apt/lists/*
+
 
 COPY --from=composer:2.8.10 /usr/bin/composer /usr/bin/composer
 
