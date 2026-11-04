@@ -22,7 +22,7 @@ else
 fi
 
 chmod 600 storage/oauth-private.key
-chmod 644 storage/oauth-public.key
+chmod 660 storage/oauth-public.key
 
 composer dump-autoload -o
 
