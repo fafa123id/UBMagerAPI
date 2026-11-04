@@ -18,8 +18,8 @@ services:
     container_name: ubmager_web
     restart: unless-stopped
     environment:
-      - VIRTUAL_HOST=api-ubmager.s1gro.online
-      - LETSENCRYPT_HOST=api-ubmager.s1gro.online
+      - VIRTUAL_HOST=dev-api-ubmager.weboss.cloud
+      - LETSENCRYPT_HOST=dev-api-ubmager.weboss.cloud
       - LETSENCRYPT_EMAIL=ahmadfauzanroziqin@gmail.com
     volumes:
       - .:/var/www/UBMagerAPI
