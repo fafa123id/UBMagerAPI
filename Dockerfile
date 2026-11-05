@@ -1,4 +1,4 @@
-FROM php:8.4-fpm
+FROM php:8.5.12-fpm
 
 
 
@@ -41,7 +41,7 @@ RUN set -eux; \
     rm -rf /var/lib/apt/lists/*
 
 
-COPY --from=composer:2.8.10 /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2.11.1 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/UBMagerAPI
 
